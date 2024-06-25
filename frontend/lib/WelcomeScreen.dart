@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled3/regScreen.dart';
+import 'regScreen.dart';
 import 'loginScreen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -40,7 +40,7 @@ class WelcomeScreen extends StatelessWidget {
             child: Container(
               width: 200,
               height: 200,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.transparent, // Transparent background
               ),

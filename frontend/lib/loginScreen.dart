@@ -7,9 +7,9 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 183, 66, 91), // Background color
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91), // Background color
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           color: Colors.white, // Arrow icon
           onPressed: () {
             Navigator.of(context).pop(); // Pop the current screen
@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
           Container(
             height: double.infinity,
             width: double.infinity,
-            color: Color.fromARGB(255, 183, 66, 91), // Background color
+            color: const Color.fromARGB(255, 183, 66, 91), // Background color
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -112,7 +112,7 @@ class LoginScreen extends StatelessWidget {
                       width: 327,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(255, 183, 66, 91), // Button color
+                        color: const Color.fromARGB(255, 183, 66, 91), // Button color
                       ),
                       child: const Center(
                         child: Text(
@@ -135,7 +135,7 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: Container(
                     padding: const EdgeInsets.all(8.0), // Add padding for better touch response
-                    child: Text(
+                    child: const Text(
                       "Forgot password?",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,

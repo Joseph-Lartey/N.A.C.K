@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 
 class InterestsPage extends StatefulWidget {
+  const InterestsPage({Key? key}) : super(key: key);
+
   @override
-  _InterestsPageState createState() => _InterestsPageState();
+  InterestsPageState createState() => InterestsPageState();
 }
 
-class _InterestsPageState extends State<InterestsPage> {
+class InterestsPageState extends State<InterestsPage> {
   List<String> selectedInterests = [];
 
   void toggleInterest(String interest) {
@@ -22,12 +24,12 @@ class _InterestsPageState extends State<InterestsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 183, 66, 91), // Match AppBar color
+      backgroundColor: const Color.fromARGB(255, 183, 66, 91), // Match AppBar color
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 183, 66, 91),
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.of(context).pop(); // Navigate to the previous page
           },
@@ -35,7 +37,7 @@ class _InterestsPageState extends State<InterestsPage> {
         actions: [
           TextButton(
             onPressed: () {},
-            child: Text(
+            child: const Text(
               "Skip",
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
@@ -58,7 +60,7 @@ class _InterestsPageState extends State<InterestsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Your interests",
                       style: TextStyle(
                         fontSize: 28,
@@ -66,12 +68,12 @@ class _InterestsPageState extends State<InterestsPage> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Text(
+                    const SizedBox(height: 10),
+                    const Text(
                       "Select a few of your interests and let everyone know what you’re passionate about.",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Wrap(
                       spacing: 10,
                       runSpacing: 10,
@@ -82,8 +84,8 @@ class _InterestsPageState extends State<InterestsPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(interest['icon'],
-                                  color: isSelected ? Colors.white : Color.fromARGB(255, 183, 66, 91)),
-                              SizedBox(width: 8),
+                                  color: isSelected ? Colors.white : const Color.fromARGB(255, 183, 66, 91)),
+                              const SizedBox(width: 8),
                               Text(interest['name']),
                             ],
                           ),
@@ -91,39 +93,39 @@ class _InterestsPageState extends State<InterestsPage> {
                           onSelected: (selected) {
                             toggleInterest(interest['name']);
                           },
-                          selectedColor: Color.fromARGB(255, 183, 66, 91),
+                          selectedColor: const Color.fromARGB(255, 183, 66, 91),
                           backgroundColor: Colors.white,
                           labelStyle: TextStyle(
                             color: isSelected ? Colors.white : Colors.black,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
-                            side: BorderSide(color: Color.fromARGB(255, 183, 66, 91)),
+                            side: const BorderSide(color: Color.fromARGB(255, 183, 66, 91)),
                           ),
                         );
                       }).toList(),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Center(
                       child: ElevatedButton(
                         onPressed: () {},
-                        child: Text(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+                        ),
+                        child: const Text(
                           "Continue",
                           style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          backgroundColor: Color.fromARGB(255, 183, 66, 91),
-                        ),
                       ),
                     ),
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),

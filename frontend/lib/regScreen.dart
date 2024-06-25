@@ -9,9 +9,9 @@ class RegScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 183, 66, 91), // Background color
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91), // Background color
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           color: Colors.white, // Arrow icon
           onPressed: () {
             Navigator.of(context).pop(); // Pop the current screen
@@ -23,7 +23,7 @@ class RegScreen extends StatelessWidget {
           Container(
             height: double.infinity,
             width: double.infinity,
-            color: Color.fromARGB(255, 183, 66, 91), // Background color
+            color: const Color.fromARGB(255, 183, 66, 91), // Background color
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -75,11 +75,11 @@ class RegScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 50),
-                    Row(
+                    const Row(
                       children: [
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
+                            padding:  EdgeInsets.only(right: 8.0),
                             child: TextField(
                               decoration: InputDecoration(
                                 suffixIcon: Icon(
@@ -97,7 +97,7 @@ class RegScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
+                            padding:  EdgeInsets.only(left: 8.0),
                             child: TextField(
                               decoration: InputDecoration(
                                 suffixIcon: Icon(
@@ -202,7 +202,7 @@ class RegScreen extends StatelessWidget {
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8.0), // Add padding for better touch response
-                        child: Text(
+                        child: const Text(
                           "Have an account already?  Login",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
