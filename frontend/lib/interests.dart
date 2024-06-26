@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'otp.dart';
 
 class InterestsPage extends StatefulWidget {
   const InterestsPage({Key? key}) : super(key: key);
@@ -19,6 +19,24 @@ class InterestsPageState extends State<InterestsPage> {
         selectedInterests.add(interest);
       }
     });
+  }
+
+  Route createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
   }
 
   @override
@@ -108,7 +126,12 @@ class InterestsPageState extends State<InterestsPage> {
                     const Spacer(),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            createRoute( OtpPage()),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                           shape: RoundedRectangleBorder(
@@ -153,3 +176,4 @@ final List<Map<String, dynamic>> interests = [
   {'name': 'Drink', 'icon': Icons.local_bar},
   {'name': 'Video games', 'icon': Icons.videogame_asset},
 ];
+
