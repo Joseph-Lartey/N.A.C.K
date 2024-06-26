@@ -1,4 +1,5 @@
 <?php
+    require_once __DIR__.'/model.php';
     /// Class to represent the Users database
     class User extends Model {
         protected $table = 'users';

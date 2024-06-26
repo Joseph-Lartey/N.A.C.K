@@ -1,5 +1,8 @@
 <?php
     require_once __DIR__ . '/../../vendor/autoload.php';
+    require_once __DIR__.'/../../config/database.php';
+    require_once __DIR__.'/../controllers/userController.php';
+    require_once __DIR__.'/../middleware/validationMiddleware.php';
 
     use Dotenv\Dotenv;
 
@@ -33,7 +36,7 @@
         echo json_encode($userController->createUser($data));
     });
 
-
+    echo 'still working';
 
 
 ?>
