@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'inter',
         useMaterial3: true,
       ),
-      home: SplashScreen(), // SplashScreen as the home widget
+      home: const SplashScreen(), // SplashScreen as the home widget
     );
   }
 }
@@ -32,7 +32,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Delay navigation to WelcomeScreen after 3 seconds
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed( const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const WelcomeScreen()),
@@ -41,7 +41,7 @@ class SplashScreen extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
