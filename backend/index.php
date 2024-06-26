@@ -1,16 +1,14 @@
 <?php
 
     echo "working";
-    require_once "./config/database.php";
+    // require_once "./config/database.php";
 
-    try {
-        $database = new Database();
-        echo "working";
-    } catch (PDOException $e) {
-        throw new Exception("Database connection failed: " . $e->getMessage());
-    }
-
-    
-
+    // try {
+    //     $database = new Database();
+    //     echo "working";
+    // } catch (PDOException $e) {
+    //     throw new Exception("Database connection failed: " . $e->getMessage());
+    // }
+    require __DIR__ . '/app/routes/api.php';
 
 ?>
