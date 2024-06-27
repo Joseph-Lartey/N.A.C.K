@@ -28,7 +28,8 @@
                             break;
                         
                         case 'confirm_password':
-                            if(!isset($data['password']) || $value !== $data['confirm_password']){
+                            // confirm that the passwords match
+                            if(!isset($data[$field]) || $value !== $data['password']){
                                 $errors[$field] = "passwords do not match";
                             }
                             break;
@@ -45,7 +46,7 @@
 
             if(!empty($errors)){
                 header('HTTP/1.1 422 Unprocessable Entity');
-                echo json_encode(['errors' => $errors]);
+                echo json_encode(['success' => false, 'errors' => $errors]);
                 exit();
             }
         }
