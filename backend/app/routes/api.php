@@ -20,6 +20,7 @@
     $router = new AltoRouter();
 
     $router->map('POST', '/users', function() use ($userController) {
+        echo 'working';
         $data = json_decode(file_get_contents('php:://input'), true);
 
         // validate data
@@ -35,8 +36,5 @@
 
         echo json_encode($userController->createUser($data));
     });
-
-    echo 'still working';
-
 
 ?>

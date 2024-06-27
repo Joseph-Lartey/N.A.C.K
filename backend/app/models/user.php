@@ -5,16 +5,17 @@
         protected $table = 'users';
 
         // Create single user
-        public function createUser($firstname, $lastname, $email, $password, $dob, $class){
+        public function createUser($firstname, $lastname, $email, $password, $dob){
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            $verified = true;
             $data = [
                 'firstName' => $firstname,
                 'lastName' => $lastname,
                 'username' => $firstname,
                 'email' => $email,
                 'password' => $password_hash,
-                'dob' => DateTime::createFromFormat('d/m/Y', $dob)->format("Y-m-d"),
-                'verified' => true,
+                'dob' => $dob,
+                'verified' => $verified,
             ];
 
             return $this->insert($data);

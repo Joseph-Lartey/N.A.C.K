@@ -13,7 +13,6 @@
             $this->userModel->createUser(
                 $data['firstname'],
                 $data['lastname'],
-                $data['username'],
                 $data['email'],
                 $data['password'],
                 $data['dob'],
