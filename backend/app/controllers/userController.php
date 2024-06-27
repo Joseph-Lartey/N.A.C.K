@@ -34,5 +34,33 @@
                 return $errors;
             }
         }
+
+        // Handle user login action using the user model
+        public function login($data){
+            try {
+
+                $db_details = $this->userModel->findByEmail($data['$email']);
+
+                $login_password = $data['password'];
+                $db_password = $db_details['password'];
+
+                if(password_verify($login_password, $db_password)){
+                    return ["success" => true];
+                } else {
+                    throw new InvalidArgumentException("Wrong password.");
+                }
+
+            } catch (InvalidArgumentException $e){ // Handle wrong password from user
+                return [
+                    "success" => false,
+                    "error" => $e->getMessage()
+                ];
+            } catch (Exception $e){
+                return [
+                    "success" => false,
+                    "error" => $e->getMessage(),
+                ];
+            }
+        }
     }
 ?>
