@@ -68,7 +68,7 @@
     });
 
     // Cater for user login
-    $router->map('POST', '/login', function() use ($userController){
+    $router->map('POST', '/users/login', function() use ($userController){
 
         $data = json_decode(file_get_contents('php://input'), true);
 

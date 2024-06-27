@@ -39,18 +39,22 @@
         public function login($data){
             try {
 
-                $db_details = $this->userModel->findByEmail($data['$email']);
+                $db_details = $this->userModel->findByEmail($data['email']);
+
+                if($db_details == false){ // throw exception if email is wrong
+                    throw new InvalidArgumentException("Wrong email.");
+                }
 
                 $login_password = $data['password'];
                 $db_password = $db_details['password'];
 
-                if(password_verify($login_password, $db_password)){
-                    return ["success" => true];
+                if(password_verify($login_password, $db_password)){ // throw exception if password is wrong
+                    return ["success" => true, "id" => $db_details['userId']];
                 } else {
                     throw new InvalidArgumentException("Wrong password.");
                 }
 
-            } catch (InvalidArgumentException $e){ // Handle wrong password from user
+            } catch (InvalidArgumentException $e){ // Handle wrong password and email from user
                 return [
                     "success" => false,
                     "error" => $e->getMessage()

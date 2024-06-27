@@ -23,10 +23,10 @@
 
         // Find a specific row in the table
         public function find($col, $val){
-            $sql = "SELECT * FROM {$this->table} WHERE :col = :val";
+            $sql = "SELECT * FROM {$this->table} WHERE $col = :val";
 
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute(['col' => $col, 'val' => $val]);
+            $stmt->execute(['val' => $val]);
 
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
