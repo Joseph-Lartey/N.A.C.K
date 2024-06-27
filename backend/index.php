@@ -43,16 +43,14 @@
 
     $userController = new UserController($pdo);
 
-    // Define a route
+    // Define root route
     $router->map('GET', '/', function() {
-        // Send a 200 status code
         http_response_code(200);
-        echo "OK";
     });
 
     // Cater for user account creation
     $router->map('POST', '/users', function() use ($userController) {
-        echo 'working';
+
         $data = json_decode(file_get_contents('php://input'), true);
 
         // validate data
@@ -70,8 +68,6 @@
     });
 
     $match = $router->match();
-    var_dump($match);
-    var_dump($router);
 
     if ($match && is_callable($match['target'])) {
         call_user_func_array($match['target'], $match['params']);

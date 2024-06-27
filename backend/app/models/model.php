@@ -12,12 +12,11 @@
         public function insert($data){
             $columns = implode(",", array_keys($data));
             $value_placeholders = ":".implode(", :", array_keys($data));
-            var_dump($data);
-            var_dump($columns);
+
             $sql = "INSERT INTO {$this->table} ($columns) VALUES ($value_placeholders)";
-            var_dump($sql);
+
             $stmt = $this->pdo->prepare($sql);
-            var_dump($stmt);
+
 
             return $stmt->execute($data);
         }
