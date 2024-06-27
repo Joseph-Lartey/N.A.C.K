@@ -53,7 +53,6 @@
 
         $data = json_decode(file_get_contents('php://input'), true);
 
-        try {
              // validate data
             ValidationMiddleWare::handle($data, [
                 'firstname' => 'string',
@@ -65,13 +64,7 @@
                 'dob' => 'string',
             ]);
 
-            echo json_encode($userController->createUser($data));
-
-        } catch (\Exception $e) {
-            $errors = ["error" => $e->getMessage()];
-            echo $errors;
-        }
-       
+            echo json_encode($userController->createUser($data)); 
     });
 
     $match = $router->match();
