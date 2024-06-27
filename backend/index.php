@@ -53,18 +53,25 @@
 
         $data = json_decode(file_get_contents('php://input'), true);
 
-        // validate data
-        ValidationMiddleWare::handle($data, [
-            'firstname' => 'string',
-            'lastname' => 'string',
-            'username' => 'string',
-            'email' => 'email',
-            'password' => 'password',
-            'confirm_password' => 'confirm_password',
-            'dob' => 'string',
-        ]);
+        try {
+             // validate data
+            ValidationMiddleWare::handle($data, [
+                'firstname' => 'string',
+                'lastname' => 'string',
+                'username' => 'string',
+                'email' => 'email',
+                'password' => 'password',
+                'confirm_password' => 'confirm_password',
+                'dob' => 'string',
+            ]);
 
-        echo json_encode($userController->createUser($data));
+            echo json_encode($userController->createUser($data));
+
+        } catch (\Exception $e) {
+            $errors = ["error" => $e->getMessage()];
+            echo $errors;
+        }
+       
     });
 
     $match = $router->match();
