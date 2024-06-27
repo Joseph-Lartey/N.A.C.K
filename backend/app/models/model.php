@@ -49,10 +49,10 @@
 
         // Delete an entire row
         public function delete($col, $val) {
-            $sql = "DELETE FROM {$this->table} WHERE :col = :val";
+            $sql = "DELETE FROM {$this->table} WHERE $col = :val";
             $stmt = $this->pdo->prepare($sql);
 
-            return $stmt->execute(['col' => $col, 'val' => $val]);
+            return $stmt->execute(['val' => $val]);
         }
         
         // Get all the data of a table
