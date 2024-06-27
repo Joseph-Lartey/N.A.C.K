@@ -25,11 +25,13 @@
 
             } catch(PDOException $pe) {
                 if ($pe->getCode() == 23000){
+                    header('HTTP/1.1 422 Unprocessable Entity');
                     $errors = ["success" => false, "error" => "Email already exists in system"];
                     return $errors;
                 }
             }
             catch (\Exception $e) {
+                header('HTTP/1.1 422 Unprocessable Entity');
                 $errors = ["success" => false,"error" => $e->getMessage()];
                 return $errors;
             }
@@ -55,11 +57,13 @@
                 }
 
             } catch (InvalidArgumentException $e){ // Handle wrong password and email from user
+                header('HTTP/1.1 422 Unprocessable Entity');
                 return [
                     "success" => false,
                     "error" => $e->getMessage()
                 ];
             } catch (Exception $e){
+                header('HTTP/1.1 422 Unprocessable Entity');
                 return [
                     "success" => false,
                     "error" => $e->getMessage(),
