@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'otp.dart';
 
 class InterestsPage extends StatefulWidget {
   const InterestsPage({Key? key}) : super(key: key);
@@ -21,6 +21,12 @@ class InterestsPageState extends State<InterestsPage> {
     });
   }
 
+
+
+  bool canContinue() {
+    return selectedInterests.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +42,12 @@ class InterestsPageState extends State<InterestsPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                _createRoute(const OtpPage()),
+              );
+            },
             child: const Text(
               "Skip",
               style: TextStyle(color: Colors.white, fontSize: 16),
@@ -70,7 +81,7 @@ class InterestsPageState extends State<InterestsPage> {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      "Select a few of your interests and let everyone know what you’re passionate about.",
+                      "Select a few of your interests and let everyone know what you\'re passionate about.",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                     const SizedBox(height: 20),
@@ -108,7 +119,14 @@ class InterestsPageState extends State<InterestsPage> {
                     const Spacer(),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: canContinue()
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  _createRoute(const OtpPage()),
+                                );
+                              }
+                            : null, // Disable button if no interests selected
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                           shape: RoundedRectangleBorder(
@@ -133,6 +151,25 @@ class InterestsPageState extends State<InterestsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Route _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset(0.0, 0.0);
+        const curve = Curves.ease;
+
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 }
