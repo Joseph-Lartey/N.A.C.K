@@ -43,10 +43,8 @@
 
     $userController = new UserController($pdo);
 
-    // Define root route
-    $router->map('GET', '/', function() {
-        http_response_code(200);
-    });
+    // Routes
+    // Below I will define all the different end points that the user can send requests to
 
     // Cater for user account creation
     $router->map('POST', '/users', function() use ($userController) {
