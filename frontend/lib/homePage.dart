@@ -6,29 +6,33 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Ensures the body extends behind the BottomNavigationBar
+      extendBody:
+          true, // Ensures the body extends behind the BottomNavigationBar
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop(); 
-          },
+        automaticallyImplyLeading: false,
+        leading: const Padding(
+          padding: EdgeInsets.all(5.0),
+          child: CircleAvatar(
+            backgroundImage: AssetImage('assets/img2.jpg'),
+            radius: 5,
+          ),
         ),
-        title: const Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: AssetImage('assets/img2.jpg'),
-              radius: 20,
-            ),
-            SizedBox(width: 10),
-            Text('Home', style: TextStyle(color: Colors.black)),
-          ],
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.black),
+            icon: const Icon(
+              Icons.notifications_outlined,
+              color: Colors.black,
+            ),
             onPressed: () {
               // Action for notifications
             },
@@ -62,7 +66,8 @@ class HomePage extends StatelessWidget {
                     CircleAvatar(
                       radius: 30,
                       backgroundColor: Color.fromARGB(255, 183, 66, 91),
-                      child: Icon(Icons.favorite, color: Colors.white, size: 30),
+                      child:
+                          Icon(Icons.favorite, color: Colors.white, size: 30),
                     ),
                   ],
                 ),
@@ -107,7 +112,7 @@ class HomePage extends StatelessWidget {
           topLeft: Radius.circular(40),
           topRight: Radius.circular(40),
         ),
-        child: CustomBottomAppBar(), 
+        child: CustomBottomAppBar(),
       ),
     );
   }
