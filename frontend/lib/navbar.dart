@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'profile.dart';
+import 'homePage.dart';
 
 class CustomBottomAppBar extends StatelessWidget {
   const CustomBottomAppBar({Key? key}) : super(key: key);
@@ -28,6 +30,10 @@ class CustomBottomAppBar extends StatelessWidget {
                     ),
                     onPressed: () {
                       // Navigate to home screen or perform action
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
                     },
                   ),
                   IconButton(
@@ -48,6 +54,10 @@ class CustomBottomAppBar extends StatelessWidget {
                     ),
                     onPressed: () {
                       // Navigate to profile screen or perform action
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfilePage()),
+                      );
                     },
                   ),
                   IconButton(
