@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: const Padding(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(6.5),
           child: CircleAvatar(
             backgroundImage: AssetImage('assets/img2.jpg'),
             radius: 5,
