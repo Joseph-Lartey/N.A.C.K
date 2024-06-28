@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'messages.dart';
 
 class CustomBottomAppBar extends StatelessWidget {
   const CustomBottomAppBar({Key? key}) : super(key: key);
@@ -12,13 +13,13 @@ class CustomBottomAppBar extends StatelessWidget {
       child: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8.0,
-        color: const Color.fromARGB(255, 183, 66, 91), 
+        color: const Color.fromARGB(255, 183, 66, 91),
         child: SizedBox(
           height: 60.0,
           child: Builder(
             builder: (context) {
               return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
                     icon: const Icon(Icons.home, color: Colors.white),
@@ -30,6 +31,10 @@ class CustomBottomAppBar extends StatelessWidget {
                     icon: const Icon(Icons.chat, color: Colors.white),
                     onPressed: () {
                       // Navigate to chat screen or perform action
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Messages()),
+                      );
                     },
                   ),
                   IconButton(
