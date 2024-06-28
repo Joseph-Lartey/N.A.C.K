@@ -1,58 +1,72 @@
 import 'package:flutter/material.dart';
-import 'interests.dart';
-import 'loginScreen.dart'; // Import the InterestsPage
+import 'otp.dart'; // Import the OTP service
+import 'otpPage.dart'; // Import the OTP page
+import 'loginScreen.dart';
+import 'package:intl/intl.dart'; // Import intl package for date formatting
 
 class RegScreen extends StatefulWidget {
   const RegScreen({Key? key}) : super(key: key);
 
   @override
-  _RegScreenState createState() => _RegScreenState();
+  State<RegScreen> createState() => _RegScreenState();
 }
 
 class _RegScreenState extends State<RegScreen> {
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
-  TextEditingController _classController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController dobController = TextEditingController();
+  final TextEditingController classController = TextEditingController();
+
   bool _isButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _firstNameController.addListener(_checkButtonState);
-    _lastNameController.addListener(_checkButtonState);
-    _emailController.addListener(_checkButtonState);
-    _passwordController.addListener(_checkButtonState);
-    _confirmPasswordController.addListener(_checkButtonState);
-    _dobController.addListener(_checkButtonState);
-    _classController.addListener(_checkButtonState);
+
+    firstNameController.addListener(_checkButtonState);
+    lastNameController.addListener(_checkButtonState);
+    emailController.addListener(_checkButtonState);
+    passwordController.addListener(_checkButtonState);
+    confirmPasswordController.addListener(_checkButtonState);
+    dobController.addListener(_checkButtonState);
+    classController.addListener(_checkButtonState);
   }
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _dobController.dispose();
-    _classController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    dobController.dispose();
+    classController.dispose();
+    
     super.dispose();
   }
 
   void _checkButtonState() {
     setState(() {
-      _isButtonEnabled = _firstNameController.text.isNotEmpty &&
-          _lastNameController.text.isNotEmpty &&
-          _emailController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty &&
-          _confirmPasswordController.text.isNotEmpty &&
-          _dobController.text.isNotEmpty &&
-          _classController.text.isNotEmpty;
+      _isButtonEnabled = firstNameController.text.isNotEmpty &&
+          lastNameController.text.isNotEmpty &&
+          emailController.text.isNotEmpty &&
+          passwordController.text.isNotEmpty &&
+          confirmPasswordController.text.isNotEmpty &&
+          dobController.text.isNotEmpty &&
+          classController.text.isNotEmpty;
     });
+  }
+
+  void _sendOTP() {
+    OTPService.sendOTP(emailController.text);
+    Navigator.push(
+      context,
+      _createRoute(OtpPage(email: emailController.text)),
+    );
   }
 
   Route _createRoute(Widget page) {
@@ -74,16 +88,33 @@ class _RegScreenState extends State<RegScreen> {
     );
   }
 
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        dobController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _checkButtonState();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 183, 66, 91), // Background color
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: Colors.white, // Arrow icon
+          color: Colors.white,
           onPressed: () {
-            Navigator.of(context).pop(); // Pop the current screen
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -92,7 +123,7 @@ class _RegScreenState extends State<RegScreen> {
           Container(
             height: double.infinity,
             width: double.infinity,
-            color: const Color.fromARGB(255, 183, 66, 91), // Background color
+            color: const Color.fromARGB(255, 183, 66, 91),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -139,9 +170,7 @@ class _RegScreenState extends State<RegScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       const Text(
                         'Welcome back, Sign in using your social \n           or email to continue with us',
                         style: TextStyle(
@@ -154,11 +183,13 @@ class _RegScreenState extends State<RegScreen> {
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
+                              padding: const EdgeInsets.only(right: 8.0),
                               child: TextField(
-                                controller: _firstNameController,
-                                decoration: InputDecoration(
-                                  suffixIcon: const Icon(
+
+                                controller: firstNameController,
+                                decoration: const InputDecoration(
+                                  suffixIcon: Icon(
+
                                     Icons.check,
                                     color: Colors.grey,
                                   ),
@@ -176,11 +207,12 @@ class _RegScreenState extends State<RegScreen> {
                           ),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(left: 8.0),
+                              padding: const EdgeInsets.only(left: 8.0),
                               child: TextField(
-                                controller: _lastNameController,
-                                decoration: InputDecoration(
-                                  suffixIcon: const Icon(
+                                controller: lastNameController,
+                                decoration: const InputDecoration(
+                                  suffixIcon: Icon(
+
                                     Icons.check,
                                     color: Colors.grey,
                                   ),
@@ -200,9 +232,9 @@ class _RegScreenState extends State<RegScreen> {
                       ),
                       const SizedBox(height: 30),
                       TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          suffixIcon: const Icon(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          suffixIcon: Icon(
                             Icons.check,
                             color: Colors.grey,
                           ),
@@ -218,10 +250,10 @@ class _RegScreenState extends State<RegScreen> {
                       ),
                       const SizedBox(height: 30),
                       TextField(
-                        controller: _passwordController,
+                        controller: passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
-                          suffixIcon: const Icon(
+                        decoration: const InputDecoration(
+                          suffixIcon: Icon(
                             Icons.visibility_off,
                             color: Colors.grey,
                           ),
@@ -237,10 +269,10 @@ class _RegScreenState extends State<RegScreen> {
                       ),
                       const SizedBox(height: 30),
                       TextField(
-                        controller: _confirmPasswordController,
+                        controller: confirmPasswordController,
                         obscureText: true,
-                        decoration: InputDecoration(
-                          suffixIcon: const Icon(
+                        decoration: const InputDecoration(
+                          suffixIcon: Icon(
                             Icons.visibility_off,
                             color: Colors.grey,
                           ),
@@ -255,28 +287,35 @@ class _RegScreenState extends State<RegScreen> {
                         },
                       ),
                       const SizedBox(height: 30),
-                      TextField(
-                        controller: _dobController,
-                        decoration: InputDecoration(
-                          suffixIcon: const Icon(
-                            Icons.calendar_today,
-                            color: Colors.grey,
-                          ),
-                          labelText: 'Date of Birth',
-                          labelStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 183, 66, 91),
+                      GestureDetector(
+                        onTap: () {
+                          _selectDate(context);
+                        },
+                        child: AbsorbPointer(
+                          child: TextFormField(
+                            controller: dobController,
+                            decoration: const InputDecoration(
+                              suffixIcon: Icon(
+                                Icons.calendar_today,
+                                color: Colors.grey,
+                              ),
+                              labelText: 'Date of Birth',
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 183, 66, 91),
+                              ),
+                            ),
+                            onChanged: (_) {
+                              _checkButtonState();
+                            },
                           ),
                         ),
-                        onChanged: (_) {
-                          _checkButtonState();
-                        },
                       ),
                       const SizedBox(height: 30),
                       TextField(
-                        controller: _classController,
-                        decoration: InputDecoration(
-                          suffixIcon: const Icon(
+                        controller: classController,
+                        decoration: const InputDecoration(
+                          suffixIcon: Icon(
                             Icons.school,
                             color: Colors.grey,
                           ),
@@ -292,14 +331,7 @@ class _RegScreenState extends State<RegScreen> {
                       ),
                       const SizedBox(height: 60),
                       GestureDetector(
-                        onTap: _isButtonEnabled
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  _createRoute(InterestsPage()),
-                                );
-                              }
-                            : null,
+                        onTap: _isButtonEnabled ? _sendOTP : null,
                         child: Container(
                           height: 63,
                           width: 327,
@@ -330,8 +362,7 @@ class _RegScreenState extends State<RegScreen> {
                           );
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(
-                              8.0), // Add padding for better touch response
+                          padding: const EdgeInsets.all(8.0),
                           child: const Text(
                             "Have an account already?  Login",
                             style: TextStyle(

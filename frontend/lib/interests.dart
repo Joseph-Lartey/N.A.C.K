@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'otp.dart';
+import 'package:untitled3/homePage.dart';
 
 class InterestsPage extends StatefulWidget {
   const InterestsPage({Key? key}) : super(key: key);
@@ -21,8 +21,6 @@ class InterestsPageState extends State<InterestsPage> {
     });
   }
 
-
-
   bool canContinue() {
     return selectedInterests.isNotEmpty;
   }
@@ -30,22 +28,21 @@ class InterestsPageState extends State<InterestsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 183, 66, 91), // Match AppBar color
+      backgroundColor:
+          const Color.fromARGB(255, 183, 66, 91), // Match AppBar color
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 183, 66, 91),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.of(context).pop(); // Navigate to the previous page
-          },
-        ),
+        automaticallyImplyLeading: false, // Remove back button
+
         actions: [
           TextButton(
             onPressed: () {
               Navigator.push(
                 context,
-                _createRoute(const OtpPage()),
+
+                _createRoute(const HomePage()),
+
               );
             },
             child: const Text(
@@ -81,7 +78,8 @@ class InterestsPageState extends State<InterestsPage> {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      "Select a few of your interests and let everyone know what you\'re passionate about.",
+
+                      "Select a few of your interests and let everyone know what you're passionate about.",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                     const SizedBox(height: 20),
@@ -89,13 +87,16 @@ class InterestsPageState extends State<InterestsPage> {
                       spacing: 10,
                       runSpacing: 10,
                       children: interests.map((interest) {
-                        bool isSelected = selectedInterests.contains(interest['name']);
+                        bool isSelected =
+                            selectedInterests.contains(interest['name']);
                         return ChoiceChip(
                           label: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(interest['icon'],
-                                  color: isSelected ? Colors.white : const Color.fromARGB(255, 183, 66, 91)),
+                                  color: isSelected
+                                      ? Colors.white
+                                      : const Color.fromARGB(255, 183, 66, 91)),
                               const SizedBox(width: 8),
                               Text(interest['name']),
                             ],
@@ -111,7 +112,8 @@ class InterestsPageState extends State<InterestsPage> {
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(color: Color.fromARGB(255, 183, 66, 91)),
+                            side: const BorderSide(
+                                color: Color.fromARGB(255, 183, 66, 91)),
                           ),
                         );
                       }).toList(),
@@ -123,16 +125,19 @@ class InterestsPageState extends State<InterestsPage> {
                             ? () {
                                 Navigator.push(
                                   context,
-                                  _createRoute(const OtpPage()),
+
+                                  _createRoute(const HomePage()),
                                 );
                               }
                             : null, // Disable button if no interests selected
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 100, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+                          backgroundColor:
+                              const Color.fromARGB(255, 183, 66, 91),
                         ),
                         child: const Text(
                           "Continue",
