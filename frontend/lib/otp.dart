@@ -40,5 +40,6 @@ class OTPService {
 
   static bool verifyOTP(String otp) {
     return EmailOTP.verifyOTP(otp: otp);
+
   }
 }

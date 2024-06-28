@@ -40,7 +40,9 @@ class InterestsPageState extends State<InterestsPage> {
             onPressed: () {
               Navigator.push(
                 context,
+
                 _createRoute(const HomePage()),
+
               );
             },
             child: const Text(
@@ -76,6 +78,7 @@ class InterestsPageState extends State<InterestsPage> {
                     ),
                     const SizedBox(height: 10),
                     const Text(
+
                       "Select a few of your interests and let everyone know what you're passionate about.",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
@@ -122,6 +125,7 @@ class InterestsPageState extends State<InterestsPage> {
                             ? () {
                                 Navigator.push(
                                   context,
+
                                   _createRoute(const HomePage()),
                                 );
                               }
