@@ -79,6 +79,12 @@
         echo json_encode($userController->login($data));
     });
 
+    // Cater for fetching all users
+    $router->map('GET', '/users', function() use ($userController){
+        
+        echo json_encode($userController->getAllUsers());
+    });
+
     $match = $router->match();
 
     if ($match && is_callable($match['target'])) {
