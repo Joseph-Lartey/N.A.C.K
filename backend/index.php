@@ -79,6 +79,11 @@
         echo json_encode($userController->login($data));
     });
 
+// Cater for fetching user details by userId
+$router->map('GET', '/users/[i:userId]', function($userId) use ($userController) {
+    echo json_encode($userController->getUserById($userId));
+});
+
     $match = $router->match();
 
     if ($match && is_callable($match['target'])) {

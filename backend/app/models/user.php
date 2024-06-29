@@ -26,7 +26,11 @@
             $result = $this->find("email", $email);
             return $result;
         }
+        
+        public function findById($userId){
+            $result = $this->find("userId", $userId);
+            return $result;
+        }
 
     }
 
-?>

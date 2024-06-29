@@ -70,5 +70,19 @@
                 ];
             }
         }
+
+        public function getUserById($userId){
+            try {
+                $result = $this->userModel->findById($userId);
+                if ($result) {
+                    return $result;
+                } else {
+                    header('HTTP/1.1 404 Not Found');
+                    return ["success" => false, "error" => "User not found"];
+                }
+            } catch (Exception $e) {
+                header('HTTP/1.1 422 Unprocessable Entity');
+                return ["success" => false, "error" => $e->getMessage()];
+            }
+        }
     }
-?>
