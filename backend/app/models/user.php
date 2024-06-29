@@ -27,6 +27,7 @@
             return $result;
         }
         
+        //find a user by their id
         public function findById($userId){
             $result = $this->find("userId", $userId);
             return $result;

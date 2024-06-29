@@ -50,6 +50,14 @@
                 exit();
             }
         }
+
+        public static function validateId($userId) {
+            if (!filter_var($userId, FILTER_VALIDATE_INT)) {
+                header('HTTP/1.1 422 Unprocessable Entity');
+                echo json_encode(['success' => false, 'error' => 'Invalid user ID']);
+                exit();
+            }
+        }
     }
 
 ?>

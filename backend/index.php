@@ -79,10 +79,19 @@
         echo json_encode($userController->login($data));
     });
 
-// Cater for fetching user details by userId
-$router->map('GET', '/users/[i:userId]', function($userId) use ($userController) {
-    echo json_encode($userController->getUserById($userId));
-});
+// Catering for fetching user details by userId
+   // Cater for getting user profile by id
+    $router->map('GET', '/users/[i:userId]', function($userId) use ($userController) {
+        // Validate id
+        ValidationMiddleWare::validateId($userId);
+
+        echo json_encode($userController->getUserById($userId));
+    });
+
+    // Catch all route to handle invalid user ID
+    $router->map('GET', '/users/[**:id]', function($id) {
+        ValidationMiddleWare::validateId($id);
+    });
 
     $match = $router->match();
 
