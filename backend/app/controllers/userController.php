@@ -73,7 +73,7 @@
 
         public function getUserById($userId){
             try {
-                $result = $this->userModel->findById($userId);
+                $result = $this->userModel->findProfileById($userId);
                 if ($result) {
                     return $result;
                 } else {

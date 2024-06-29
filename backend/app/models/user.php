@@ -28,9 +28,11 @@
         }
         
         //find a user by their id
-        public function findById($userId){
-            $result = $this->find("userId", $userId);
-            return $result;
+        public function findProfileById($userId) {
+            $sql = "SELECT userId, firstName, lastName, email FROM " . $this->table . "                     WHERE userId = :userId";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute(['userId' => $userId]);
+            return $stmt->fetch();
         }
 
     }
