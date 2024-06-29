@@ -1,15 +1,22 @@
+# match_users.py
 import mysql.connector
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import date
+import sys
 
-# Calculate age
 def calculate_age(dob):
     today = date.today()
     born = date.fromisoformat(dob)
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
-# Connect the db
+# Get user ID from command line arguments
+if len(sys.argv) != 2:
+    print("Usage: python match_users.py <userId>")
+    sys.exit(1)
+
+user_id = int(sys.argv[1])
+
 db = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -17,9 +24,8 @@ db = mysql.connector.connect(
     database="nack_database"
 )
 
-# Fetch details (userId = 1)
 cursor = db.cursor(dictionary=True)
-cursor.execute("""
+cursor.execute(f"""
 SELECT 
     u.userId, 
     u.gender,
@@ -37,14 +43,13 @@ JOIN
 JOIN 
     Interests i ON ui.interestId = i.interestId
 WHERE
-    u.userId = 1  -- Assuming you are user with userId = 1
+    u.userId = {user_id}
 GROUP BY 
     u.userId;
 """)
 user = cursor.fetchone()
 
-# Fetch all other users and their interests
-cursor.execute("""
+cursor.execute(f"""
 SELECT 
     u.userId, 
     u.gender,
@@ -62,33 +67,27 @@ JOIN
 JOIN 
     Interests i ON ui.interestId = i.interestId
 WHERE
-    u.userId != 1  -- Exclude the user with userId = 1
+    u.userId != {user_id}
 GROUP BY 
     u.userId;
 """)
 users = cursor.fetchall()
 
-# Prepare the data for similarity calculation
 user_ids = [user['userId'] for user in users]
 interests = [user['interests'] for user in users]
 
-# Add the first user's interests to the list
 user_ids.insert(0, user['userId'])
 interests.insert(0, user['interests'])
 
-# Vectorize the interests
 vectorizer = CountVectorizer().fit_transform(interests)
 vectors = vectorizer.toarray()
 
-# Calculate cosine similarity
 cosine_sim = cosine_similarity(vectors)
 
-# Threshold for considering a good match
-threshold = 0.5
+threshold = 0.3
 
-# Insert matches for userId = 1
 for idx, other_user in enumerate(users):
-    similarity = cosine_sim[0][idx + 1]  # Avoid self-similarity
+    similarity = cosine_sim[0][idx + 1]
     if similarity >= threshold:
         cursor.execute("""
             INSERT INTO Matches (userId_1, userId_2, similarity, isMatched)
