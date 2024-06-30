@@ -70,5 +70,24 @@
                 ];
             }
         }
+
+        // Handle request to fetch all users
+        public function getAllUsers(){
+            
+            try {
+                
+                // get all the users in the database
+                $users = $this->userModel->fetchAll();
+
+                return ["success" => true, "data" => $users];
+
+            } catch (\Exception $e) {
+                header('HTTP/1.1 422 Unprocessable Entity');
+                return [
+                    "success" => false,
+                    "error" => $e->getMessage(),
+                ];
+            }
+        }
     }
 ?>

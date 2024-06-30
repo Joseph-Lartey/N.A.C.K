@@ -27,6 +27,16 @@
             return $result;
         }
 
+        // Fetch all users in the system with a specific set of column details (attributes)
+        public function fetchAll(){
+            $sql = "SELECT userId, firstName, lastName, username, bio, profile_Image
+                    FROM {$this->table}";
+            
+            $stmt = $this->pdo->query($sql);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
     }
 
 ?>

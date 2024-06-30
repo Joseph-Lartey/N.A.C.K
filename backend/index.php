@@ -5,24 +5,6 @@
     header('Access-Control-Max-Age: 1000');
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
     header('content-Type: application/json');
-    // require_once __DIR__.'/vendor/autoload.php';
-
-    // // Load environment variables from .env file
-    // $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-    // $dotenv->load();
-
-    // $router = new AltoRouter();
-    // $router->setBasePath('/N.A.C.K/backend');
-
-    // // Include your route definitions from app/routes/api.php
-    // require __DIR__ . '/app/routes/api.php';
-
-    // // Define a route
-    // // $router->map('GET', '/', function() {
-    // //     // Send a 200 status code
-    // //     http_response_code(200);
-    // //     echo "OK";
-    // // });
 
     require_once __DIR__.'/vendor/autoload.php';
     require_once __DIR__.'/config/database.php';
@@ -77,6 +59,12 @@
         ]);
         
         echo json_encode($userController->login($data));
+    });
+
+    // Cater for fetching all users
+    $router->map('GET', '/users', function() use ($userController) {
+        
+        echo json_encode($userController->getAllUsers());
     });
 
     $match = $router->match();
