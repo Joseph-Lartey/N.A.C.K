@@ -1,21 +1,120 @@
 import 'package:flutter/material.dart';
-import 'interests.dart';
-import 'loginScreen.dart'; // Import the InterestsPage
+import 'otp.dart'; // Import the OTP service
+import 'otpPage.dart'; // Import the OTP page
+import 'loginScreen.dart';
+import 'package:intl/intl.dart'; // Import intl package for date formatting
 
-class RegScreen extends StatelessWidget {
+class RegScreen extends StatefulWidget {
   const RegScreen({Key? key}) : super(key: key);
+
+  @override
+  State<RegScreen> createState() => _RegScreenState();
+}
+
+class _RegScreenState extends State<RegScreen> {
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController dobController = TextEditingController();
+  final TextEditingController classController = TextEditingController();
+
+  bool _isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    firstNameController.addListener(_checkButtonState);
+    lastNameController.addListener(_checkButtonState);
+    emailController.addListener(_checkButtonState);
+    passwordController.addListener(_checkButtonState);
+    confirmPasswordController.addListener(_checkButtonState);
+    dobController.addListener(_checkButtonState);
+    classController.addListener(_checkButtonState);
+  }
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    dobController.dispose();
+    classController.dispose();
+    
+    super.dispose();
+  }
+
+  void _checkButtonState() {
+    setState(() {
+      _isButtonEnabled = firstNameController.text.isNotEmpty &&
+          lastNameController.text.isNotEmpty &&
+          emailController.text.isNotEmpty &&
+          passwordController.text.isNotEmpty &&
+          confirmPasswordController.text.isNotEmpty &&
+          dobController.text.isNotEmpty &&
+          classController.text.isNotEmpty;
+    });
+  }
+
+  void _sendOTP() {
+    OTPService.sendOTP(emailController.text);
+    Navigator.push(
+      context,
+      _createRoute(OtpPage(email: emailController.text)),
+    );
+  }
+
+  Route _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset(0.0, 0.0);
+        const curve = Curves.ease;
+
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        dobController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _checkButtonState();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:
-            const Color.fromARGB(255, 183, 66, 91), // Background color
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: Colors.white, // Arrow icon
+          color: Colors.white,
           onPressed: () {
-            Navigator.of(context).pop(); // Pop the current screen
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -24,7 +123,7 @@ class RegScreen extends StatelessWidget {
           Container(
             height: double.infinity,
             width: double.infinity,
-            color: const Color.fromARGB(255, 183, 66, 91), // Background color
+            color: const Color.fromARGB(255, 183, 66, 91),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -71,9 +170,7 @@ class RegScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       const Text(
                         'Welcome back, Sign in using your social \n           or email to continue with us',
                         style: TextStyle(
@@ -82,14 +179,17 @@ class RegScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 50),
-                      const Row(
+                      Row(
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
+                              padding: const EdgeInsets.only(right: 8.0),
                               child: TextField(
-                                decoration: InputDecoration(
+
+                                controller: firstNameController,
+                                decoration: const InputDecoration(
                                   suffixIcon: Icon(
+
                                     Icons.check,
                                     color: Colors.grey,
                                   ),
@@ -99,15 +199,20 @@ class RegScreen extends StatelessWidget {
                                     color: Color.fromARGB(255, 183, 66, 91),
                                   ),
                                 ),
+                                onChanged: (_) {
+                                  _checkButtonState();
+                                },
                               ),
                             ),
                           ),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(left: 8.0),
+                              padding: const EdgeInsets.only(left: 8.0),
                               child: TextField(
-                                decoration: InputDecoration(
+                                controller: lastNameController,
+                                decoration: const InputDecoration(
                                   suffixIcon: Icon(
+
                                     Icons.check,
                                     color: Colors.grey,
                                   ),
@@ -117,76 +222,124 @@ class RegScreen extends StatelessWidget {
                                     color: Color.fromARGB(255, 183, 66, 91),
                                   ),
                                 ),
+                                onChanged: (_) {
+                                  _checkButtonState();
+                                },
                               ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 30),
-                      const TextField(
-                        decoration: InputDecoration(
+                      TextField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
                           suffixIcon: Icon(
                             Icons.check,
                             color: Colors.grey,
                           ),
-                          label: Text(
-                            'Email (Ashesi email)',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 183, 66, 91),
-                            ),
+                          labelText: 'Email (Ashesi email)',
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 183, 66, 91),
                           ),
                         ),
+                        onChanged: (_) {
+                          _checkButtonState();
+                        },
                       ),
                       const SizedBox(height: 30),
-                      const TextField(
+                      TextField(
+                        controller: passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           suffixIcon: Icon(
                             Icons.visibility_off,
                             color: Colors.grey,
                           ),
-                          label: Text(
-                            'Password',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 183, 66, 91),
-                            ),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 183, 66, 91),
                           ),
                         ),
+                        onChanged: (_) {
+                          _checkButtonState();
+                        },
                       ),
                       const SizedBox(height: 30),
-                      const TextField(
+                      TextField(
+                        controller: confirmPasswordController,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           suffixIcon: Icon(
                             Icons.visibility_off,
                             color: Colors.grey,
                           ),
-                          label: Text(
-                            'Confirm Password',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 183, 66, 91),
-                            ),
+                          labelText: 'Confirm Password',
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 183, 66, 91),
                           ),
                         ),
+                        onChanged: (_) {
+                          _checkButtonState();
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                      GestureDetector(
+                        onTap: () {
+                          _selectDate(context);
+                        },
+                        child: AbsorbPointer(
+                          child: TextFormField(
+                            controller: dobController,
+                            decoration: const InputDecoration(
+                              suffixIcon: Icon(
+                                Icons.calendar_today,
+                                color: Colors.grey,
+                              ),
+                              labelText: 'Date of Birth',
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 183, 66, 91),
+                              ),
+                            ),
+                            onChanged: (_) {
+                              _checkButtonState();
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      TextField(
+                        controller: classController,
+                        decoration: const InputDecoration(
+                          suffixIcon: Icon(
+                            Icons.school,
+                            color: Colors.grey,
+                          ),
+                          labelText: 'Class',
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 183, 66, 91),
+                          ),
+                        ),
+                        onChanged: (_) {
+                          _checkButtonState();
+                        },
                       ),
                       const SizedBox(height: 60),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            _createRoute(InterestsPage()),
-                          );
-                        },
+                        onTap: _isButtonEnabled ? _sendOTP : null,
                         child: Container(
                           height: 63,
                           width: 327,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Color.fromARGB(
-                                255, 183, 66, 91), // Button color
+                            color: _isButtonEnabled
+                                ? const Color.fromARGB(255, 183, 66, 91)
+                                : Colors.grey, // Adjusted color based on state
                           ),
                           child: const Center(
                             child: Text(
@@ -209,14 +362,13 @@ class RegScreen extends StatelessWidget {
                           );
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(
-                              8.0), // Add padding for better touch response
+                          padding: const EdgeInsets.all(8.0),
                           child: const Text(
                             "Have an account already?  Login",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: Color.fromARGB(255, 183, 66, 91),
+                              color: Color.fromARGB(255, 183,                               66, 91),
                             ),
                           ),
                         ),
@@ -231,23 +383,5 @@ class RegScreen extends StatelessWidget {
       ),
     );
   }
-
-  Route _createRoute(Widget page) {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, 1.0);
-        const end = Offset(0.0, 0.0);
-        const curve = Curves.ease;
-
-        final tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
 }
+

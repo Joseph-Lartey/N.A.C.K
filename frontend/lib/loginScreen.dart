@@ -1,7 +1,57 @@
 import 'package:flutter/material.dart';
+import 'homePage.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  bool _isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_checkButtonState);
+    _passwordController.addListener(_checkButtonState);
+  }
+
+  void _checkButtonState() {
+    setState(() {
+      _isButtonEnabled = _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty;
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Route _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset(0.0, 0.0);
+        const curve = Curves.ease;
+
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,66 +130,69 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 50),
-                      const TextField(
+                      TextField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           suffixIcon: Icon(
                             Icons.check,
                             color: Colors.grey,
                           ),
-                          label: Text(
-                            'Email (Ashesi email)',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 183, 66, 91),
-                            ),
+                          labelText: 'Email (Ashesi email)',
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 183, 66, 91),
                           ),
                         ),
                       ),
                       const SizedBox(height: 30),
-                      const TextField(
+                      TextField(
+                        controller: _passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           suffixIcon: Icon(
                             Icons.visibility_off,
                             color: Colors.grey,
                           ),
-                          label: Text(
-                            'Password',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 183, 66, 91),
-                            ),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 183, 66, 91),
                           ),
                         ),
                       ),
                       const SizedBox(height: 30),
-                      Container(
-                        height: 63,
-                        width: 327,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: const Color.fromARGB(
-                              255, 183, 66, 91), // Button color
+                      ElevatedButton(
+                        onPressed: _isButtonEnabled
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  _createRoute(const HomePage()),
+                                );
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 100, vertical: 15), // Adjusted padding
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: _isButtonEnabled
+                              ? const Color.fromARGB(255, 183, 66, 91)
+                              : Colors.grey,
                         ),
-                        child: const Center(
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()),
-                          );
+                          // Implement forgot password functionality here
                         },
                         child: Container(
                           padding: const EdgeInsets.all(
