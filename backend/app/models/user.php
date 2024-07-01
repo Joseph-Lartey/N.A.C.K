@@ -44,7 +44,7 @@ class User extends Model
     // Find a user by their id
     public function findProfileById($id)
     {
-        $sql = "SELECT userId, firstname, lastname, profile_Image, phoneNumber, bio, email FROM " . $this->table . " WHERE userId = :id";
+        $sql = "SELECT userId, firstname, lastname, profile_Image, bio, email FROM " . $this->table . " WHERE userId = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
