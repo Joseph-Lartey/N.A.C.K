@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'profile.dart';
 import 'homePage.dart';
-//import 'settings.dart';
+import 'settings.dart';
 
 class CustomBottomAppBar extends StatelessWidget {
   const CustomBottomAppBar({Key? key}) : super(key: key);
@@ -61,7 +61,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      //_navigateTo(context, SettingsPage(), currentIndex: 3);
+                      _navigateTo(context, SettingsPage(), currentIndex: 3);
                     },
                   ),
                 ],
