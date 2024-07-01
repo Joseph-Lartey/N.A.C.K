@@ -31,7 +31,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      _navigateTo(context, HomePage(), currentIndex: 0);
+                      _navigateTo(context, const HomePage(), currentIndex: 0);
                     },
                   ),
                   IconButton(
@@ -51,7 +51,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      _navigateTo(context, ProfilePage(), currentIndex: 2);
+                      _navigateTo(context, const ProfilePage(), currentIndex: 2);
                     },
                   ),
                   IconButton(
@@ -61,7 +61,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      _navigateTo(context, SettingsPage(), currentIndex: 3);
+                      _navigateTo(context, const SettingsPage(), currentIndex: 3);
                     },
                   ),
                 ],
@@ -73,7 +73,8 @@ class CustomBottomAppBar extends StatelessWidget {
     );
   }
 
-  void _navigateTo(BuildContext context, Widget page, {required int currentIndex}) {
+  void _navigateTo(BuildContext context, Widget page,
+      {required int currentIndex}) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -85,10 +86,15 @@ class CustomBottomAppBar extends StatelessWidget {
           const Offset endLeft = Offset.zero;
           const Curve curve = Curves.easeInOut;
 
-          final Animatable<Offset> tweenRight = Tween(begin: beginRight, end: endRight).chain(CurveTween(curve: curve));
-          final Animatable<Offset> tweenLeft = Tween(begin: beginLeft, end: endLeft).chain(CurveTween(curve: curve));
+          final Animatable<Offset> tweenRight =
+              Tween(begin: beginRight, end: endRight)
+                  .chain(CurveTween(curve: curve));
+          final Animatable<Offset> tweenLeft =
+              Tween(begin: beginLeft, end: endLeft)
+                  .chain(CurveTween(curve: curve));
 
-          final Animation<Offset> offsetAnimation = animation.drive(currentIndex % 2 == 0 ? tweenLeft : tweenRight);
+          final Animation<Offset> offsetAnimation =
+              animation.drive(currentIndex % 2 == 0 ? tweenLeft : tweenRight);
 
           return SlideTransition(
             position: offsetAnimation,
