@@ -11,7 +11,6 @@ CREATE TABLE Users (
     username VARCHAR(255),
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
-    phoneNumber VARCHAR(255) UNIQUE,
     gender VARCHAR(50),
     dob DATE,
     bio TEXT,
@@ -26,7 +25,6 @@ CREATE TABLE UserPreferences (
     gender_preference VARCHAR(50),
     age_range_min INT,
     age_range_max INT,
-    distance_preference INT,
     FOREIGN KEY (userId) REFERENCES Users(userId)
 );
 
@@ -36,6 +34,7 @@ CREATE TABLE Matches (
     userId_1 INT,
     userId_2 INT,
     isMatched BOOLEAN DEFAULT FALSE,
+    similarity DECIMAL(5, 2),
     FOREIGN KEY (userId_1) REFERENCES Users(userId),
     FOREIGN KEY (userId_2) REFERENCES Users(userId)
 );
@@ -105,55 +104,6 @@ CREATE TABLE ConsentContracts (
     FOREIGN KEY (userId1) REFERENCES Users(userId),
     FOREIGN KEY (userId2) REFERENCES Users(userId)
 );
-
--- Insert Sample Data into Users Table
-INSERT INTO Users (name, firstName, lastName, username, email, password, phoneNumber, gender, dob, bio, profile_Image, verified) VALUES
-('John Doe', 'John', 'Doe', 'johndoe', 'johndoe@example.com', 'password123', '1234567890', 'Male', '1990-01-01', 'This is John''s bio', 'profile1.jpg', TRUE),
-('Jane Smith', 'Jane', 'Smith', 'janesmith', 'janesmith@example.com', 'password123', '0987654321', 'Female', '1992-02-02', 'This is Jane''s bio', 'profile2.jpg', FALSE);
-
--- Insert Sample Data into User Preferences Table
-INSERT INTO UserPreferences (userId, gender_preference, age_range_min, age_range_max, distance_preference) VALUES
-(1, 'Female', 25, 35, 50),
-(2, 'Male', 28, 38, 30);
-
--- Insert Sample Data into Interests Table
-INSERT INTO Interests (interestName) VALUES
-('Reading'),
-('Traveling'),
-('Music');
-
--- Insert Sample Data into User Interests Table
-INSERT INTO UserInterests (userId, interestId) VALUES
-(1, 1),
-(1, 2),
-(2, 2),
-(2, 3);
-
--- Insert Sample Data into Matches Table
-INSERT INTO Matches (userId_1, userId_2, isMatched) VALUES
-(1, 2, TRUE);
-
--- Insert Sample Data into Messages Table
-INSERT INTO Messages (match_id, sender_id, message_text, message_audio) VALUES
-(1, 1, 'Hello Jane!', 'audio1.mp3'),
-(1, 2, 'Hi John!', 'audio2.mp3');
-
--- Insert Sample Data into Blocked Users Table
-INSERT INTO BlockedUsers (userId, blocked_userId) VALUES
-(1, 2);
-
--- Insert Sample Data into Reported Users Table
-INSERT INTO ReportedUsers (userId, reported_userId, reason) VALUES
-(2, 1, 'Inappropriate behavior');
-
--- Insert Sample Data into Push Notifications Table
-INSERT INTO PushNotifications (user_id, message, `read`) VALUES
-(1, 'You have a new match!', FALSE),
-(2, 'New message received!', TRUE);
-
--- Insert Sample Data into Consent Contracts Table
-INSERT INTO ConsentContracts (userId1, userId2, consent_text, accepted) VALUES
-(1, 2, 'I consent to share my contact details.', TRUE);
 
 
 -- 1. Retrieve all users

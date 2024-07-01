@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /N.A.C.K/backend/
+
+# Redirect all requests to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
