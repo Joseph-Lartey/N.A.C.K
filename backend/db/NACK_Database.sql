@@ -11,7 +11,6 @@ CREATE TABLE Users (
     username VARCHAR(255),
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
-    phoneNumber VARCHAR(255) UNIQUE,
     gender VARCHAR(50),
     dob DATE,
     bio TEXT,
