@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
-import 'navbar.dart';  // Assuming this is where CustomBottomAppBar() is defined
+import 'navbar.dart';  
 
 class ProfilePage extends StatelessWidget {
+  const ProfilePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 183, 66, 91), // Background color
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -19,16 +27,16 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              color: Color.fromARGB(255, 183, 66, 91),
-              padding: EdgeInsets.all(16),
-              child: Column(
+              color: const Color.fromARGB(255, 183, 66, 91),
+              padding: const EdgeInsets.all(16),
+              child: const Column(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('assets/img2.jpg'),
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'Jhon Abraham',
                     style: TextStyle(
                       color: Colors.white,
@@ -36,105 +44,109 @@ class ProfilePage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
+                  const Text(
                     '@jhonabraham',
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.message),
-                        color: Colors.white,
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.videocam),
-                        color: Colors.white,
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.phone),
-                        color: Colors.white,
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.more_horiz),
-                        color: Colors.white,
-                        onPressed: () {},
-                      ),
-                    ],
+                    // children: [
+                    //   IconButton(
+                    //     icon: const Icon(Icons.message),
+                    //     color: Colors.white,
+                    //     onPressed: () {},
+                    //   ),
+                    //   IconButton(
+                    //     icon: const Icon(Icons.videocam),
+                    //     color: Colors.white,
+                    //     onPressed: () {},
+                    //   ),
+                    //   IconButton(
+                    //     icon: const Icon(Icons.phone),
+                    //     color: Colors.white,
+                    //     onPressed: () {},
+                    //   ),
+                    //   IconButton(
+                    //     icon: const Icon(Icons.more_horiz),
+                    //     color: Colors.white,
+                    //     onPressed: () {},
+                    //   ),
+                    // ],
                   ),
                 ],
               ),
             ),
             Container(
-              color: Color.fromARGB(255, 183, 66, 91), // Maintain red background
+              color: const Color.fromARGB(255, 183, 66, 91), // Maintain red background
               child: ClipRRect(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(40),
                   topRight: Radius.circular(40),
                 ),
                 child: Container(
                   color: Colors.white,
-                  padding: EdgeInsets.all(16),
-                  child: Column(
+                  padding: const EdgeInsets.all(16),
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProfileInfoRow(
-                        label: 'Display Name',
-                        value: 'Jhon Abraham',
+                      const ProfileInfoRow(
+                        label: 'First Name',
+                        value: 'Jhon',
                       ),
-                      ProfileInfoRow(
+                      const ProfileInfoRow(
+                        label: 'Last Name',
+                        value: 'Abraham',
+                      ),
+                      const ProfileInfoRow(
+                        label: 'Username',
+                        value: 'Bomber',
+                      ),
+                      const ProfileInfoRow(
                         label: 'Email Address',
                         value: 'jhonabraham20@gmail.com',
                       ),
-                      ProfileInfoRow(
-                        label: 'Address',
-                        value: '33 street west subidbazar, sylhet',
+                      const ProfileInfoRow(
+                        label: 'Bio',
+                        value: 'Hey there! I\'m Alex, a 29-year-old musician who loves exploring new places and diving into a good book. When I\'m not strumming my guitar, you can find me hiking up a mountain or planning my next adventure. Looking for someone who enjoys great conversations, has a sense of humor, and is up for spontaneous road trips. Let\'s create some amazing memories together!',
                       ),
-                      ProfileInfoRow(
-                        label: 'Phone Number',
-                        value: '(320) 555-0104',
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Media Shared',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            MediaThumbnail(assetPath: 'assets/img2.jpg'),
-                            MediaThumbnail(assetPath: 'assets/img3.jpg'),
-                            MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                            MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                            MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                            MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                            // Add more thumbnails if necessary
-                          ],
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Handle view all media action
-                        },
-                        child: Text(
-                          'View All',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 183, 66, 91),
-                          ),
-                        ),
-                      ),
+                      const SizedBox(height: 20),
+                      // const Text(
+                      //   'Media Shared',
+                      //   style: TextStyle(
+                      //     fontSize: 18,
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      // ),
+                      // const SizedBox(height: 10),
+                      // const SingleChildScrollView(
+                      //   scrollDirection: Axis.horizontal,
+                      //   child: Row(
+                      //     children: [
+                      //       MediaThumbnail(assetPath: 'assets/img2.jpg'),
+                      //       MediaThumbnail(assetPath: 'assets/img3.jpg'),
+                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
+                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
+                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
+                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
+                      //       // Add more thumbnails if necessary
+                      //     ],
+                      //   ),
+                      // ),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     // Handle view all media action
+                      //   },
+                      //   child: const Text(
+                      //     'View All',
+                      //     style: TextStyle(
+                      //       color: Color.fromARGB(255, 183, 66, 91),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -143,7 +155,7 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomAppBar(),
+      bottomNavigationBar: const CustomBottomAppBar(),
     );
   }
 }
@@ -152,7 +164,7 @@ class ProfileInfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  ProfileInfoRow({required this.label, required this.value});
+  const ProfileInfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -163,14 +175,14 @@ class ProfileInfoRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.grey,
               fontSize: 12,
             ),
           ),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 18,
             ),
@@ -181,24 +193,24 @@ class ProfileInfoRow extends StatelessWidget {
   }
 }
 
-class MediaThumbnail extends StatelessWidget {
-  final String assetPath;
+// class MediaThumbnail extends StatelessWidget {
+//   final String assetPath;
 
-  MediaThumbnail({required this.assetPath});
+//   const MediaThumbnail({required this.assetPath});
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
-        child: Image.asset(
-          assetPath,
-          width: 80,
-          height: 80,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.all(4.0),
+//       child: ClipRRect(
+//         borderRadius: BorderRadius.circular(8.0),
+//         child: Image.asset(
+//           assetPath,
+//           width: 80,
+//           height: 80,
+//           fit: BoxFit.cover,
+//         ),
+//       ),
+//     );
+//   }
+// }
