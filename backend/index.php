@@ -85,6 +85,12 @@ $router->map('GET', '/users/[*:userId]', function ($userId) use ($userController
     echo json_encode($userController->getUserById($userId));
 });
 
+// Cater for fetching all users
+$router->map('GET', '/users', function() use ($userController) {
+        
+    echo json_encode($userController->getAllUsers());
+});
+
 
 
 $match = $router->match();
