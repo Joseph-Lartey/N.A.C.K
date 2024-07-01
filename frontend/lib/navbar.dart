@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled3/messages.dart';
 import 'profile.dart';
 import 'homePage.dart';
 //import 'settings.dart';
@@ -41,7 +42,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      // Navigate to chat screen or perform action
+                      _navigateTo(context, Messages(), currentIndex: 1);
                     },
                   ),
                   IconButton(
@@ -73,7 +74,8 @@ class CustomBottomAppBar extends StatelessWidget {
     );
   }
 
-  void _navigateTo(BuildContext context, Widget page, {required int currentIndex}) {
+  void _navigateTo(BuildContext context, Widget page,
+      {required int currentIndex}) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -85,10 +87,15 @@ class CustomBottomAppBar extends StatelessWidget {
           const Offset endLeft = Offset.zero;
           const Curve curve = Curves.easeInOut;
 
-          final Animatable<Offset> tweenRight = Tween(begin: beginRight, end: endRight).chain(CurveTween(curve: curve));
-          final Animatable<Offset> tweenLeft = Tween(begin: beginLeft, end: endLeft).chain(CurveTween(curve: curve));
+          final Animatable<Offset> tweenRight =
+              Tween(begin: beginRight, end: endRight)
+                  .chain(CurveTween(curve: curve));
+          final Animatable<Offset> tweenLeft =
+              Tween(begin: beginLeft, end: endLeft)
+                  .chain(CurveTween(curve: curve));
 
-          final Animation<Offset> offsetAnimation = animation.drive(currentIndex % 2 == 0 ? tweenLeft : tweenRight);
+          final Animation<Offset> offsetAnimation =
+              animation.drive(currentIndex % 2 == 0 ? tweenLeft : tweenRight);
 
           return SlideTransition(
             position: offsetAnimation,
