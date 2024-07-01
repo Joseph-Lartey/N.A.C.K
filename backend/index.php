@@ -1,80 +1,98 @@
 <?php
 
-    // header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-    header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, PATCH, OPTIONS');
-    header('Access-Control-Max-Age: 1000');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-    header('content-Type: application/json');
+// header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, PATCH, OPTIONS');
+header('Access-Control-Max-Age: 1000');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('content-Type: application/json');
+// require_once __DIR__.'/vendor/autoload.php';
 
-    require_once __DIR__.'/vendor/autoload.php';
-    require_once __DIR__.'/config/database.php';
-    require_once __DIR__.'/app/controllers/userController.php';
-    require_once __DIR__.'/app/middleware/validationMiddleware.php';
+// // Load environment variables from .env file
+// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+// $dotenv->load();
 
-    use Dotenv\Dotenv;
+// $router = new AltoRouter();
+// $router->setBasePath('/N.A.C.K/backend');
 
-    $dotenv = Dotenv::createImmutable(__DIR__);
-    $dotenv->load();
+// // Include your route definitions from app/routes/api.php
+// require __DIR__ . '/app/routes/api.php';
 
-    $router = new AltoRouter();
-    $router->setBasePath('/N.A.C.K/backend');
+// // Define a route
+// // $router->map('GET', '/', function() {
+// //     // Send a 200 status code
+// //     http_response_code(200);
+// //     echo "OK";
+// // });
 
-    // create database and pdo
-    $database = new Database();
-    $pdo = $database->getPdo();
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/app/controllers/userController.php';
+require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 
-    $userController = new UserController($pdo);
+use Dotenv\Dotenv;
 
-    // Routes
-    // Below I will define all the different end points that the user can send requests to
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-    // Cater for user account creation
-    $router->map('POST', '/users', function() use ($userController) {
+$router = new AltoRouter();
+$router->setBasePath('/N.A.C.K/backend');
 
-        $data = json_decode(file_get_contents('php://input'), true);
+// create database and pdo
+$database = new Database();
+$pdo = $database->getPdo();
 
-        // validate data
-        ValidationMiddleWare::handle($data, [
-            'firstname' => 'string',
-            'lastname' => 'string',
-            'username' => 'string',
-            'email' => 'email',
-            'password' => 'password',
-            'confirm_password' => 'confirm_password',
-            'dob' => 'string',
-        ]);
+$userController = new UserController($pdo);
 
-        echo json_encode($userController->createUser($data)); 
-    });
+// Routes
+// Below I will define all the different end points that the user can send requests to
 
-    // Cater for user login
-    $router->map('POST', '/users/login', function() use ($userController){
+// Cater for user account creation
+$router->map('POST', '/users', function () use ($userController) {
 
-        $data = json_decode(file_get_contents('php://input'), true);
+    $data = json_decode(file_get_contents('php://input'), true);
 
-        // validate data
-        ValidationMiddleWare::handle($data, [
-            'email' => 'string',
-            'password' => 'password',
-        ]);
-        
-        echo json_encode($userController->login($data));
-    });
+    // validate data
+    ValidationMiddleWare::handle($data, [
+        'firstname' => 'string',
+        'lastname' => 'string',
+        'username' => 'string',
+        'email' => 'email',
+        'password' => 'password',
+        'confirm_password' => 'confirm_password',
+        'dob' => 'string',
+    ]);
 
-    // Cater for fetching all users
-    $router->map('GET', '/users', function() use ($userController) {
-        
-        echo json_encode($userController->getAllUsers());
-    });
+    echo json_encode($userController->createUser($data));
+});
 
-    $match = $router->match();
+// Cater for user login
+$router->map('POST', '/users/login', function () use ($userController) {
 
-    if ($match && is_callable($match['target'])) {
-        call_user_func_array($match['target'], $match['params']);
-    } else {
-        // No route was matched
-        http_response_code(404);
-        echo json_encode(['status' => 'error', 'message' => 'Route not found']);
-    }
+    $data = json_decode(file_get_contents('php://input'), true);
 
-?>
+    // validate data
+    ValidationMiddleWare::handle($data, [
+        'email' => 'string',
+        'password' => 'password',
+    ]);
+
+    echo json_encode($userController->login($data));
+});
+
+// Catering for fetching user details by userId
+$router->map('GET', '/users/[*:userId]', function ($userId) use ($userController) {
+    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'userId']);
+    echo json_encode($userController->getUserById($userId));
+});
+
+
+
+$match = $router->match();
+
+if ($match && is_callable($match['target'])) {
+    call_user_func_array($match['target'], $match['params']);
+} else {
+    // No route was matched
+    http_response_code(404);
+    echo json_encode(['status' => 'error', 'message' => 'Route not found']);
+}
