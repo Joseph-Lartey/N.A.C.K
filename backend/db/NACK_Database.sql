@@ -5,7 +5,6 @@ USE nack_database;
 -- Create Users Table
 CREATE TABLE Users (
     userId INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255),
     firstName VARCHAR(255),
     lastName VARCHAR(255),
     username VARCHAR(255),
@@ -33,8 +32,6 @@ CREATE TABLE Matches (
     match_id INT AUTO_INCREMENT PRIMARY KEY,
     userId_1 INT,
     userId_2 INT,
-    isMatched BOOLEAN DEFAULT FALSE,
-    similarity DECIMAL(5, 2),
     FOREIGN KEY (userId_1) REFERENCES Users(userId),
     FOREIGN KEY (userId_2) REFERENCES Users(userId)
 );
@@ -105,6 +102,17 @@ CREATE TABLE ConsentContracts (
     FOREIGN KEY (userId2) REFERENCES Users(userId)
 );
 
+-- Create Likes Table
+CREATE TABLE Likes (
+    like_id INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT,
+    liked_userId INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES Users(userId),
+    FOREIGN KEY (liked_userId) REFERENCES Users(userId)
+);
+
+-- Sample Queries:
 
 -- 1. Retrieve all users
 -- SELECT * FROM Users;
@@ -113,7 +121,7 @@ CREATE TABLE ConsentContracts (
 -- SELECT * FROM UserPreferences WHERE userId = 1;
 
 -- 3. List all users who have been blocked by a specific user (e.g., userId = 1)
--- SELECT Users.userId, Users.name, Users.username
+-- SELECT Users.userId, Users.firstName, Users.lastName, Users.username
 -- FROM BlockedUsers
 -- JOIN Users ON BlockedUsers.blocked_userId = Users.userId
 -- WHERE BlockedUsers.userId = 1;
