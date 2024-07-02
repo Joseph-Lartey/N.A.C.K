@@ -42,15 +42,8 @@ class ValidationMiddleWare
                         }
                         break;
 
-                    case 'userId':
-                        if (!ctype_digit($value)) {
-                            $errors[$field] = "Invalid user ID";
-                        }
-                        break;
-                    
                     case 'integer':
                         if(!filter_var($value, FILTER_VALIDATE_INT)){
-                            echo "test";
                             $errors[$field] = "$field should be an integer";
                         }
                         break;

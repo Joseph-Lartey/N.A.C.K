@@ -83,7 +83,7 @@ $router->map('POST', '/users/login', function () use ($userController) {
 
 // Catering for fetching user details by userId
 $router->map('GET', '/users/[*:userId]', function ($userId) use ($userController) {
-    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'userId']);
+    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
     echo json_encode($userController->getUserById($userId));
 });
 
@@ -108,7 +108,8 @@ $router->map('POST', '/users/like', function () use ($likeController) {
 });
 
 // Catering for fetching the matches of a user
-$router->map('GET', '/users/[*:userId]/matches', function ($userId) use ($likeController) {
+$router->map('GET', '/matches/[*:userId]', function ($userId) use ($likeController) {
+    
     ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
     
     echo json_encode($likeController->getMatches($userId));
