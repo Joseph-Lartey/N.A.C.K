@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'messages.dart';
+import 'messages.dart'; // Ensure this file contains the Message class definition
 
 class ChatScreen extends StatefulWidget {
   final Message message;
@@ -12,37 +12,50 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> _messages = [];
+  final List<Map<String, dynamic>> _messages = [
+    // Example initial messages
+    {'text': 'Hi there!', 'isSentByMe': false},
+    {'text': 'Hello!', 'isSentByMe': true},
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.message.name,
-          style: TextStyle(fontSize: 22), // Increase font size of the title
+        title: Row(
+          children: [
+            CircleAvatar(
+              backgroundImage:
+                  AssetImage(widget.message.avatar), // Avatar image
+            ),
+            const SizedBox(width: 10),
+            Text(
+              widget.message.name,
+              style: const TextStyle(fontSize: 20),
+            ),
+          ],
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.phone),
+            icon: const Icon(Icons.phone),
             onPressed: () {
               // Action for phone call
             },
           ),
           IconButton(
-            icon: Icon(Icons.videocam),
+            icon: const Icon(Icons.videocam),
             onPressed: () {
               // Action for video call
             },
           ),
         ],
-        toolbarHeight: 70, // Increase the height of the AppBar
+        toolbarHeight: 70,
       ),
       body: Stack(
         children: [
           // Wallpaper
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
                     'assets/wallpaper.jpg'), // Replace with your wallpaper image
@@ -55,19 +68,31 @@ class _ChatScreenState extends State<ChatScreen> {
               // Message List
               Expanded(
                 child: ListView.builder(
+                  padding: const EdgeInsets.all(10.0),
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
+                    final message = _messages[index];
+                    return Align(
+                      alignment: message['isSentByMe']
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 15),
+                        decoration: BoxDecoration(
+                          color: message['isSentByMe']
+                              ? Colors.blueAccent.withOpacity(0.7)
+                              : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          message['text'],
+                          style: TextStyle(
+                            color: message['isSentByMe']
+                                ? Colors.white
+                                : Colors.black,
                           ),
-                          child: Text(_messages[index]),
                         ),
                       ),
                     );
@@ -76,18 +101,18 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               // Message Input
               Container(
-                color: Colors.white, // White background for the bottom bar
-                padding: const EdgeInsets.all(12.0), // Increase padding
+                color: Colors.white,
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.camera_alt),
+                      icon: const Icon(Icons.camera_alt),
                       onPressed: () {
                         // Action for camera
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.attach_file),
+                      icon: const Icon(Icons.attach_file),
                       onPressed: () {
                         // Action for attachments
                       },
@@ -103,7 +128,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[200],
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 20),
                         ),
                         onSubmitted: (text) {
                           _sendMessage();
@@ -111,16 +137,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.mic),
-                      onPressed: () {
-                        // Action for microphone
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.photo_library),
-                      onPressed: () {
-                        // Action for gallery
-                      },
+                      icon: const Icon(Icons.send),
+                      onPressed: _sendMessage,
                     ),
                   ],
                 ),
@@ -135,7 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     if (_controller.text.trim().isNotEmpty) {
       setState(() {
-        _messages.add(_controller.text.trim());
+        _messages.add({'text': _controller.text.trim(), 'isSentByMe': true});
         _controller.clear();
       });
     }
