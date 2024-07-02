@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart'; // Ensure this import points to the correct location of your navbar.dart
 
-
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
   @override
@@ -15,24 +14,10 @@ class SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Handle back button action here
-          },
-        ),
-      ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          const SizedBox(height: 120), // Add spacing at the top
           const Center(
             child: Column(
               children: [
@@ -59,13 +44,6 @@ class SettingsPageState extends State<SettingsPage> {
               // Handle change password action
             },
           ),
-          ListTile(
-            title: const Text('Add a payment method'),
-            trailing: const Icon(Icons.add),
-            onTap: () {
-              // Handle add payment method action
-            },
-          ),
           SwitchListTile(
             title: const Text('Push notifications'),
             value: _pushNotifications,
@@ -77,7 +55,7 @@ class SettingsPageState extends State<SettingsPage> {
             },
           ),
           SwitchListTile(
-            title: const Text('Dark mode'),
+            title: const Text('Enable biometric'),
             value: _darkMode,
             activeColor: const Color.fromARGB(255, 183, 66, 91),
             onChanged: (bool value) {
