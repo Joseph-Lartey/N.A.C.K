@@ -6,37 +6,20 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: const Color.fromARGB(255, 183, 66, 91), // Background color
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: Colors.white, // Arrow icon
-          onPressed: () {
-            Navigator.of(context).pop(); // Pop the current screen
-          },
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               color: const Color.fromARGB(255, 183, 66, 91),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(80),
               child: const Column(
                 children: [
-                  const CircleAvatar(
+                   CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('assets/img2.jpg'),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
+                   SizedBox(height: 10),
+                   Text(
                     'Jhon Abraham',
                     style: TextStyle(
                       color: Colors.white,
@@ -44,38 +27,16 @@ class ProfilePage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text(
+                   Text(
                     '@jhonabraham',
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                   SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    // children: [
-                    //   IconButton(
-                    //     icon: const Icon(Icons.message),
-                    //     color: Colors.white,
-                    //     onPressed: () {},
-                    //   ),
-                    //   IconButton(
-                    //     icon: const Icon(Icons.videocam),
-                    //     color: Colors.white,
-                    //     onPressed: () {},
-                    //   ),
-                    //   IconButton(
-                    //     icon: const Icon(Icons.phone),
-                    //     color: Colors.white,
-                    //     onPressed: () {},
-                    //   ),
-                    //   IconButton(
-                    //     icon: const Icon(Icons.more_horiz),
-                    //     color: Colors.white,
-                    //     onPressed: () {},
-                    //   ),
-                    // ],
                   ),
                 ],
               ),
@@ -93,60 +54,27 @@ class ProfilePage extends StatelessWidget {
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const ProfileInfoRow(
+                       ProfileInfoRow(
                         label: 'First Name',
                         value: 'Jhon',
                       ),
-                      const ProfileInfoRow(
+                       ProfileInfoRow(
                         label: 'Last Name',
                         value: 'Abraham',
                       ),
-                      const ProfileInfoRow(
+                       ProfileInfoRow(
                         label: 'Username',
                         value: 'Bomber',
                       ),
-                      const ProfileInfoRow(
+                       ProfileInfoRow(
                         label: 'Email Address',
                         value: 'jhonabraham20@gmail.com',
                       ),
-                      const ProfileInfoRow(
+                       ProfileInfoRow(
                         label: 'Bio',
                         value: 'Hey there! I\'m Alex, a 29-year-old musician who loves exploring new places and diving into a good book. When I\'m not strumming my guitar, you can find me hiking up a mountain or planning my next adventure. Looking for someone who enjoys great conversations, has a sense of humor, and is up for spontaneous road trips. Let\'s create some amazing memories together!',
                       ),
-                      const SizedBox(height: 20),
-                      // const Text(
-                      //   'Media Shared',
-                      //   style: TextStyle(
-                      //     fontSize: 18,
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 10),
-                      // const SingleChildScrollView(
-                      //   scrollDirection: Axis.horizontal,
-                      //   child: Row(
-                      //     children: [
-                      //       MediaThumbnail(assetPath: 'assets/img2.jpg'),
-                      //       MediaThumbnail(assetPath: 'assets/img3.jpg'),
-                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                      //       MediaThumbnail(assetPath: 'assets/img1.jpg'),
-                      //       // Add more thumbnails if necessary
-                      //     ],
-                      //   ),
-                      // ),
-                      // TextButton(
-                      //   onPressed: () {
-                      //     // Handle view all media action
-                      //   },
-                      //   child: const Text(
-                      //     'View All',
-                      //     style: TextStyle(
-                      //       color: Color.fromARGB(255, 183, 66, 91),
-                      //     ),
-                      //   ),
-                      // ),
+                       SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -193,24 +121,3 @@ class ProfileInfoRow extends StatelessWidget {
   }
 }
 
-// class MediaThumbnail extends StatelessWidget {
-//   final String assetPath;
-
-//   const MediaThumbnail({required this.assetPath});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(4.0),
-//       child: ClipRRect(
-//         borderRadius: BorderRadius.circular(8.0),
-//         child: Image.asset(
-//           assetPath,
-//           width: 80,
-//           height: 80,
-//           fit: BoxFit.cover,
-//         ),
-//       ),
-//     );
-//   }
-// }
