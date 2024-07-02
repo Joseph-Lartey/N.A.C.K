@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'otp.dart'; // Import the OTP service
-import 'interests.dart'; // Import the InterestsPage
+import 'profilesetup.dart'; // Import the InterestsPage
 
 class OtpPage extends StatefulWidget {
   final String email;
@@ -24,7 +24,7 @@ class _OtpPageState extends State<OtpPage> {
       );
       Navigator.push(
         context,
-        _createRoute(const InterestsPage()), // Using custom route transition
+        _createRoute(const ProfileSetupPage()), // Using custom route transition
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
