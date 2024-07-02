@@ -27,6 +27,7 @@ header('content-Type: application/json');
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/app/controllers/userController.php';
+require_once __DIR__ . '/app/controllers/likeController.php';
 require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 
 use Dotenv\Dotenv;
@@ -42,6 +43,7 @@ $database = new Database();
 $pdo = $database->getPdo();
 
 $userController = new UserController($pdo);
+$likeController = new LikeController($pdo);
 
 // Routes
 // Below I will define all the different end points that the user can send requests to
@@ -81,7 +83,7 @@ $router->map('POST', '/users/login', function () use ($userController) {
 
 // Catering for fetching user details by userId
 $router->map('GET', '/users/[*:userId]', function ($userId) use ($userController) {
-    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'userId']);
+    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
     echo json_encode($userController->getUserById($userId));
 });
 
@@ -89,6 +91,28 @@ $router->map('GET', '/users/[*:userId]', function ($userId) use ($userController
 $router->map('GET', '/users', function() use ($userController) {
         
     echo json_encode($userController->getAllUsers());
+});
+
+// Cater for one user liking another user
+$router->map('POST', '/users/like', function () use ($likeController) {
+    
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    //validate data
+    ValidationMiddleWare::handle($data, [
+        'userId' => 'integer',
+        'liked_userId' => 'integer'
+    ]);
+
+    echo json_encode($likeController->likeUser($data));
+});
+
+// Catering for fetching the matches of a user
+$router->map('GET', '/matches/[*:userId]', function ($userId) use ($likeController) {
+    
+    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
+    
+    echo json_encode($likeController->getMatches($userId));
 });
 
 
