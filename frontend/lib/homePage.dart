@@ -1,13 +1,60 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart';
+import 'match.dart'; // Import MatchPage
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final List<Map<String, String>> _profiles = [
+    {
+      'image': 'assets/img1.jpg',
+      'name': 'Amy',
+      'age': '21',
+      'location': 'Dufie Annex',
+      'bio': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et lorem et massa vestibulum bibendum.',
+    },
+    {
+      'image': 'assets/img2.jpg',
+      'name': 'John',
+      'age': '25',
+      'location': 'Downtown',
+      'bio': 'Passionate about photography and travel. Always looking for new adventures.',
+    },
+    {
+      'image': 'assets/img3.jpg',
+      'name': 'Emma',
+      'age': '23',
+      'location': 'Green Park',
+      'bio': 'Love cooking, reading, and spending time with my cat. Looking for someone to share life’s moments.',
+    },
+    // Add more profiles here
+  ];
+  int _currentIndex = 0;
+
+  void _nextProfile() {
+    setState(() {
+      _currentIndex = (_currentIndex + 1) % _profiles.length;
+    });
+  }
+
+  void _goToMatchPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MatchPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentProfile = _profiles[_currentIndex];
+
     return Scaffold(
-      extendBody:
-          true, // Ensures the body extends behind the BottomNavigationBar
+      extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: const Padding(
@@ -43,12 +90,12 @@ class HomePage extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/img3.jpg',
+              currentProfile['image']!,
               fit: BoxFit.cover,
             ),
           ),
-          const Positioned(
-            bottom: 150, // Adjust this value to push the content up
+          Positioned(
+            bottom: 150,
             left: 20,
             right: 20,
             child: Column(
@@ -60,44 +107,49 @@ class HomePage extends StatelessWidget {
                     CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.white,
-                      child: Icon(Icons.close, color: Colors.black, size: 30),
+                      child: IconButton(
+                        icon: const Icon(Icons.close, color: Colors.black, size: 30),
+                        onPressed: _nextProfile,
+                      ),
                     ),
-                    SizedBox(width: 30),
+                    const SizedBox(width: 30),
                     CircleAvatar(
                       radius: 30,
-                      backgroundColor: Color.fromARGB(255, 183, 66, 91),
-                      child:
-                          Icon(Icons.favorite, color: Colors.white, size: 30),
+                      backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+                      child: IconButton(
+                        icon: const Icon(Icons.favorite, color: Colors.white, size: 30),
+                        onPressed: _goToMatchPage,
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  'Amy, 21',
-                  style: TextStyle(
+                  '${currentProfile['name']}, ${currentProfile['age']}',
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.location_on, color: Colors.white),
-                    SizedBox(width: 4),
+                    const Icon(Icons.location_on, color: Colors.white),
+                    const SizedBox(width: 4),
                     Text(
-                      'Dufie Annex',
-                      style: TextStyle(
+                      currentProfile['location']!,
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et lorem et massa vestibulum bibendum.',
-                  style: TextStyle(
+                  currentProfile['bio']!,
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,
                   ),
@@ -117,3 +169,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
