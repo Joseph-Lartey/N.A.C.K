@@ -14,9 +14,9 @@
 
         // Get all the matches in the matches table
         public function getMatches($id){
-            $sql = " (SELECT userId_1 as userId FROM {$this->table} WHERE userId_2 = :id)
+            $sql = " (SELECT match_id, userId_1 as userId FROM {$this->table} WHERE userId_2 = :id)
             UNION
-            (SELECT userId_2 as userId FROM {$this->table} WHERE userId_1 = :id)";
+            (SELECT match_id, userId_2 as userId FROM {$this->table} WHERE userId_1 = :id)";
             
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute(['id' => $id]);
