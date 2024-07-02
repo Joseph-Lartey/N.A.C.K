@@ -107,6 +107,13 @@ $router->map('POST', '/users/like', function () use ($likeController) {
     echo json_encode($likeController->likeUser($data));
 });
 
+// Catering for fetching the matches of a user
+$router->map('GET', '/users/[*:userId]/matches', function ($userId) use ($likeController) {
+    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
+    
+    echo json_encode($likeController->getMatches($userId));
+});
+
 
 
 $match = $router->match();

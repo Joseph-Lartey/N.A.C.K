@@ -50,6 +50,7 @@ class ValidationMiddleWare
                     
                     case 'integer':
                         if(!filter_var($value, FILTER_VALIDATE_INT)){
+                            echo "test";
                             $errors[$field] = "$field should be an integer";
                         }
                         break;

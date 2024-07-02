@@ -21,6 +21,15 @@ class Like extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // Delete a like from the likes table due to the presence of a like
+    public function deleteLike($data){
+
+        $sql = "DELETE FROM {$this->table} WHERE userId = :liked_userId AND liked_userId = :userId";
+        $stmt = $this->pdo->prepare($sql);
+        
+        return $stmt->execute(['userId' => $data['userId'], 'liked_userId' => $data['liked_userId']]);
+    }
+
     
 
 }
