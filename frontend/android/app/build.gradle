@@ -26,6 +26,7 @@ android {
     namespace "com.example.frontend"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+    minSdkVersion 21
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
