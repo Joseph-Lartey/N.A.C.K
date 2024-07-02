@@ -57,4 +57,16 @@ class ValidationMiddleWare
             exit();
         }
     }
+
+    // handle image validation
+    public static function handleImage($file){
+
+        $allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+
+        if(!in_array($file['type'], $allowedTypes)){
+            header('HTTP/1.1 422 Unprocessable Entity');
+            echo json_encode(['success' => false, 'errors' => "Disallowed image type"]);
+            exit();
+        }
+    }
 }
