@@ -15,9 +15,9 @@ class Like extends Model
     // check if like exisits and return id of matched liked id or false
     public function isLiked($data){
 
-        $sql = "SELECT userId FROM {$this->table} WHERE userId = :liker_id AND liked_userId = :id";
+        $sql = "SELECT userId FROM {$this->table} WHERE userId = :liked_userId AND liked_userId = :userId";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $data['user'], 'liker_id' => $data['other_user']]);
+        $stmt->execute(['userId' => $data['userId'], 'liked_userId' => $data['liked_userId']]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 

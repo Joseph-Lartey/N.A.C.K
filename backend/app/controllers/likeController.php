@@ -23,7 +23,7 @@ class LikeController
                 return ["success" => true, "message" => "Like has been inserted"];
 
             } else {
-
+                return ["testing"];
                 //TODO: Add match controller to create a match
 
             }

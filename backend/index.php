@@ -100,11 +100,11 @@ $router->map('POST', '/users/like', function () use ($likeController) {
 
     //validate data
     ValidationMiddleWare::handle($data, [
-        'user' => 'userId',
-        'other_user' => 'userId'
+        'userId' => 'integer',
+        'liked_userId' => 'integer'
     ]);
 
-    echo json_encode($likeController);
+    echo json_encode($likeController->likeUser($data));
 });
 
 
