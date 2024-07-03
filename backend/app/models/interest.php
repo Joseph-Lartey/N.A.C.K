@@ -8,16 +8,4 @@ class Interest extends Model
     {
         return $this->all();
     }
-
-    public function insertInterest($data)
-    {
-        return $this->insert($data);
-    }
-
-    public function findInterest($col, $val)
-    {
-        return $this->find($col, $val);
-    }
-
-    
 }
