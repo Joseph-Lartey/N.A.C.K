@@ -123,17 +123,6 @@ $router->map('GET', '/interests', function() use ($interestController) {
 });
 
 
-$router->map('POST', '/interests', function() use ($interestController) {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    // Validate data
-    ValidationMiddleWare::handle($data, [
-        'interestName' => 'string',
-    ]);
-
-    echo json_encode($interestController->createInterest($data));
-});
-
 // Routes for user interests
 $router->map('GET', '/users/[*:userId]/interests', function($userId) use ($interestController) {
     ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
@@ -152,17 +141,6 @@ $router->map('POST', '/users/interests', function() use ($interestController) {
     echo json_encode($interestController->addUserInterest($data));
 });
 
-$router->map('DELETE', '/users/interests', function() use ($interestController) {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    // Validate data
-    ValidationMiddleWare::handle($data, [
-        'userId' => 'integer',
-        'interestId' => 'integer',
-    ]);
-
-    echo json_encode($interestController->removeUserInterest($data));
-});
 
 
 $match = $router->match();
@@ -174,3 +152,4 @@ if ($match && is_callable($match['target'])) {
     http_response_code(404);
     echo json_encode(['status' => 'error', 'message' => 'Route not found']);
 }
+
