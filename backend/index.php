@@ -120,7 +120,7 @@ $router->map('POST', '/upload/[*:userId]', function ($userId) use ($userControll
 
     $file = $_FILES['profile_image'];
     
-    ValidationMiddleWare::handle(["userId" => $userId], "integer");
+    ValidationMiddleWare::handle(["userId" => $userId], ["userId" => "integer"]);
     ValidationMiddleWare::handleImage($file);
     
     echo json_encode($userController->uploadProfileImage($userId));
