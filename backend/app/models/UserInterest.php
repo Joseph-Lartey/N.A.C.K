@@ -20,12 +20,4 @@ class UserInterest extends Model
     {
         return $this->insert($data);
     }
-
-    public function deleteUserInterest($userId, $interestId)
-    {
-        $sql = "DELETE FROM {$this->table} WHERE userId = :userId AND interestId = :interestId";
-        $stmt = $this->pdo->prepare($sql);
-
-        return $stmt->execute(['userId' => $userId, 'interestId' => $interestId]);
-    }
 }
