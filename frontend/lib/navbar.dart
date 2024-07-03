@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'profile.dart';
+import 'homePage.dart';
+import 'settings.dart';
 
 class CustomBottomAppBar extends StatelessWidget {
   const CustomBottomAppBar({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -27,7 +31,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      // Navigate to home screen or perform action
+                      _navigateTo(context, const HomePage());
                     },
                   ),
                   IconButton(
@@ -47,7 +51,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      // Navigate to profile screen or perform action
+                      _navigateTo(context, const ProfilePage());
                     },
                   ),
                   IconButton(
@@ -57,7 +61,7 @@ class CustomBottomAppBar extends StatelessWidget {
                       size: 30,
                     ),
                     onPressed: () {
-                      // Navigate to settings screen or perform action
+                      _navigateTo(context, const SettingsPage());
                     },
                   ),
                 ],
@@ -65,6 +69,17 @@ class CustomBottomAppBar extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  void _navigateTo(BuildContext context, Widget page) {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => page,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
     );
   }
