@@ -44,6 +44,8 @@ $pdo = $database->getPdo();
 
 $userController = new UserController($pdo);
 $likeController = new LikeController($pdo);
+$interestController = new InterestController($pdo);
+
 
 // Routes
 // Below I will define all the different end points that the user can send requests to
@@ -115,6 +117,52 @@ $router->map('GET', '/matches/[*:userId]', function ($userId) use ($likeControll
     echo json_encode($likeController->getMatches($userId));
 });
 
+// Routes for interests
+$router->map('GET', '/interests', function() use ($interestController) {
+    echo json_encode($interestController->getAllInterests());
+});
+
+
+$router->map('POST', '/interests', function() use ($interestController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Validate data
+    ValidationMiddleWare::handle($data, [
+        'interestName' => 'string',
+    ]);
+
+    echo json_encode($interestController->createInterest($data));
+});
+
+// Routes for user interests
+$router->map('GET', '/users/[*:userId]/interests', function($userId) use ($interestController) {
+    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
+    echo json_encode($interestController->getUserInterests($userId));
+});
+
+$router->map('POST', '/users/interests', function() use ($interestController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Validate data
+    ValidationMiddleWare::handle($data, [
+        'userId' => 'integer',
+        'interestId' => 'integer',
+    ]);
+
+    echo json_encode($interestController->addUserInterest($data));
+});
+
+$router->map('DELETE', '/users/interests', function() use ($interestController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Validate data
+    ValidationMiddleWare::handle($data, [
+        'userId' => 'integer',
+        'interestId' => 'integer',
+    ]);
+
+    echo json_encode($interestController->removeUserInterest($data));
+});
 
 
 $match = $router->match();
