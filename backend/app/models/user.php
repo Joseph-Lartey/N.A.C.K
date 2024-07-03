@@ -49,5 +49,12 @@ class User extends Model
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // Update user profile image
+    public function updateProfileImage($id, $imagePath){
+        $sql = "UPDATE {$this->table} SET profile_Image = :profile_Image WHERE userId = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute(['profile_Image' => $imagePath, 'id' => $id]);
+    }
 }
 ?>
