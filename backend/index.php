@@ -28,6 +28,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/app/controllers/userController.php';
 require_once __DIR__ . '/app/controllers/likeController.php';
+require_once __DIR__ . '/app/controllers/InterestController.php';
 require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 
 use Dotenv\Dotenv;
@@ -90,14 +91,14 @@ $router->map('GET', '/users/[*:userId]', function ($userId) use ($userController
 });
 
 // Cater for fetching all users
-$router->map('GET', '/users', function() use ($userController) {
-        
+$router->map('GET', '/users', function () use ($userController) {
+
     echo json_encode($userController->getAllUsers());
 });
 
 // Cater for one user liking another user
 $router->map('POST', '/users/like', function () use ($likeController) {
-    
+
     $data = json_decode(file_get_contents('php://input'), true);
 
     //validate data
@@ -111,25 +112,25 @@ $router->map('POST', '/users/like', function () use ($likeController) {
 
 // Catering for fetching the matches of a user
 $router->map('GET', '/matches/[*:userId]', function ($userId) use ($likeController) {
-    
+
     ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
-    
+
     echo json_encode($likeController->getMatches($userId));
 });
 
 // Routes for interests
-$router->map('GET', '/interests', function() use ($interestController) {
+$router->map('GET', '/interests', function () use ($interestController) {
     echo json_encode($interestController->getAllInterests());
 });
 
 
 // Routes for user interests
-$router->map('GET', '/users/[*:userId]/interests', function($userId) use ($interestController) {
+$router->map('GET', '/interests/[*:userId]', function ($userId) use ($interestController) {
     ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
     echo json_encode($interestController->getUserInterests($userId));
 });
 
-$router->map('POST', '/users/interests', function() use ($interestController) {
+$router->map('POST', '/users/interests', function () use ($interestController) {
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Validate data
@@ -152,4 +153,3 @@ if ($match && is_callable($match['target'])) {
     http_response_code(404);
     echo json_encode(['status' => 'error', 'message' => 'Route not found']);
 }
-
