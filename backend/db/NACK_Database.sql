@@ -5,11 +5,11 @@ USE nack_database;
 -- Create Users Table
 CREATE TABLE Users (
     userId INT AUTO_INCREMENT PRIMARY KEY,
-    firstName VARCHAR(255),
-    lastName VARCHAR(255),
-    username VARCHAR(255),
-    email VARCHAR(255) UNIQUE,
-    password VARCHAR(255),
+    firstName VARCHAR(35),
+    lastName VARCHAR(70),
+    username VARCHAR(50),
+    email VARCHAR(50) UNIQUE,
+    password VARCHAR(60),
     gender VARCHAR(50),
     dob DATE,
     bio TEXT,
@@ -52,6 +52,23 @@ CREATE TABLE Interests (
     interestId INT AUTO_INCREMENT PRIMARY KEY,
     interestName VARCHAR(255) UNIQUE
 );
+
+-- Insert interests into the Interests Table
+INSERT INTO Interests (interestName) VALUES
+('Photography'),
+('Shopping'),
+('Karaoke'),
+('Yoga'),
+('Cooking'),
+('Tennis'),
+('Run'),
+('Swimming'),
+('Art'),
+('Traveling'),
+('Extreme'),
+('Music'),
+('Drink'),
+('Video games');
 
 -- Create User Interests Table
 CREATE TABLE UserInterests (

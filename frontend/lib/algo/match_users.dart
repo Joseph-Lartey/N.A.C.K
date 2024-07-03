@@ -41,9 +41,8 @@ class User {
 }
 
 
-// assuming we have the end point
 Future<List<User>> fetchUsers(int userId) async {
-  final response = await http.get(Uri.parse('http://yourapi.com/users'));
+  final response = await http.get(Uri.parse('waiting for api from palal'));
 
   if (response.statusCode == 200) {
     List<dynamic> jsonData = json.decode(response.body);
