@@ -21,6 +21,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Poppins',
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.white, // Set the seed color to white
+          brightness: Brightness.light, // Ensure light theme
+        ),
+        scaffoldBackgroundColor:
+            Colors.white, // Set scaffold background to white
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white, // Set AppBar background to white
+          iconTheme:
+              IconThemeData(color: Colors.black), // Icon color for AppBar
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontFamily: 'Poppins',
+            fontSize: 20,
+          ),
+        ),
       ),
       home: const SplashScreen(), // SplashScreen as the home widget
     );
