@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'homePage.dart';
+import 'welcomeScreen.dart';
+import 'forgottenPassword.dart'; // Import the reset password page here
+import 'changePassword.dart'; // Import the change password page here
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -12,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   bool _isButtonEnabled = false;
+  bool _isResetPassword = false; // Add a flag to check if coming from reset password page
 
   @override
   void initState() {
@@ -63,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
           icon: const Icon(Icons.arrow_back),
           color: Colors.white, // Arrow icon
           onPressed: () {
-            Navigator.of(context).pop(); // Pop the current screen
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WelcomeScreen()));// Pop the current screen
           },
         ),
       ),
@@ -164,10 +168,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ElevatedButton(
                         onPressed: _isButtonEnabled
                             ? () {
-                                Navigator.push(
-                                  context,
-                                  _createRoute(const HomePage()),
-                                );
+                                if (_isResetPassword) {
+                                  // Navigate directly to ChangePasswordPage
+                                  Navigator.push(
+                                    context,
+                                    _createRoute(const ChangePasswordPage()),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    _createRoute(const HomePage()),
+                                  );
+                                }
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
@@ -191,8 +203,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 20),
                       GestureDetector(
-                        onTap: () {
-                          // Implement forgot password functionality here
+                        onTap: () async {
+                          // Navigate to the ResetPasswordPage and wait for the result
+                          final result = await Navigator.push(
+                            context,
+                            _createRoute(const ResetPasswordPage()),
+                          );
+                          // If coming back from ResetPasswordPage, set the flag
+                          if (result == true) {
+                            setState(() {
+                              _isResetPassword = true;
+                            });
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.all(

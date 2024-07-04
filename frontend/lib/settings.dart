@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'navbar.dart'; 
+import 'navbar.dart';
 import 'changePassword.dart';
-import'aboutUs.dart';
+import 'aboutUs.dart';
+import 'loginScreen.dart'; // Import the Login page
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -26,6 +27,36 @@ class SettingsPageState extends State<SettingsPage> {
         return FadeTransition(
           opacity: animation.drive(tween),
           child: child,
+        );
+      },
+    );
+  }
+
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushAndRemoveUntil(
+                  createFadeRoute(const LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              child: const Text('Yes'),
+            ),
+          ],
         );
       },
     );
@@ -95,18 +126,16 @@ class SettingsPageState extends State<SettingsPage> {
             },
           ),
           ListTile(
-            title: const Text('Privacy policy'),
+            title: const Text('Terms and conditions'),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               // Handle privacy policy action
             },
           ),
           ListTile(
-            title: const Text('Terms and conditions'),
+            title: const Text('Logout'),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              // Handle terms and conditions action
-            },
+            onTap: _showLogoutConfirmationDialog,
           ),
         ],
       ),

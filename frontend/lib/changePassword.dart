@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'homePage.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
@@ -53,13 +54,17 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   void _handleSubmit() {
-    // Perform password change logic here (simulate success)
-    // For demonstration purposes, we'll just show a SnackBar
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Password changed successfully!'),
-        duration: Duration(seconds: 3),
-      ),
+  // Perform password change logic here (simulate success)
+  // For demonstration purposes, we'll just show a SnackBar
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Password changed successfully!'),
+      duration: Duration(seconds: 3),
+    ),
+  ).closed.then((reason) {
+    // Navigate to HomePage after the SnackBar is closed
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const HomePage()),
     );
 
     // Clear form fields or perform any other necessary cleanup
@@ -75,7 +80,10 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
       _doPasswordsMatch = true;
       _isSubmitDisabled = true; // Disable submit button again
     });
-  }
+  });
+}
+
+
 
   @override
   void dispose() {
