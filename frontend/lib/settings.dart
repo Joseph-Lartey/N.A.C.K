@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'navbar.dart';
+import 'navbar.dart'; 
 import 'changePassword.dart';
-import 'aboutUs.dart';
-import 'loginScreen.dart'; // Import the Login page
+import'aboutUs.dart';
+import 'loginScreen.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -12,7 +13,37 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   bool _pushNotifications = true;
-  bool _darkMode = false;
+  bool _biometricEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _pushNotifications = prefs.getBool('pushNotifications') ?? true;
+      _biometricEnabled = prefs.getBool('biometricEnabled') ?? false;
+    });
+  }
+
+  Future<void> _updatePushNotifications(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('pushNotifications', value);
+    setState(() {
+      _pushNotifications = value;
+    });
+  }
+
+  Future<void> _updateBiometricEnabled(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('biometricEnabled', value);
+    setState(() {
+      _biometricEnabled = value;
+    });
+  }
 
   Route createFadeRoute(Widget page) {
     return PageRouteBuilder(
@@ -101,19 +132,15 @@ class SettingsPageState extends State<SettingsPage> {
             value: _pushNotifications,
             activeColor: const Color.fromARGB(255, 183, 66, 91),
             onChanged: (bool value) {
-              setState(() {
-                _pushNotifications = value;
-              });
+              _updatePushNotifications(value); // Call _updatePushNotifications
             },
           ),
           SwitchListTile(
             title: const Text('Enable biometric'),
-            value: _darkMode,
+            value: _biometricEnabled,
             activeColor: const Color.fromARGB(255, 183, 66, 91),
             onChanged: (bool value) {
-              setState(() {
-                _darkMode = value;
-              });
+              _updateBiometricEnabled(value);
             },
           ),
           const Divider(),
