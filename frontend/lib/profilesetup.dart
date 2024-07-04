@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProfileSetupPage extends StatefulWidget {
   const ProfileSetupPage({Key? key}) : super(key: key);
+
   @override
   _ProfileSetupPageState createState() => _ProfileSetupPageState();
 }
@@ -10,6 +11,29 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   String? _selectedGender;
+  bool _isButtonActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController.addListener(_updateButtonState);
+    _bioController.addListener(_updateButtonState);
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _bioController.dispose();
+    super.dispose();
+  }
+
+  void _updateButtonState() {
+    setState(() {
+      _isButtonActive = _usernameController.text.isNotEmpty &&
+          _bioController.text.isNotEmpty &&
+          _selectedGender != null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +147,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
             _buildGenderSelector(),
             SizedBox(height: 20),
             Align(
+              alignment: Alignment.centerLeft,
               child: Text(
                 'Bio',
                 style: TextStyle(
@@ -149,14 +174,19 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 minimumSize: Size(double.infinity, 50),
+                backgroundColor: _isButtonActive
+                    ? Color.fromARGB(255, 183, 66, 91)
+                    : Colors.grey,
               ),
               child: Text(
                 'Continue',
                 style: TextStyle(fontSize: 16),
               ),
-              onPressed: () {
-                // Handle continue button press
-              },
+              onPressed: _isButtonActive
+                  ? () {
+                      // Handle continue button press
+                    }
+                  : null,
             ),
             SizedBox(height: 20),
           ],
@@ -191,6 +221,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           onChanged: (String? newValue) {
             setState(() {
               _selectedGender = newValue;
+              _updateButtonState();
             });
           },
           items: <String>['Male', 'Female', 'Other', 'Prefer not to say']

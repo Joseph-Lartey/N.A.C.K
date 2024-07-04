@@ -7,7 +7,7 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
-    OTPService.configure(); // Configure the OTP service
+  OTPService.configure(); // Configure the OTP service
   runApp(const MyApp());
 }
 
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'inter',
+        fontFamily: 'Poppins',
         useMaterial3: true,
       ),
       home: const SplashScreen(), // SplashScreen as the home widget
@@ -33,7 +33,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Delay navigation to WelcomeScreen after 3 seconds
-    Future.delayed( const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const WelcomeScreen()),

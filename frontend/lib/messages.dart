@@ -23,38 +23,43 @@ class _MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFB7425B), // WhatsApp green
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundImage: AssetImage('assets/img2.jpg'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60), // Adjust the preferred size here
+        child: AppBar(
+          backgroundColor: Colors.white, // WhatsApp green
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: CircleAvatar(
+              backgroundImage: AssetImage('assets/img2.jpg'),
+            ),
           ),
+          title: const Text(
+            'Messages',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon:
+                  const Icon(Icons.notifications_outlined, color: Colors.black),
+              onPressed: () {
+                // Action for notifications
+              },
+            ),
+          ],
         ),
-        title: const Text(
-          'Messages',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {
-              // Action for notifications
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
             child: TextField(
               controller: _searchController,
               onChanged: (value) {
@@ -62,16 +67,22 @@ class _MessagesPageState extends State<MessagesPage> {
               },
               decoration: InputDecoration(
                 hintText: 'Search',
-                prefixIcon: const Icon(Icons.search),
+                hintStyle: TextStyle(
+                  color: Color.fromRGBO(151, 151, 151, 0.7),
+                ),
+                prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+                fillColor: Color.fromRGBO(151, 151, 151, 0.13),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
               ),
             ),
           ),
+
           // List of messages
           Expanded(
             child: ValueListenableBuilder<String>(
@@ -121,7 +132,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                   ),
                                 ),
                                 child: Text(
-                                  '3',
+                                  message.unreadCount.toString(),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -151,7 +162,7 @@ class _MessagesPageState extends State<MessagesPage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '2 min ago',
+                            message.time,
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12,
@@ -178,25 +189,41 @@ class Message {
   final String name;
   final String avatar;
   final String lastMessage;
+  final String time;
+  final int unreadCount;
 
   Message({
     required this.name,
     required this.avatar,
     required this.lastMessage,
+    required this.time,
+    required this.unreadCount,
   });
 }
 
 // Sample messages list
 List<Message> messages = [
   Message(
-    name: 'Alex Linderson',
+    name: 'Jasmine Young',
     avatar: 'assets/img1.jpg',
-    lastMessage: 'How are you today?',
+    lastMessage: 'Last night was great?',
+    time: '2 mins ago',
+    unreadCount: 3,
   ),
   Message(
-    name: 'Team Align',
+    name: 'Jessica Stain',
     avatar: 'assets/img2.jpg',
-    lastMessage: 'Don’t miss to attend the meeting.',
+    lastMessage: "Let's meet up for coffee tomorrow.",
+    time: '5 mins ago',
+    unreadCount: 1,
   ),
+  Message(
+    name: 'Emma Watson',
+    avatar: 'assets/img3.jpg',
+    lastMessage: 'I will be there in 5 minutes.',
+    time: '10 mins ago',
+    unreadCount: 5,
+  ),
+
   // Add more messages here
 ];
