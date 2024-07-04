@@ -29,6 +29,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/app/controllers/userController.php';
 require_once __DIR__ . '/app/controllers/likeController.php';
 require_once __DIR__ . '/app/controllers/InterestController.php';
+require_once __DIR__ . '/app/controllers/chatController.php';
 require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 
 use Dotenv\Dotenv;
@@ -46,6 +47,7 @@ $pdo = $database->getPdo();
 $userController = new UserController($pdo);
 $likeController = new LikeController($pdo);
 $interestController = new InterestController($pdo);
+$chatController = new ChatController($pdo);
 
 
 // Routes
@@ -175,6 +177,23 @@ $router->map('POST', '/upload/[*:userId]', function ($userId) use ($userControll
     ValidationMiddleWare::handleImage($file);
     
     echo json_encode($userController->uploadProfileImage($userId));
+});
+
+// catering for fetching the chats between two users
+$router->map('GET', '/chat/[i:userId1]/[i:userId2]', function($userId1, $userId2) use ($chatController) {
+
+    ValidationMiddleWare::handle(
+        [
+            "userId1" => $userId1, 
+            "userId2" => $userId2
+        ], 
+        [
+            "userId1" => "integer", 
+            "userId2" => "integer"
+        ]
+    );
+
+    $chatController->getChatHistory($userId1, $userId2);
 });
 
 
