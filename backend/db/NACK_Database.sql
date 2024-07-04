@@ -3,7 +3,7 @@ CREATE DATABASE nack_database;
 USE nack_database;
 
 -- Create Users Table
-CREATE TABLE Users (
+CREATE TABLE users (
     userId INT AUTO_INCREMENT PRIMARY KEY,
     firstName VARCHAR(35),
     lastName VARCHAR(70),
@@ -13,48 +13,48 @@ CREATE TABLE Users (
     gender VARCHAR(50),
     dob DATE,
     bio TEXT,
-    profile_Image VARCHAR(255),
+    profileImage VARCHAR(255),
     verified BOOLEAN DEFAULT FALSE
 );
 
 -- Create User Preferences Table
-CREATE TABLE UserPreferences (
+CREATE TABLE userPreferences (
     preferenceId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
-    gender_preference VARCHAR(50),
-    age_range_min INT,
-    age_range_max INT,
-    FOREIGN KEY (userId) REFERENCES Users(userId)
+    genderPreference VARCHAR(50),
+    ageRangeMin INT,
+    ageRangeMax INT,
+    FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
 -- Create Matches Table
-CREATE TABLE Matches (
-    match_id INT AUTO_INCREMENT PRIMARY KEY,
-    userId_1 INT,
-    userId_2 INT,
-    FOREIGN KEY (userId_1) REFERENCES Users(userId),
-    FOREIGN KEY (userId_2) REFERENCES Users(userId)
+CREATE TABLE matches (
+    matchId INT AUTO_INCREMENT PRIMARY KEY,
+    userId1 INT,
+    userId2 INT,
+    FOREIGN KEY (userId1) REFERENCES users(userId),
+    FOREIGN KEY (userId2) REFERENCES users(userId)
 );
 
 -- Create Messages Table
-CREATE TABLE Messages (
-    message_id INT AUTO_INCREMENT PRIMARY KEY,
-    match_id INT,
-    sender_id INT,
-    message_text TEXT,
-    message_audio VARCHAR(255),
-    FOREIGN KEY (match_id) REFERENCES Matches(match_id),
-    FOREIGN KEY (sender_id) REFERENCES Users(userId)
+CREATE TABLE messages (
+    messageId INT AUTO_INCREMENT PRIMARY KEY,
+    matchId INT,
+    senderId INT,
+    messageText TEXT,
+    messageAudio VARCHAR(255),
+    FOREIGN KEY (matchId) REFERENCES matches(matchId),
+    FOREIGN KEY (senderId) REFERENCES users(userId)
 );
 
 -- Create Interests Table
-CREATE TABLE Interests (
+CREATE TABLE interests (
     interestId INT AUTO_INCREMENT PRIMARY KEY,
-    interestName VARCHAR(255) UNIQUE
+    interestName VARCHAR(70) UNIQUE
 );
 
 -- Insert interests into the Interests Table
-INSERT INTO Interests (interestName) VALUES
+INSERT INTO interests (interestName) VALUES
 ('Photography'),
 ('Shopping'),
 ('Karaoke'),
@@ -71,86 +71,86 @@ INSERT INTO Interests (interestName) VALUES
 ('Video games');
 
 -- Create User Interests Table
-CREATE TABLE UserInterests (
+CREATE TABLE userInterests (
     userInterestId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
     interestId INT,
-    FOREIGN KEY (userId) REFERENCES Users(userId),
-    FOREIGN KEY (interestId) REFERENCES Interests(interestId)
+    FOREIGN KEY (userId) REFERENCES users(userId),
+    FOREIGN KEY (interestId) REFERENCES interests(interestId)
 );
 
 -- Create Blocked Users Table
-CREATE TABLE BlockedUsers (
-    block_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE blockedUsers (
+    blockId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
-    blocked_userId INT,
-    FOREIGN KEY (userId) REFERENCES Users(userId),
-    FOREIGN KEY (blocked_userId) REFERENCES Users(userId)
+    blockedUserId INT,
+    FOREIGN KEY (userId) REFERENCES users(userId),
+    FOREIGN KEY (blockedUserId) REFERENCES users(userId)
 );
 
 -- Create Reported Users Table
-CREATE TABLE ReportedUsers (
+CREATE TABLE reportedUsers (
     reportId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
-    reported_userId INT,
+    reportedUserId INT,
     reason TEXT,
-    FOREIGN KEY (userId) REFERENCES Users(userId),
-    FOREIGN KEY (reported_userId) REFERENCES Users(userId)
+    FOREIGN KEY (userId) REFERENCES users(userId),
+    FOREIGN KEY (reportedUserId) REFERENCES users(userId)
 );
 
 -- Create Push Notifications Table
-CREATE TABLE PushNotifications (
-    notification_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
+CREATE TABLE pushNotifications (
+    notificationId INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT,
     message TEXT,
     `read` BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (user_id) REFERENCES Users(userId)
+    FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
 -- Create Consent Contracts Table
-CREATE TABLE ConsentContracts (
-    consent_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE consentContracts (
+    consentId INT AUTO_INCREMENT PRIMARY KEY,
     userId1 INT,
     userId2 INT,
-    consent_text TEXT,
+    consentText TEXT,
     accepted BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (userId1) REFERENCES Users(userId),
-    FOREIGN KEY (userId2) REFERENCES Users(userId)
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId1) REFERENCES users(userId),
+    FOREIGN KEY (userId2) REFERENCES users(userId)
 );
 
 -- Create Likes Table
-CREATE TABLE Likes (
-    like_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE likes (
+    likeId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
-    liked_userId INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (userId) REFERENCES Users(userId),
-    FOREIGN KEY (liked_userId) REFERENCES Users(userId)
+    likedUserId INT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES users(userId),
+    FOREIGN KEY (likedUserId) REFERENCES users(userId)
 );
 
 -- Sample Queries:
 
 -- 1. Retrieve all users
--- SELECT * FROM Users;
+-- SELECT * FROM users;
 
 -- 2. Get user preferences for a specific user (e.g., userId = 1)
--- SELECT * FROM UserPreferences WHERE userId = 1;
+-- SELECT * FROM userPreferences WHERE userId = 1;
 
 -- 3. List all users who have been blocked by a specific user (e.g., userId = 1)
--- SELECT Users.userId, Users.firstName, Users.lastName, Users.username
--- FROM BlockedUsers
--- JOIN Users ON BlockedUsers.blocked_userId = Users.userId
--- WHERE BlockedUsers.userId = 1;
+-- SELECT users.userId, users.firstName, users.lastName, users.username
+-- FROM blockedUsers
+-- JOIN users ON blockedUsers.blockedUserId = users.userId
+-- WHERE blockedUsers.userId = 1;
 
 -- 4. Find all interests for a specific user (e.g., userId = 2)
--- SELECT Interests.interestName
--- FROM UserInterests
--- JOIN Interests ON UserInterests.interestId = Interests.interestId
--- WHERE UserInterests.userId = 2;
+-- SELECT interests.interestName
+-- FROM userInterests
+-- JOIN interests ON userInterests.interestId = interests.interestId
+-- WHERE userInterests.userId = 2;
 
--- 5. Get all messages in a specific match (e.g., match_id = 1)
--- SELECT Messages.message_text, Messages.message_audio, Users.username AS sender
--- FROM Messages
--- JOIN Users ON Messages.sender_id = Users.userId
--- WHERE Messages.match_id = 1;
+-- 5. Get all messages in a specific match (e.g., matchId = 1)
+-- SELECT messages.messageText, messages.messageAudio, users.username AS sender
+-- FROM messages
+-- JOIN users ON messages.senderId = users.userId
+-- WHERE messages.matchId = 1;
