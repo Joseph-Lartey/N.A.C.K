@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   void _goToMatchPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const MatchPage()),
+      MaterialPageRoute(builder: (context) =>  MatchPage()),
     );
   }
 
