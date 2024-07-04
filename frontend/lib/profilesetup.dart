@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'interests.dart';
 
 class ProfileSetupPage extends StatefulWidget {
   const ProfileSetupPage({Key? key}) : super(key: key);
@@ -35,12 +36,31 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     });
   }
 
+  Route _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset(0.0, 0.0);
+        const curve = Curves.ease;
+
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0, // Remove the shadow
-        backgroundColor: Colors.transparent, // Make the AppBar transparent
+        backgroundColor: Colors.white, // Make the AppBar transparent
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -138,9 +158,14 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
               controller: _usernameController,
               decoration: InputDecoration(
                 hintText: 'Enter your username',
+                filled: true,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
             SizedBox(height: 20),
@@ -162,9 +187,15 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Write a short bio',
+                filled: true,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      BorderSide(color: Color.fromARGB(255, 215, 215, 215)),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
             SizedBox(height: 30),
@@ -180,11 +211,14 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
               ),
               child: Text(
                 'Continue',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
               onPressed: _isButtonActive
                   ? () {
-                      // Handle continue button press
+                      _createRoute(InterestsPage());
                     }
                   : null,
             ),
@@ -213,8 +247,11 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           iconSize: 24,
           elevation: 16,
           decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
