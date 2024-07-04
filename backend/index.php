@@ -142,6 +142,40 @@ $router->map('POST', '/users/interests', function () use ($interestController) {
     echo json_encode($interestController->addUserInterest($data));
 });
 
+// Routes for interests
+$router->map('GET', '/interests', function () use ($interestController) {
+    echo json_encode($interestController->getAllInterests());
+});
+
+
+// Routes for user interests
+$router->map('GET', '/interests/[*:userId]', function ($userId) use ($interestController) {
+    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
+    echo json_encode($interestController->getUserInterests($userId));
+});
+
+$router->map('POST', '/users/interests', function () use ($interestController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Validate data
+    ValidationMiddleWare::handle($data, [
+        'userId' => 'integer',
+        'interestId' => 'integer',
+    ]);
+
+    echo json_encode($interestController->addUserInterest($data));
+});
+
+// Catering for fetching the matches of a user
+$router->map('POST', '/upload/[*:userId]', function ($userId) use ($userController) {
+
+    $file = $_FILES['profile_image'];
+    
+    ValidationMiddleWare::handle(["userId" => $userId], ["userId" => "integer"]);
+    ValidationMiddleWare::handleImage($file);
+    
+    echo json_encode($userController->uploadProfileImage($userId));
+});
 
 
 $match = $router->match();

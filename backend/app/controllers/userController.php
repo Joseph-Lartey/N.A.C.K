@@ -1,4 +1,7 @@
 <?php
+
+use Dotenv\Exception\InvalidFileException;
+
 require_once __DIR__ . '/../models/user.php';
 // Class to cater for all user oriented actions
 class UserController
@@ -104,6 +107,42 @@ class UserController
         } catch (Exception $e) {
             header('HTTP/1.1 422 Unprocessable Entity');
             return ["success" => false, "error" => $e->getMessage()];
+        }
+    }
+
+    // upload user profile
+    public function uploadProfileImage($id){
+
+        try {
+            
+            if(!isset($_FILES['profile_image'])){
+                throw new InvalidArgumentException("No image attached");
+            }
+
+            $file = $_FILES['profile_image'];
+            $dir = __DIR__ . '/../../public/profile_images/';
+            $targetFile = $dir . basename($file['name']) . '-' . $id;
+
+            // move file from temp position to directory intenteded
+            if(!move_uploaded_file($file['tmp_name'], $targetFile)){
+                header('HTTP/1.1 500 Server Error');
+                throw new Exception("Error moving image");
+            }
+
+            // update user profile image path in database
+            $this->userModel->updateProfileImage($id, basename($targetFile));
+
+            return ["success" => true, "message" => "Successful profile upload"];
+
+        } catch (InvalidArgumentException $e) {
+            
+            header('HTTP/1.1 422 Unprocessable Entity');
+            return ["success" => false, "message" => "File was not found in payload"];
+
+        } catch (Exception $e){
+
+            return ["success" => false, "message" => $e->getMessage()];
+
         }
     }
 }

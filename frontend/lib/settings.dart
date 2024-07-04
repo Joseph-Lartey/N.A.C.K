@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'changePassword.dart';
+import'aboutUs.dart';
 import 'navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Ensure this import points to the correct location of your navbar.dart
+
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -43,6 +46,24 @@ class SettingsPageState extends State<SettingsPage> {
     });
   }
 
+  Route createFadeRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = 0.0;
+        const end = 1.0;
+        const curve = Curves.easeInOut;
+
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return FadeTransition(
+          opacity: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +95,7 @@ class SettingsPageState extends State<SettingsPage> {
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               // Handle change password action
+              Navigator.of(context).push(createFadeRoute(const ChangePasswordPage()));
             },
           ),
           SwitchListTile(
@@ -98,6 +120,7 @@ class SettingsPageState extends State<SettingsPage> {
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               // Handle about us action
+              Navigator.of(context).push(createFadeRoute( AboutUsPage()));
             },
           ),
           ListTile(
