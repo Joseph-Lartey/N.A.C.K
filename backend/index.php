@@ -115,6 +115,16 @@ $router->map('GET', '/matches/[*:userId]', function ($userId) use ($likeControll
     echo json_encode($likeController->getMatches($userId));
 });
 
+// Catering for fetching the matches of a user
+$router->map('POST', '/upload/[*:userId]', function ($userId) use ($userController) {
+
+    $file = $_FILES['profile_image'];
+    
+    ValidationMiddleWare::handle(["userId" => $userId], ["userId" => "integer"]);
+    ValidationMiddleWare::handleImage($file);
+    
+    echo json_encode($userController->uploadProfileImage($userId));
+});
 
 
 $match = $router->match();
