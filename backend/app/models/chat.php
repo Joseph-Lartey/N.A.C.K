@@ -1,6 +1,6 @@
 <?php
 
-    require __DIR__ . '/model.php';
+    require_once __DIR__ . '/model.php';
 
     class Chat extends Model {
         
