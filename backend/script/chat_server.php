@@ -40,7 +40,7 @@ class ChatServer implements MessageComponentInterface {
         $message = $data['message'];
 
         // save the message to the database
-        $sql = "INSERT INTO messages (match_id, sender_id, message_text) VALUES (:toUserId, :fromUserId, :messageSent)";
+        $sql = "INSERT INTO messages (matchId, senderId, messageText) VALUES (:toUserId, :fromUserId, :messageSent)";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['toUserId' => $toUserId, 'fromUserId' => $fromUserId, 'messageSent' => $message]);
 
@@ -68,6 +68,7 @@ class ChatServer implements MessageComponentInterface {
     // Handle error pop ups
     public function onError(ConnectionInterface $conn, Exception $e)
     {
+        echo "error: {$e->getMessage()}";
         $conn->close();
     }
 
