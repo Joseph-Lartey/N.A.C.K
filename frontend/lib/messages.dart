@@ -24,12 +24,13 @@ class _MessagesPageState extends State<MessagesPage> {
     return Scaffold(
       extendBody: true,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60), // Adjust the preferred size here
+        preferredSize:
+            const Size.fromHeight(60), // Adjust the preferred size here
         child: AppBar(
           backgroundColor: Colors.white, // WhatsApp green
           elevation: 0,
-          leading: Padding(
-            padding: const EdgeInsets.all(10.0),
+          leading: const Padding(
+            padding: EdgeInsets.all(10.0),
             child: CircleAvatar(
               backgroundImage: AssetImage('assets/img2.jpg'),
             ),
@@ -58,8 +59,10 @@ class _MessagesPageState extends State<MessagesPage> {
         children: [
           // Search bar
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 8.0,
+            ),
             child: TextField(
               controller: _searchController,
               onChanged: (value) {
@@ -67,18 +70,20 @@ class _MessagesPageState extends State<MessagesPage> {
               },
               decoration: InputDecoration(
                 hintText: 'Search',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                   color: Color.fromRGBO(151, 151, 151, 0.7),
                 ),
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Color.fromRGBO(151, 151, 151, 0.13),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                fillColor: const Color.fromRGBO(151, 151, 151, 0.13),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 1.0,
+                  horizontal: 10.0,
+                ),
               ),
             ),
           ),
@@ -93,13 +98,16 @@ class _MessagesPageState extends State<MessagesPage> {
 
                 return ListView.separated(
                   itemCount: filteredMessages.length,
-                  separatorBuilder: (context, index) => Divider(height: 1),
+                  separatorBuilder: (context, index) => const Divider(
+                    height: 1,
+                    color: Colors.transparent,
+                  ),
                   itemBuilder: (context, index) {
                     final message = filteredMessages.elementAt(index);
                     return ListTile(
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
-                        vertical: 8.0, // Adjust vertical padding here
+                        vertical: 5.0, // Adjust vertical padding here
                       ),
                       onTap: () {
                         // Navigate to chat screen
@@ -124,7 +132,7 @@ class _MessagesPageState extends State<MessagesPage> {
                               child: Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFB7425B),
+                                  color: const Color(0xFFB7425B),
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: Colors.white,
