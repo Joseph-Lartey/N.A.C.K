@@ -43,7 +43,7 @@ CREATE TABLE messages (
     senderId INT,
     messageText TEXT,
     messageAudio VARCHAR(255),
-    FOREIGN KEY (matchId) REFERENCES matches(matchId),
+    FOREIGN KEY (matchId) REFERENCES users(userId),
     FOREIGN KEY (senderId) REFERENCES users(userId)
 );
 
