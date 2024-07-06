@@ -1,10 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'otp.dart'; // Import the OTP service
-import 'WelcomeScreen.dart'; // Import the settings page
-import 'package:local_auth/local_auth.dart'; // Import the local_auth package
+import 'WelcomeScreen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -22,77 +19,43 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'inter',
+        fontFamily: 'Poppins',
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.white, // Set the seed color to white
+          brightness: Brightness.light, // Ensure light theme
+        ),
+        scaffoldBackgroundColor:
+            Colors.white, // Set scaffold background to white
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white, // Set AppBar background to white
+          iconTheme:
+              IconThemeData(color: Colors.black), // Icon color for AppBar
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontFamily: 'Poppins',
+            fontSize: 20,
+          ),
+        ),
       ),
       home: const SplashScreen(), // SplashScreen as the home widget
     );
   }
 }
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  final LocalAuthentication auth = LocalAuthentication();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkBiometricPreference();
-  }
-
-  Future<void> _checkBiometricPreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    final biometricEnabled = prefs.getBool('biometricEnabled') ?? false;
-
-    if (biometricEnabled) {
-      _authenticateUser();
-    } else {
-      _navigateToWelcomeScreen();
-    }
-  }
-
-  Future<void> _authenticateUser() async {
-    bool authenticated = false;
-    try {
-      authenticated = await auth.authenticate(
-        localizedReason: 'Please authenticate to access the app',
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-        ),
-      );
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-
-    if (authenticated) {
-      _navigateToWelcomeScreen();
-    } else {
-      // Handle authentication failure
-      if (kDebugMode) {
-        print('Authentication failed');
-      }
-    }
-  }
-
-  void _navigateToWelcomeScreen() {
+  Widget build(BuildContext context) {
+    // Delay navigation to WelcomeScreen after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const WelcomeScreen()),
       );
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -105,6 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ],
           ),
         ),
+        // You can add your logo or any other content here
         child: Center(
           child: Center(
             child: Image.asset('assets/logo.png'),
