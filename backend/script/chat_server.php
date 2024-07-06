@@ -1,7 +1,9 @@
 <?php
 
+use Ratchet\App;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+require_once __DIR__ . '/../config/database.php';
 
 class ChatServer implements MessageComponentInterface {
 
@@ -70,5 +72,14 @@ class ChatServer implements MessageComponentInterface {
     }
 
 }
+
+// Create database object
+$database = new Database();
+$pdo = $database->getPdo();
+
+// Run server
+$app = new App('localhost', 8080);
+$app->route('/chat', new ChatServer($pdo), ['*']);
+$app->run();
 
 ?>
