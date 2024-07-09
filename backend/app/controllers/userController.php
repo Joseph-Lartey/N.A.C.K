@@ -67,7 +67,7 @@ class UserController
                     "success" => true, 
                     "id" => $db_details['userId'],
                     "token" => $token,
-                    "web-socket" => "ws://localhost:8080/chat"
+                    "socket-channel" => "ws://localhost:8080/chat"
                 ];
             } else {
                 throw new InvalidArgumentException("Wrong password.");
