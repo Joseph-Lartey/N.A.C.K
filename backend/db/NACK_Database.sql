@@ -38,10 +38,10 @@ CREATE TABLE matches (
 
 -- Create Tokens Table
 CREATE TABLE tokens (
-    token_id INT AUTO_INCREMENT PRIMARY KEY,
+    tokenId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
     token VARCHAR(20),
-    FOREIGN KEY (user_id) REFERENCES users(userId)
+    FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
 
