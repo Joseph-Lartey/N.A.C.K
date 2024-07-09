@@ -56,7 +56,19 @@ class UserController
             $db_password = $db_details['password'];
 
             if (password_verify($login_password, $db_password)) { // throw exception if password is wrong
-                return ["success" => true, "id" => $db_details['userId']];
+
+                // Generate a token
+                $token = bin2hex(random_bytes(16));
+
+                // Store token in database
+                $this->userModel->storeToken($db_details['userId'], $token);
+
+                return [
+                    "success" => true, 
+                    "id" => $db_details['userId'],
+                    "token" => $token,
+                    "web-socket" => "ws://localhost:8080/chat"
+                ];
             } else {
                 throw new InvalidArgumentException("Wrong password.");
             }
