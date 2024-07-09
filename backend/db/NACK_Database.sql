@@ -36,6 +36,15 @@ CREATE TABLE matches (
     FOREIGN KEY (userId2) REFERENCES users(userId)
 );
 
+-- Create Tokens Table
+CREATE TABLE tokens (
+    token_id INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT,
+    token VARCHAR(20),
+    FOREIGN KEY (user_id) REFERENCES users(userId)
+);
+
+
 -- Create Messages Table
 CREATE TABLE messages (
     messageId INT AUTO_INCREMENT PRIMARY KEY,
