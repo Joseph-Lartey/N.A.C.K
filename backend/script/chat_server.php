@@ -72,6 +72,17 @@ class ChatServer implements MessageComponentInterface {
         $conn->close();
     }
 
+    // Validate token sent by request
+    public function validateToken($token){
+        
+        $sql = "SELECT userId FROM tokens WHERE token = :token";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['token' => $token]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? $result['userId']: false ;
+    }
+
 }
 
 // Create database object
