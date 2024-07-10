@@ -5,6 +5,7 @@ require_once __DIR__ . '/model.php';
 class User extends Model
 {
     protected $table = 'users';
+    protected $otherTable = 'tokens';
 
     // Create single user
     public function createUser($firstname, $lastname, $email, $password, $dob)
@@ -55,6 +56,16 @@ class User extends Model
         $sql = "UPDATE {$this->table} SET profile_Image = :profile_Image WHERE userId = :id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(['profile_Image' => $imagePath, 'id' => $id]);
+    }
+
+    // Store the user's login token in the database
+    public function storeToken($id, $token){
+        $sql = "INSERT INTO {$this->otherTable} (userId, token) VALUES (:id, :token)
+            ON DUPLICATE KEY UPDATE
+            token = VALUES(token)";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id' => $id, 'token' => $token]);
     }
 }
 ?>

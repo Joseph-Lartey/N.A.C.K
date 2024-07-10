@@ -31,24 +31,39 @@ class ChatServer implements MessageComponentInterface {
     {
         $data = json_decode($msg, true);
 
-        if(isset($data['userId'])){
-            $this->users[$data['userId']] = $from;
-        }
+        if(isset($data['token'])){
 
-        $fromUserId = $data['userId'];
-        $toUserId = $data['toUserId'];
-        $message = $data['message'];
+            $userId = $this->validateToken($data['token']);
 
-        // save the message to the database
-        $sql = "INSERT INTO messages (matchId, senderId, messageText) VALUES (:toUserId, :fromUserId, :messageSent)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['toUserId' => $toUserId, 'fromUserId' => $fromUserId, 'messageSent' => $message]);
+            // Check if user exists and take action accordingly
+            if(isset($userId)){
+                $this->users[$userId] = $from;
+                $from->send(json_encode(['status' => 'success']));
+            }
+            else {
+                $from->send(json_encode(['status' => 'error', 'message' => 'Invalid token']));
+                $from->close();
+            }
+        } elseif(isset($data['userId']) && array_key_exists($data['userId'], $this->users)){ // check if user is authorized
 
-        if (isset($this->users[$toUserId])) {
-            $this->users[$toUserId]->send(json_encode([
-                'from_user_id' => $fromUserId,
-                'message' => $message,
-            ]));
+            $fromUserId = $data['userId'];
+            $toUserId = $data['toUserId'];
+            $message = $data['message'];
+    
+            // save the message to the database
+            $sql = "INSERT INTO messages (matchId, senderId, messageText) VALUES (:toUserId, :fromUserId, :messageSent)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute(['toUserId' => $toUserId, 'fromUserId' => $fromUserId, 'messageSent' => $message]);
+    
+            if (isset($this->users[$toUserId])) {
+                $this->users[$toUserId]->send(json_encode([
+                    'from_user_id' => $fromUserId,
+                    'message' => $message,
+                ]));
+            }
+        } else {
+            $from->send(json_encode(['status' => 'error', 'message' => 'Unauthorized']));
+            $from->close();
         }
     }
 
@@ -70,6 +85,17 @@ class ChatServer implements MessageComponentInterface {
     {
         echo "error: {$e->getMessage()}";
         $conn->close();
+    }
+
+    // Validate token sent by request
+    public function validateToken($token){
+        
+        $sql = "SELECT userId FROM tokens WHERE token = :token";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['token' => $token]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? $result['userId']: false ;
     }
 
 }
