@@ -1,0 +1,20 @@
+def array_operations(arr):
+    sum_all = 0
+    sum_positive = 0
+    sum_negative = 0
+
+    for num in arr:
+        sum_all += num
+        if num > 0:
+            sum_positive += num
+        elif num < 0:
+            sum_negative += num
+    
+    return sum_all, sum_positive, sum_negative
+
+# Example usage
+arr = [1, -2, 3, -4, 5, -6]
+sum_all, sum_positive, sum_negative = array_operations(arr)
+print(f"Sum of all elements: {sum_all}")
+print(f"Sum of positive elements: {sum_positive}")
+print(f"Sum of negative elements: {sum_negative}")

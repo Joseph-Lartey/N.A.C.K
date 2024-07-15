@@ -368,7 +368,7 @@ class _RegScreenState extends State<RegScreen> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: Color.fromARGB(255, 183,                               66, 91),
+                              color: Color.fromARGB(255, 183, 66, 91),
                             ),
                           ),
                         ),
