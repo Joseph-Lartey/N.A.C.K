@@ -197,7 +197,7 @@ $router->map('GET', '/chat/[i:userId1]/[i:userId2]', function($userId1, $userId2
     echo json_encode($chatController->getChatHistory($userId1, $userId2));
 });
 
-
+// catering for a user forgetting and reseting their password
 $router->map('POST', '/users/reset_password', function () use ($forgetPasswordController) {
     $data = json_decode(file_get_contents('php://input'), true);
     ValidationMiddleWare::handle($data, ['email' => 'email']);
