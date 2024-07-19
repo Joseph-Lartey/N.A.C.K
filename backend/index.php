@@ -194,7 +194,7 @@ $router->map('GET', '/chat/[i:userId1]/[i:userId2]', function($userId1, $userId2
         ]
     );
 
-    $chatController->getChatHistory($userId1, $userId2);
+    echo json_encode($chatController->getChatHistory($userId1, $userId2));
 });
 
 
