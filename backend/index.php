@@ -30,6 +30,7 @@ require_once __DIR__ . '/app/controllers/userController.php';
 require_once __DIR__ . '/app/controllers/likeController.php';
 require_once __DIR__ . '/app/controllers/InterestController.php';
 require_once __DIR__ . '/app/controllers/chatController.php';
+require_once __DIR__ . '/app/controllers/ForgetPasswordController.php';
 require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 
 use Dotenv\Dotenv;
@@ -48,7 +49,7 @@ $userController = new UserController($pdo);
 $likeController = new LikeController($pdo);
 $interestController = new InterestController($pdo);
 $chatController = new ChatController($pdo);
-
+$forgetPasswordController = new ForgetPasswordController($pdo);
 
 // Routes
 // Below I will define all the different end points that the user can send requests to
@@ -194,6 +195,13 @@ $router->map('GET', '/chat/[i:userId1]/[i:userId2]', function($userId1, $userId2
     );
 
     $chatController->getChatHistory($userId1, $userId2);
+});
+
+
+$router->map('POST', '/users/reset_password', function () use ($forgetPasswordController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    ValidationMiddleWare::handle($data, ['email' => 'email']);
+    echo json_encode($forgetPasswordController->resetPassword($data));
 });
 
 

@@ -67,5 +67,15 @@ class User extends Model
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['id' => $id, 'token' => $token]);
     }
+
+    // update password
+    public function resetPassword($email, $newPassword)
+    {
+        $password_hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $sql = "UPDATE {$this->table} SET password = :password WHERE email = :email";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute(['password' => $password_hash, 'email' => $email]);
+    }
+
 }
 ?>
