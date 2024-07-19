@@ -5,7 +5,13 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/../models/user.php';
-require '/xampp/htdocs/N.A.C.K/backend/vendor/autoload.php';
+// require '/xampp/htdocs/N.A.C.K/backend/vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
 
 class ForgetPasswordController
 {
@@ -67,12 +73,12 @@ class ForgetPasswordController
     {
         $mail = new PHPMailer;
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';  
+        $mail->Host = $_ENV["MAIL_HOST"];  
         $mail->SMTPAuth = true;
-        $mail->Username = 'cliffco24@gmail.com';  
-        $mail->Password = 'zsve myrn ajao xhuw'; 
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+        $mail->Username = $_ENV["MAIL_USERNAME"];  
+        $mail->Password = $_ENV["MAIL_PASSWORD"]; 
+        $mail->SMTPSecure = $_ENV["MAIL_SMTPSECURE"];
+        $mail->Port = $_ENV["MAIL_PORT"];
 
         $mail->setFrom('no-reply@example.com', 'nack');
         $mail->addAddress($email);
