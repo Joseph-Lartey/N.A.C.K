@@ -46,6 +46,7 @@ dependencies:
   local_auth: ^2.1.4
   curved_navigation_bar: ^1.0.3
   http:
+  provider:
 
 dev_dependencies:
   flutter_test:
