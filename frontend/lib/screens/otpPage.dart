@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'otp.dart'; // Import the OTP service
+import '../services/otp.dart'; // Import the OTP service
 import 'profilesetup.dart'; // Import the InterestsPage
 
 class OtpPage extends StatefulWidget {

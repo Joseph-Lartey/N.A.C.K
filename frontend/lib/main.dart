@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'otp.dart'; // Import the OTP service
-import 'WelcomeScreen.dart';
+import 'services/otp.dart'; // Import the OTP service
+import 'screens/WelcomeScreen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

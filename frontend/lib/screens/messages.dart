@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'navbar.dart'; // Ensure CustomBottomAppBar is implemented here
+import '../widgets/navbar.dart'; // Ensure CustomBottomAppBar is implemented here
 import 'chatscreen.dart'; // Ensure ChatScreen is implemented correctly
 
 class MessagesPage extends StatefulWidget {

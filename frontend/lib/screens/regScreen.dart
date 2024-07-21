@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'otp.dart'; // Import the OTP service
+import '../services/otp.dart'; // Import the OTP service
 import 'otpPage.dart'; // Import the OTP page
 import 'loginScreen.dart';
 import 'package:intl/intl.dart'; // Import intl package for date formatting
