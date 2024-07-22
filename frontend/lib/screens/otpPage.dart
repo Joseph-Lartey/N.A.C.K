@@ -4,8 +4,21 @@ import 'profilesetup.dart'; // Import the InterestsPage
 
 class OtpPage extends StatefulWidget {
   final String email;
+  final String firstname;
+  final String lastname;
+  final String password;
+  final String confirmPassword;
+  final String dob;
 
-  const OtpPage({Key? key, required this.email}) : super(key: key);
+  const OtpPage({
+    Key? key, 
+    required this.email,
+    required this.firstname,
+    required this.lastname,
+    required this.password,
+    required this.confirmPassword,
+    required this.dob
+  }) : super(key: key);
 
   @override
   State<OtpPage> createState() => _OtpPageState();

@@ -65,7 +65,16 @@ class _RegScreenState extends State<RegScreen> {
     OTPService.sendOTP(emailController.text);
     Navigator.push(
       context,
-      _createRoute(OtpPage(email: emailController.text)),
+      _createRoute(
+        OtpPage(
+          email: emailController.text,
+          firstname: firstNameController.text,
+          lastname: lastNameController.text,
+          password: passwordController.text,
+          confirmPassword: confirmPasswordController.text,
+          dob: dobController.text
+        )
+      ),
     );
   }
 
