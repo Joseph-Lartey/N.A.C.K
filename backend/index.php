@@ -32,6 +32,8 @@ require_once __DIR__ . '/app/controllers/InterestController.php';
 require_once __DIR__ . '/app/controllers/chatController.php';
 require_once __DIR__ . '/app/controllers/ForgetPasswordController.php';
 require_once __DIR__ . '/app/middleware/validationMiddleware.php';
+require_once __DIR__ . '/app/controllers/changePasswordController.php';
+
 
 use Dotenv\Dotenv;
 
@@ -50,6 +52,7 @@ $likeController = new LikeController($pdo);
 $interestController = new InterestController($pdo);
 $chatController = new ChatController($pdo);
 $forgetPasswordController = new ForgetPasswordController($pdo);
+$changePasswordController = new ChangePasswordController($pdo);
 
 // Routes
 // Below I will define all the different end points that the user can send requests to
@@ -205,12 +208,23 @@ $router->map('POST', '/users/reset_password', function () use ($forgetPasswordCo
 });
 
 
+$router->map('POST', '/users/change_password', function () use ($changePasswordController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    ValidationMiddleWare::handle($data, [
+        'email' => 'email',
+        'oldPassword' => 'string',
+        'newPassword' => 'string'
+    ]);
+    echo json_encode($changePasswordController->changePassword($data));
+});
+
+
 $match = $router->match();
 
 if ($match && is_callable($match['target'])) {
     call_user_func_array($match['target'], $match['params']);
 } else {
-    // No route was matched
     http_response_code(404);
     echo json_encode(['status' => 'error', 'message' => 'Route not found']);
 }
+
