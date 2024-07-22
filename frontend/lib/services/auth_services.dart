@@ -12,7 +12,6 @@ class AuthService {
       String username,
       String email,
       String password,
-      String gender,
       String dob) async {
     final response = await http.post(Uri.parse('$baseUrl/users'),
         headers: {'Content-Type': 'application/json'},
@@ -26,10 +25,10 @@ class AuthService {
           'dob': dob
         }));
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+    if (response.statusCode == 500 || response.statusCode == 503) {
+      throw Exception("Server error");
     } else {
-      throw Exception('Failed to register user');
+      return jsonDecode(response.body);
     }
   }
 

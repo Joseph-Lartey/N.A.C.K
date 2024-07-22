@@ -8,7 +8,7 @@ class AuthProvider with ChangeNotifier {
   User? _user;
   String? _token;
   String? _socketChannel;
-  bool? _registrationSuccess;
+  bool _registrationSuccess = false;
   bool _loginSuccess = false;
   String? _errorMessage;
 
@@ -56,16 +56,18 @@ class AuthProvider with ChangeNotifier {
 
   // Create user
   Future<void> register(String firstname, String lastname, String username,
-      String email, String password, String gender, String dob) async {
+      String email, String password, String dob) async {
     setLoading(true);
 
     try {
       final registerResponse = await _authService.register(
-          firstname, lastname, username, email, password, gender, dob);
+          firstname, lastname, username, email, password, dob);
 
       if (registerResponse['success'] == true) {
         _registrationSuccess = true;
       }
+
+      print(registerResponse);
     } catch (e) {
       _registrationSuccess = false;
       print(e);
