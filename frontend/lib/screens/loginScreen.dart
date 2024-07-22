@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'homePage.dart';
@@ -37,8 +38,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Check if the login request was successful
     if (authProvider.loginSuccess == false) {
-      // TODO: Include proper alert
-      print(authProvider.errorMessage);
+      // print(authProvider.errorMessage);
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Oops...',
+        text: "Wrong email or password",
+      );
     } else {
       Navigator.push(
         context,
