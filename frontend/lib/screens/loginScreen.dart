@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import 'homePage.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,6 +27,24 @@ class _LoginScreenState extends State<LoginScreen> {
       _isButtonEnabled = _emailController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty;
     });
+  }
+
+  // Log user in
+  void _loginRequest(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    await authProvider.login(_emailController.text, _passwordController.text);
+
+    // Check if the login request was successful
+    if (authProvider.loginSuccess == false) {
+      // TODO: Include proper alert
+      print(authProvider.errorMessage);
+    } else {
+      Navigator.push(
+        context,
+        _createRoute(const HomePage()),
+      );
+    }
   }
 
   @override
@@ -163,16 +183,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
                       ElevatedButton(
                         onPressed: _isButtonEnabled
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  _createRoute(const HomePage()),
-                                );
-                              }
+                            ? () => _loginRequest(context)
                             : null,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 100, vertical: 15), // Adjusted padding
+                              horizontal: 100,
+                              vertical: 15), // Adjusted padding
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),

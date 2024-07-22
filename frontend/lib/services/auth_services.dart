@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final String baseUrl = "http://4.231.236.2/N.A.C.K/backend/";
+  final String baseUrl = "http://4.231.236.2/N.A.C.K/backend";
+  // final String baseUrl = "http://localhost/N.A.C.K/backend";
 
   // Register users
   Future<Map<String, dynamic>> register(
@@ -38,10 +39,10 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}));
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+    if (response.statusCode == 500 || response.statusCode == 503) {
+      throw Exception("Server error");
     } else {
-      throw Exception("Failed to login");
+      return jsonDecode(response.body);
     }
   }
 

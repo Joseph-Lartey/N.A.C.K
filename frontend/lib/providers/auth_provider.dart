@@ -9,11 +9,15 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   String? _socketChannel;
   bool? _registrationSuccess;
+  bool _loginSuccess = false;
+  String? _errorMessage;
 
   User? get user => _user;
   String? get token => _token;
   String? get socketChannel => _socketChannel;
   bool? get registrationSuccess => _registrationSuccess;
+  bool? get loginSuccess => _loginSuccess;
+  String? get errorMessage => _errorMessage;
   bool isLoading = false;
 
   // Communicate whether or not the fetch is loading
@@ -28,14 +32,24 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final loginResponse = await _authService.login(email, password);
-      _token = loginResponse['token'];
 
-      // Get the profile details of the user
-      _user = User.fromJson(await _authService.getProfile(loginResponse['id']));
-      _socketChannel = loginResponse['socket-channel'];
+      if (loginResponse['success'] == true) {
+        _loginSuccess = true;
+
+        // _token = loginResponse['token'];
+        // _socketChannel = loginResponse['socket-channel'];
+
+        // Get the profile details of the user
+        _user =
+            User.fromJson(await _authService.getProfile(loginResponse['id']));
+      } else {
+        _loginSuccess = false;
+        _errorMessage = loginResponse['error'];
+      }
 
       setLoading(false);
     } catch (e) {
+      //TODO: Include bottom banner message
       print(e);
     }
   }
