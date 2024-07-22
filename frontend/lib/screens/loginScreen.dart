@@ -12,8 +12,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isButtonEnabled = false;
 
   @override
@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 50),
                       TextField(
                         controller: _emailController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           suffixIcon: Icon(
                             Icons.check,
                             color: Colors.grey,
@@ -174,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         controller: _passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           suffixIcon: Icon(
                             Icons.visibility_off,
                             color: Colors.grey,
