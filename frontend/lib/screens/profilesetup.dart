@@ -1,5 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import 'interests.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileSetupPage extends StatefulWidget {
   const ProfileSetupPage({Key? key}) : super(key: key);
@@ -9,10 +15,13 @@ class ProfileSetupPage extends StatefulWidget {
 }
 
 class _ProfileSetupPageState extends State<ProfileSetupPage> {
+  int? userId;
+  final ImagePicker _imagePicker = ImagePicker();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   String? _selectedGender;
   bool _isButtonActive = false;
+  File? _imageSelected;
 
   @override
   void initState() {
@@ -36,6 +45,36 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     });
   }
 
+  Future<void> selectImageFromGallery() async {
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (image != null) {
+      setState(() {
+        _imageSelected = File(image.path);
+      });
+    }
+  }
+
+  Future<void> uploadImage() async {
+    if (_imageSelected == null) return;
+
+    userId = Provider.of<AuthProvider>(context, listen: false).user!.userId;
+
+    final uri =
+        Uri.parse('http://16.171.150.101/N.A.C.K/backend/upload/$userId');
+    final request = http.MultipartRequest('POST', uri)
+      ..files.add(await http.MultipartFile.fromPath(
+          'profile_image', _imageSelected!.path));
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully');
+    } else {
+      print('Failed to upload image');
+    }
+  }
+
   Route _createRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -55,25 +94,49 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     );
   }
 
+  // Create a profile
+  void _createProfile() async {
+    // create profile
+    final response = await http.post(
+        Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userId': userId,
+          'username': _usernameController.text,
+          'gender': _selectedGender,
+          'bio': _bioController.text,
+        }));
+
+    if (response.statusCode == 500 || response.statusCode == 503) {
+      throw Exception("Server error");
+    } else {
+      // Upload user profile
+      uploadImage();
+
+      // Navigate to next page
+      _createRoute(InterestsPage());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0, // Remove the shadow
         backgroundColor: Colors.white, // Make the AppBar transparent
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            // Handle back button press
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.black),
+        //   onPressed: () {
+        //     // Handle back button press
+        //   },
+        // ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -114,29 +177,40 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.grey[200],
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.grey[700],
-                      size: 30,
-                    ),
+                    backgroundImage: _imageSelected != null
+                        ? FileImage(_imageSelected!)
+                        : null,
+                    child: _imageSelected == null
+                        ? Align(
+                            alignment: Alignment.bottomRight,
+                            child: IconButton(
+                              icon: Icon(Icons.camera_alt,
+                                  color: Colors.grey[700], size: 30),
+                              onPressed: selectImageFromGallery,
+                            ),
+                          )
+                        : null,
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromARGB(255, 183, 66, 91),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 20,
+                    child: GestureDetector(
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color.fromARGB(255, 183, 66, 91),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
+                      onTap: () => selectImageFromGallery(),
                     ),
                   ),
                 ],
@@ -216,11 +290,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                   color: Colors.white,
                 ),
               ),
-              onPressed: _isButtonActive
-                  ? () {
-                      _createRoute(InterestsPage());
-                    }
-                  : null,
+              onPressed: _isButtonActive ? () => _createProfile() : null,
             ),
             SizedBox(height: 20),
           ],
@@ -264,7 +334,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           items: <String>['Male', 'Female', 'Other', 'Prefer not to say']
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
-              value: value,
+              value: value.toLowerCase(),
               child: Text(value),
             );
           }).toList(),
