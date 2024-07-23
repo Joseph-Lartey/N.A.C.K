@@ -105,7 +105,7 @@ $database = new Database();
 $pdo = $database->getPdo();
 
 // Run server
-$app = new App('localhost', 8080);
+$app = new App('0.0.0.0', 8080);
 $app->route('/chat', new ChatServer($pdo), ['*']);
 $app->run();
 

@@ -2,7 +2,7 @@
 
 class Interest extends Model
 {
-    protected $table = 'Interests';
+    protected $table = 'interests';
 
     public function getAllInterests()
     {
