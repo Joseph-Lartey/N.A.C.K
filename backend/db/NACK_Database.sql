@@ -135,7 +135,7 @@ CREATE TABLE likes (
     liked_userId INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userId) REFERENCES users(userId),
-    FOREIGN KEY (likedUserId) REFERENCES users(userId)
+    FOREIGN KEY (liked_userId) REFERENCES users(userId)
 );
 
 -- Sample Queries:

@@ -46,8 +46,6 @@ class AuthService {
   Future<Map<String, dynamic>> getProfile(int userId) async {
     final response = await http.get(Uri.parse('$baseUrl/users/$userId'));
 
-    print(response.body);
-
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
