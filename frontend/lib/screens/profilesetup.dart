@@ -142,6 +142,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         elevation: 0, // Remove the shadow
         backgroundColor: Colors.white, // Make the AppBar transparent
         // leading: IconButton(
