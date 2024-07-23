@@ -55,11 +55,21 @@ class _OtpPageState extends State<OtpPage> {
         await authProvider.login(widget.email, widget.password);
 
         print("registration finished");
+        print(authProvider.user);
+
+        if (authProvider.user == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User login failed!')),
+          );
+          return;
+        }
+
         // navigate to profile setup page
         Navigator.push(
           context,
-          _createRoute(
-              const ProfileSetupPage()), // Using custom route transition
+          _createRoute(ProfileSetupPage(
+            userId: authProvider.user?.userId,
+          )), // Using custom route transition
         );
       }
     } else {
@@ -110,6 +120,7 @@ class _OtpPageState extends State<OtpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(255, 183, 66, 91),
         elevation: 0,
         leading: IconButton(
