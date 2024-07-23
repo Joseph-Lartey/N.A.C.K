@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'otp.dart'; // Import the OTP service
+import 'services/otp.dart'; // Import the OTP service
 import 'WelcomeScreen.dart';
 
 void main() {
