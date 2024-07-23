@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled3/homePage.dart';
+import 'package:untitled3/screens/homePage.dart';
 
 class InterestsPage extends StatefulWidget {
   const InterestsPage({Key? key}) : super(key: key);

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import 'homePage.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,8 +12,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isButtonEnabled = false;
 
   @override
@@ -25,6 +28,29 @@ class _LoginScreenState extends State<LoginScreen> {
       _isButtonEnabled = _emailController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty;
     });
+  }
+
+  // Log user in
+  void _loginRequest(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    await authProvider.login(_emailController.text, _passwordController.text);
+
+    // Check if the login request was successful
+    if (authProvider.loginSuccess == false) {
+      // print(authProvider.errorMessage);
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Oops...',
+        text: "Wrong email or password",
+      );
+    } else {
+      Navigator.push(
+        context,
+        _createRoute(const HomePage()),
+      );
+    }
   }
 
   @override
@@ -132,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 50),
                       TextField(
                         controller: _emailController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           suffixIcon: Icon(
                             Icons.check,
                             color: Colors.grey,
@@ -148,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         controller: _passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           suffixIcon: Icon(
                             Icons.visibility_off,
                             color: Colors.grey,
@@ -163,16 +189,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
                       ElevatedButton(
                         onPressed: _isButtonEnabled
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  _createRoute(const HomePage()),
-                                );
-                              }
+                            ? () => _loginRequest(context)
                             : null,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 100, vertical: 15), // Adjusted padding
+                              horizontal: 100,
+                              vertical: 15), // Adjusted padding
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
