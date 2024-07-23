@@ -13,7 +13,7 @@ CREATE TABLE users (
     gender VARCHAR(50),
     dob DATE,
     bio TEXT,
-    profile_Image VARCHAR(255),
+    profileImage VARCHAR(255),
     verified BOOLEAN DEFAULT FALSE
 );
 
@@ -21,19 +21,19 @@ CREATE TABLE users (
 CREATE TABLE userPreferences (
     preferenceId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
-    gender_preference VARCHAR(50),
-    age_range_min INT,
-    age_range_max INT,
+    genderPreference VARCHAR(50),
+    ageRangeMin INT,
+    ageRangeMax INT,
     FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
 -- Create Matches Table
 CREATE TABLE matches (
-    match_id INT AUTO_INCREMENT PRIMARY KEY,
-    userId_1 INT,
-    userId_2 INT,
-    FOREIGN KEY (userId_1) REFERENCES users(userId),
-    FOREIGN KEY (userId_2) REFERENCES users(userId)
+    matchId INT AUTO_INCREMENT PRIMARY KEY,
+    userId1 INT,
+    userId2 INT,
+    FOREIGN KEY (userId1) REFERENCES users(userId),
+    FOREIGN KEY (userId2) REFERENCES users(userId)
 );
 
 -- Create Tokens Table
@@ -109,11 +109,11 @@ CREATE TABLE reportedUsers (
 
 -- Create Push Notifications Table
 CREATE TABLE pushNotifications (
-    notification_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
+    notificationId INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT,
     message TEXT,
     `read` BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (user_id) REFERENCES users(userId)
+    FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
 -- Create Consent Contracts Table
@@ -130,12 +130,12 @@ CREATE TABLE consentContracts (
 
 -- Create Likes Table
 CREATE TABLE likes (
-    like_id INT AUTO_INCREMENT PRIMARY KEY,
+    likeId INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
-    liked_userId INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    likedUserId INT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userId) REFERENCES users(userId),
-    FOREIGN KEY (liked_userId) REFERENCES users(userId)
+    FOREIGN KEY (likedUserId) REFERENCES users(userId)
 );
 
 -- Sample Queries:

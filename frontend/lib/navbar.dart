@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../screens/profile.dart';
-import '../screens/homePage.dart';
-import '../screens/settings.dart';
-import '../screens/messages.dart';
+import 'profile.dart';
+import 'homePage.dart';
+import 'settings.dart';
+import 'messages.dart';
 
 class CustomBottomAppBar extends StatelessWidget {
   const CustomBottomAppBar({Key? key}) : super(key: key);

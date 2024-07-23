@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/navbar.dart';  
+import 'navbar.dart';  
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
