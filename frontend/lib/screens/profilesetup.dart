@@ -60,7 +60,12 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   Future<void> uploadImage() async {
     if (_imageSelected == null) return;
 
-    userId = Provider.of<AuthProvider>(context, listen: false).user!.userId;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.user;
+
+    if (user == null) return;
+
+    userId = user.userId;
 
     final uri =
         Uri.parse('http://16.171.150.101/N.A.C.K/backend/upload/$userId');
@@ -96,7 +101,9 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
 
   // Create a profile
   void _createProfile() async {
+    print("working");
     // create profile
+    // TODO: test that profile endpoint works
     final response = await http.post(
         Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
         headers: {'Content-Type': 'application/json'},
@@ -106,6 +113,8 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           'gender': _selectedGender,
           'bio': _bioController.text,
         }));
+
+    print(response.body);
 
     if (response.statusCode == 500 || response.statusCode == 503) {
       throw Exception("Server error");
@@ -182,7 +191,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                         : null,
                     child: _imageSelected == null
                         ? Align(
-                            alignment: Alignment.bottomRight,
+                            alignment: Alignment.center,
                             child: IconButton(
                               icon: Icon(Icons.camera_alt,
                                   color: Colors.grey[700], size: 30),
