@@ -16,7 +16,8 @@ class _RegScreenState extends State<RegScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController classController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -224,21 +225,6 @@ class _RegScreenState extends State<RegScreen> {
         );
       },
     );
-  }
-
-  void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        dobController.text = DateFormat('yyyy-MM-dd').format(picked);
-        _checkButtonState();
-      });
-    }
   }
 
   @override
