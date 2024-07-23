@@ -114,7 +114,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       uploadImage();
 
       // Navigate to next page
-      _createRoute(InterestsPage());
+      _createRoute(const InterestsPage());
     }
   }
 
@@ -137,7 +137,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const SizedBox(height: 10),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
@@ -158,8 +158,8 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Enter your details to set up your profile',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -167,7 +167,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
                 // Handle profile picture upload
@@ -198,11 +198,11 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                       child: Container(
                         width: 30,
                         height: 30,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Color.fromARGB(255, 183, 66, 91),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Icon(
                             Icons.add,
                             color: Colors.white,
@@ -216,8 +216,8 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 ],
               ),
             ),
-            SizedBox(height: 30),
-            Align(
+            const SizedBox(height: 30),
+            const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Username',
@@ -227,7 +227,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
@@ -235,17 +235,17 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildGenderSelector(),
-            SizedBox(height: 20),
-            Align(
+            const SizedBox(height: 20),
+            const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Bio',
@@ -255,7 +255,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: _bioController,
               maxLines: 4,
@@ -264,35 +264,35 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Color.fromARGB(255, 215, 215, 215)),
+                  borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 215, 215, 215)),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
                 backgroundColor: _isButtonActive
-                    ? Color.fromARGB(255, 183, 66, 91)
+                    ? const Color.fromARGB(255, 183, 66, 91)
                     : Colors.grey,
               ),
-              child: Text(
+              onPressed: _isButtonActive ? () => _createProfile() : null,
+              child: const Text(
                 'Continue',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
                 ),
               ),
-              onPressed: _isButtonActive ? () => _createProfile() : null,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -303,27 +303,28 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Gender',
           style: TextStyle(
             fontSize: 16,
             color: Color(0xFFB7425B),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _selectedGender,
-          icon: Icon(Icons.arrow_drop_down),
+          icon: const Icon(Icons.arrow_drop_down),
           iconSize: 24,
           elevation: 16,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
+              borderSide: const BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.circular(8),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           onChanged: (String? newValue) {
             setState(() {
