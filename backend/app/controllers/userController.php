@@ -152,7 +152,6 @@ class UserController
             return ["success" => false, "message" => "File was not found in payload"];
 
         } catch (Exception $e){
-
             return ["success" => false, "message" => $e->getMessage()];
 
         }
@@ -163,7 +162,7 @@ class UserController
         try {
             $result = $this->userModel->updateProfile($id, $username, $bio, $gender);
             if ($result) {
-                return $result;
+                return ["success" => true, "message" => "Successful profile creation"];;
             } else {
                 header('HTTP/1.1 404 Not Found');
                 return ["success" => false, "error" => "Could not update"];
