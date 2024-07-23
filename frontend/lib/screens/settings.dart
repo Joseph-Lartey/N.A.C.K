@@ -171,6 +171,11 @@ class SettingsPageState extends State<SettingsPage> {
               // Handle terms and conditions action
             },
           ),
+          ListTile(
+            title: const Text('Logout'),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: _showLogoutConfirmationDialog,
+          ),
         ],
       ),
       bottomNavigationBar: const CustomBottomAppBar(),
