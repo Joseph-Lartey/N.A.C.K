@@ -32,12 +32,13 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final loginResponse = await _authService.login(email, password);
+      print(loginResponse);
 
       if (loginResponse['success'] == true) {
         _loginSuccess = true;
 
-        // _token = loginResponse['token'];
-        // _socketChannel = loginResponse['socket-channel'];
+        _token = loginResponse['token'];
+        _socketChannel = loginResponse['socket-channel'];
 
         // Get the profile details of the user
         _user =
@@ -66,11 +67,9 @@ class AuthProvider with ChangeNotifier {
       if (registerResponse['success'] == true) {
         _registrationSuccess = true;
       }
-
-      print(registerResponse);
     } catch (e) {
       _registrationSuccess = false;
-      print(e);
+      print("Error is: $e");
     }
 
     setLoading(false);

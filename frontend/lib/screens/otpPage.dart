@@ -51,6 +51,7 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       if (authProvider.registrationSuccess == true) {
+        print("registration finished");
         // navigate to profile setup page
         Navigator.push(
           context,
