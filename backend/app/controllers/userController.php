@@ -158,6 +158,22 @@ class UserController
         }
     }
 
+    // Create user profile
+    public function createProfile($id, $username, $gender, $bio){
+        try {
+            $result = $this->userModel->updateProfile($id, $username, $bio, $gender);
+            if ($result) {
+                return $result;
+            } else {
+                header('HTTP/1.1 404 Not Found');
+                return ["success" => false, "error" => "Could not update"];
+            }
+        } catch (Exception $e) {
+            header('HTTP/1.1 422 Unprocessable Entity');
+            return ["success" => false, "error" => $e->getMessage()];
+        }
+    }
+
 
 
 }

@@ -68,6 +68,19 @@ class User extends Model
         $stmt->execute(['id' => $id, 'token' => $token]);
     }
 
+    // Setup the user's profile with bio and username
+    public function updateProfile($id, $username, $bio, $gender){
+        $sql = "UPDATE {$this->table} SET username = :username, bio = :bio, gender = :gender WHERE id = :id";
+    
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id' => $id,
+            'username' => $username,
+            'bio' => $bio,
+            'gender' => $gender
+        ]);
+    }
+
     // update password
     public function resetPassword($email, $newPassword)
     {
