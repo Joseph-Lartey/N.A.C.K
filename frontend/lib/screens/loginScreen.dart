@@ -163,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Icons.check,
                             color: Colors.grey,
                           ),
-                          labelText: 'Email (Ashesi email)',
+                          labelText: 'Email',
                           labelStyle: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 183, 66, 91),
