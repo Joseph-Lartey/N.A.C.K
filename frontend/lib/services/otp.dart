@@ -1,4 +1,5 @@
 import 'package:email_otp/email_otp.dart';
+
 class OTPService {
   static void configure() {
     // Basic configuration
@@ -16,7 +17,8 @@ class OTPService {
       emailPort: EmailPort.port587,
       secureType: SecureType.tls,
       username: 'cliffco24@gmail.com',
-      password: 'zsve myrn ajao xhuw',
+      //password: 'zsve myrn ajao xhuw',
+      password: 'fonk sufp yrpk alif',
     );
 
     // Custom email template with your specified colors
@@ -40,6 +42,5 @@ class OTPService {
 
   static bool verifyOTP(String otp) {
     return EmailOTP.verifyOTP(otp: otp);
-
   }
 }
