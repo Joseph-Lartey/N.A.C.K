@@ -20,7 +20,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   String? _selectedGender;
-  bool _isButtonActive = false;
   File? _imageSelected;
   final _formKey = GlobalKey<FormState>();
   String? _imageError;
@@ -28,8 +27,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   @override
   void initState() {
     super.initState();
-    _usernameController.addListener(_updateButtonState);
-    _bioController.addListener(_updateButtonState);
   }
 
   @override
@@ -37,15 +34,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     _usernameController.dispose();
     _bioController.dispose();
     super.dispose();
-  }
-
-  void _updateButtonState() {
-    setState(() {
-      _isButtonActive = _usernameController.text.isNotEmpty &&
-          _bioController.text.isNotEmpty &&
-          _selectedGender != null &&
-          _imageSelected != null;
-    });
   }
 
   Future<void> selectImageFromGallery() async {
@@ -57,7 +45,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       setState(() {
         _imageSelected = File(image.path);
         _imageError = null;
-        _updateButtonState();
       });
     }
   }
@@ -131,9 +118,10 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         // Navigate to next page
         Navigator.of(context).push(_createRoute(const InterestsPage()));
       }
-    } else if (_imageSelected == null) {
+    } else {
       setState(() {
-        _imageError = 'Please select an image';
+        _imageError = _imageSelected == null ? 'Please select an image' : null;
+        _formKey.currentState!.validate();
       });
     }
   }
@@ -266,13 +254,13 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
                 validator: (value) {
-                  String regularExpression = 'r^[A-Za-z][A-Za-z0-9_]{7,29}';
-                  RegExp regExp = new RegExp(regularExpression);
+                  String pattern = r'^[A-Za-z][A-Za-z0-9]*$';
+                  RegExp regExp = RegExp(pattern);
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
                   }
                   if (!regExp.hasMatch(value)) {
-                    return 'Username must be between 8 and 30 characters and start with a letter';
+                    return 'Username must start with a letter';
                   }
                   return null;
                 },
@@ -320,11 +308,9 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: _isButtonActive
-                      ? const Color.fromARGB(255, 183, 66, 91)
-                      : Colors.grey,
+                  backgroundColor: const Color.fromARGB(255, 183, 66, 91),
                 ),
-                onPressed: _isButtonActive ? _createProfile : null,
+                onPressed: _createProfile,
                 child: const Text(
                   'Continue',
                   style: TextStyle(
@@ -371,7 +357,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           onChanged: (String? newValue) {
             setState(() {
               _selectedGender = newValue;
-              _updateButtonState();
             });
           },
           validator: (value) {
