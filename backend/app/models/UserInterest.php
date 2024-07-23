@@ -1,7 +1,7 @@
 <?php
 class UserInterest extends Model
 {
-    protected $table = 'UserInterests';
+    protected $table = 'userInterests';
 
     public function getUserInterests($userId)
     {
