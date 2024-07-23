@@ -36,6 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     await authProvider.login(_emailController.text, _passwordController.text);
 
+    print(authProvider.user);
+
     // Check if the login request was successful
     if (authProvider.loginSuccess == false) {
       // print(authProvider.errorMessage);
