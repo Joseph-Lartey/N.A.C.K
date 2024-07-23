@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'chatscreen.dart';
 import 'homePage.dart';
+import 'messages.dart';
 
 class MatchPage extends StatefulWidget {
   const MatchPage({Key? key}) : super(key: key);
@@ -16,7 +18,8 @@ class MatchPageState extends State<MatchPage> {
         const end = 1.0;
         const curve = Curves.easeInOut;
 
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return FadeTransition(
           opacity: animation.drive(tween),
@@ -34,7 +37,8 @@ class MatchPageState extends State<MatchPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Color.fromARGB(255, 183, 66, 91)),
+          icon:
+              const Icon(Icons.close, color: Color.fromARGB(255, 183, 66, 91)),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -93,7 +97,8 @@ class MatchPageState extends State<MatchPage> {
                     const CircleAvatar(
                       backgroundColor: Colors.white,
                       radius: 30,
-                      child: Icon(Icons.favorite, color: Color.fromARGB(255, 183, 66, 91), size: 30),
+                      child: Icon(Icons.favorite,
+                          color: Color.fromARGB(255, 183, 66, 91), size: 30),
                     ),
                   ],
                 ),
@@ -109,36 +114,52 @@ class MatchPageState extends State<MatchPage> {
                     // Handle send a message press
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 85, vertical: 15), // Adjusted padding
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 85, vertical: 15), // Adjusted padding
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                     backgroundColor: const Color.fromARGB(255, 183, 66, 91),
                   ),
-                  child: const Text(
-                    'Send a Message',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Color.fromARGB(255, 255, 255, 255),
+                  child: GestureDetector(
+                    child: const Text(
+                      'Send a Message',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
                     ),
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(createFadeRoute(ChatScreen(Message(
+                        name: 'Jasmine Young',
+                        avatar: 'assets/img1.jpg',
+                        lastMessage: 'Last night was great?',
+                        time: '2 mins ago',
+                        unreadCount: 3,
+                      ))));
+                    },
                   ),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushReplacement(createFadeRoute(const HomePage()));
+                    Navigator.of(context)
+                        .pushReplacement(createFadeRoute(const HomePage()));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                     backgroundColor: const Color.fromARGB(255, 249, 171, 189),
-                    padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 100, vertical: 15),
                   ),
                   child: const Text(
                     'Keep Swiping',
-                    style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 183, 66, 91)),
+                    style: TextStyle(
+                        fontSize: 20, color: Color.fromARGB(255, 183, 66, 91)),
                   ),
                 ),
               ],
