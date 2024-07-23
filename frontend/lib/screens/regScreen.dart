@@ -45,7 +45,7 @@ class _RegScreenState extends State<RegScreen> {
     confirmPasswordController.dispose();
     dobController.dispose();
     classController.dispose();
-    
+
     super.dispose();
   }
 
@@ -65,16 +65,13 @@ class _RegScreenState extends State<RegScreen> {
     OTPService.sendOTP(emailController.text);
     Navigator.push(
       context,
-      _createRoute(
-        OtpPage(
+      _createRoute(OtpPage(
           email: emailController.text,
           firstname: firstNameController.text,
           lastname: lastNameController.text,
           password: passwordController.text,
           confirmPassword: confirmPasswordController.text,
-          dob: dobController.text
-        )
-      ),
+          dob: dobController.text)),
     );
   }
 
@@ -97,7 +94,6 @@ class _RegScreenState extends State<RegScreen> {
     );
   }
 
-
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -118,7 +114,6 @@ class _RegScreenState extends State<RegScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 183, 66, 91),
-
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: Colors.white,
@@ -194,11 +189,9 @@ class _RegScreenState extends State<RegScreen> {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: TextField(
-
                                 controller: firstNameController,
                                 decoration: const InputDecoration(
                                   suffixIcon: Icon(
-
                                     Icons.check,
                                     color: Colors.grey,
                                   ),
@@ -221,7 +214,6 @@ class _RegScreenState extends State<RegScreen> {
                                 controller: lastNameController,
                                 decoration: const InputDecoration(
                                   suffixIcon: Icon(
-
                                     Icons.check,
                                     color: Colors.grey,
                                   ),
@@ -247,7 +239,7 @@ class _RegScreenState extends State<RegScreen> {
                             Icons.check,
                             color: Colors.grey,
                           ),
-                          labelText: 'Email (Ashesi email)',
+                          labelText: 'Email',
                           labelStyle: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 183, 66, 91),
@@ -377,7 +369,7 @@ class _RegScreenState extends State<RegScreen> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: Color.fromARGB(255, 183,                               66, 91),
+                              color: Color.fromARGB(255, 183, 66, 91),
                             ),
                           ),
                         ),
@@ -393,4 +385,3 @@ class _RegScreenState extends State<RegScreen> {
     );
   }
 }
-
