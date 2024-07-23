@@ -32,8 +32,8 @@ CREATE TABLE matches (
     match_id INT AUTO_INCREMENT PRIMARY KEY,
     userId_1 INT,
     userId_2 INT,
-    FOREIGN KEY (userId1) REFERENCES users(userId),
-    FOREIGN KEY (userId2) REFERENCES users(userId)
+    FOREIGN KEY (userId_1) REFERENCES users(userId),
+    FOREIGN KEY (userId_2) REFERENCES users(userId)
 );
 
 -- Create Tokens Table
