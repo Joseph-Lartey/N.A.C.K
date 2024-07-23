@@ -14,6 +14,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   bool _isButtonEnabled = false;
 
   @override
@@ -25,31 +27,79 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _checkButtonState() {
     setState(() {
-      _isButtonEnabled = _emailController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty;
+      _isButtonEnabled = _formKey.currentState?.validate() ?? false;
     });
   }
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    }
+    RegExp emailRegExp = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegExp.hasMatch(value)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+    RegExp hasUppercase = RegExp(r'[A-Z]');
+    RegExp hasLowercase = RegExp(r'[a-z]');
+    RegExp hasDigit = RegExp(r'\d');
+    RegExp hasSpecialChar = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+
+    if (!hasUppercase.hasMatch(value)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!hasLowercase.hasMatch(value)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!hasDigit.hasMatch(value)) {
+      return 'Password must contain at least one digit';
+    }
+    if (!hasSpecialChar.hasMatch(value)) {
+      return 'Password must contain at least one special character';
+    }
+    return null;
+  }
+
+  // void _submit() {
+  //   if (_formKey.currentState?.validate() ?? false) {
+  //     Navigator.push(
+  //       context,
+  //       _createRoute(const HomePage()),
+  //     );
+  //   }
+  // }
+
   // Log user in
   void _loginRequest(BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (_formKey.currentState?.validate() ?? false) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    await authProvider.login(_emailController.text, _passwordController.text);
+      await authProvider.login(_emailController.text, _passwordController.text);
 
-    // Check if the login request was successful
-    if (authProvider.loginSuccess == false) {
-      // print(authProvider.errorMessage);
-      QuickAlert.show(
-        context: context,
-        type: QuickAlertType.error,
-        title: 'Oops...',
-        text: "Wrong email or password",
-      );
-    } else {
-      Navigator.push(
-        context,
-        _createRoute(const HomePage()),
-      );
+      // Check if the login request was successful
+      if (authProvider.loginSuccess == false) {
+        // print(authProvider.errorMessage);
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Oops...',
+          text: "Wrong email or password",
+        );
+      } else {
+        Navigator.push(
+          context,
+          _createRoute(const HomePage()),
+        );
+      }
     }
   }
 
@@ -156,34 +206,43 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 50),
-                      TextField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.check,
-                            color: Colors.grey,
-                          ),
-                          labelText: 'Email (Ashesi email)',
-                          labelStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 183, 66, 91),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          labelText: 'Password',
-                          labelStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 183, 66, 91),
-                          ),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _emailController,
+                              validator: _validateEmail,
+                              decoration: const InputDecoration(
+                                suffixIcon: Icon(
+                                  Icons.check,
+                                  color: Colors.grey,
+                                ),
+                                labelText: 'Email',
+                                labelStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 183, 66, 91),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              validator: _validatePassword,
+                              decoration: const InputDecoration(
+                                suffixIcon: Icon(
+                                  Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
+                                labelText: 'Password',
+                                labelStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 183, 66, 91),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 30),
