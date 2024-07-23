@@ -1,10 +1,9 @@
 import 'package:email_otp/email_otp.dart';
-
 class OTPService {
   static void configure() {
     // Basic configuration
     EmailOTP.config(
-      appName: 'Nack',
+      appName: 'nack',
       otpType: OTPType.numeric,
       emailTheme: EmailTheme.v1,
       appEmail: 'cliffco24@gmail.com',
@@ -17,7 +16,7 @@ class OTPService {
       emailPort: EmailPort.port587,
       secureType: SecureType.tls,
       username: 'cliffco24@gmail.com',
-      password: 'fonk sufp yrpk alif',
+      password: 'zsve myrn ajao xhuw',
     );
 
     // Custom email template with your specified colors
@@ -41,5 +40,6 @@ class OTPService {
 
   static bool verifyOTP(String otp) {
     return EmailOTP.verifyOTP(otp: otp);
+
   }
 }

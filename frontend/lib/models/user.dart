@@ -20,21 +20,19 @@ class User {
     required this.dob,
     required this.bio,
     required this.profileImage,
-
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      userId: json['userId'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      username: json['username'],
-      email: json['email'],
-      gender: json['gender'],
-      dob: DateTime.parse(json['dob']),
-      bio: json['bio'],
-      profileImage: json['profileImage']
-    );
+        userId: json['userId'],
+        firstName: json['firstName'],
+        lastName: json['lastName'],
+        username: json['username'],
+        email: json['email'],
+        gender: json['gender'],
+        dob: DateTime.parse(json['dob']),
+        bio: json['bio'],
+        profileImage: json['profileImage']);
   }
 
   Map<String, dynamic> toJson() {

@@ -89,7 +89,7 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    height: 53,
+                    height: 65,
                     width: 320,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -108,7 +108,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -117,7 +117,8 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(8.0), // Add padding for better touch response
+                    padding: const EdgeInsets.all(
+                        8.0), // Add padding for better touch response
                     child: const Text(
                       "Don't have an account?  Login",
                       style: TextStyle(
@@ -146,7 +147,8 @@ class WelcomeScreen extends StatelessWidget {
         const end = Offset(0.0, 0.0);
         const curve = Curves.ease;
 
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return SlideTransition(
           position: animation.drive(tween),

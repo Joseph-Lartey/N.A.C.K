@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/navbar.dart';
+import 'navbar.dart';
 import 'match.dart'; // Import MatchPage
 
 class HomePage extends StatefulWidget {
