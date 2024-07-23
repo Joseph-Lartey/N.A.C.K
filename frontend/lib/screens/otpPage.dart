@@ -51,9 +51,6 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       if (authProvider.registrationSuccess == true) {
-        // Log user in to set up user
-        await authProvider.login(widget.email, widget.password);
-
         print("registration finished");
         // navigate to profile setup page
         Navigator.push(

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled3/providers/auth_provider.dart';
 import 'services/otp.dart'; // Import the OTP service
-import 'WelcomeScreen.dart';
+import 'screens/WelcomeScreen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
   OTPService.configure(); // Configure the OTP service
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => AuthProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
