@@ -23,6 +23,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   bool _isButtonActive = false;
   File? _imageSelected;
   final _formKey = GlobalKey<FormState>();
+  String? _imageError;
 
   @override
   void initState() {
@@ -42,7 +43,8 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     setState(() {
       _isButtonActive = _usernameController.text.isNotEmpty &&
           _bioController.text.isNotEmpty &&
-          _selectedGender != null;
+          _selectedGender != null &&
+          _imageSelected != null;
     });
   }
 
@@ -54,6 +56,8 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     if (image != null) {
       setState(() {
         _imageSelected = File(image.path);
+        _imageError = null;
+        _updateButtonState();
       });
     }
   }
@@ -102,7 +106,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
 
   // Create a profile
   void _createProfile() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _imageSelected != null) {
       print("working");
       // create profile
       // TODO: test that profile endpoint works
@@ -127,6 +131,10 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         // Navigate to next page
         Navigator.of(context).push(_createRoute(const InterestsPage()));
       }
+    } else if (_imageSelected == null) {
+      setState(() {
+        _imageError = 'Please select an image';
+      });
     }
   }
 
@@ -224,6 +232,14 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                   ],
                 ),
               ),
+              if (_imageError != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    _imageError!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
               const SizedBox(height: 30),
               const Align(
                 alignment: Alignment.centerLeft,
@@ -250,8 +266,13 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
                 validator: (value) {
+                  String regularExpression = 'r^[A-Za-z][A-Za-z0-9_]{7,29}';
+                  RegExp regExp = new RegExp(regularExpression);
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
+                  }
+                  if (!regExp.hasMatch(value)) {
+                    return 'Username must be between 8 and 30 characters and start with a letter';
                   }
                   return null;
                 },
@@ -303,7 +324,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                       ? const Color.fromARGB(255, 183, 66, 91)
                       : Colors.grey,
                 ),
-                onPressed: _isButtonActive ? () => _createProfile() : null,
+                onPressed: _isButtonActive ? _createProfile : null,
                 child: const Text(
                   'Continue',
                   style: TextStyle(
