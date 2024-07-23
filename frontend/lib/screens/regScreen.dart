@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'otp.dart'; // Import the OTP service
+import '../services/otp.dart'; // Import the OTP service
 import 'otpPage.dart'; // Import the OTP page
 import 'loginScreen.dart';
 import 'package:intl/intl.dart'; // Import intl package for date formatting
@@ -63,13 +63,17 @@ class _RegScreenState extends State<RegScreen> {
   }
 
   void _sendOTP() {
-    if (_formKey.currentState?.validate() ?? false) {
-      OTPService.sendOTP(emailController.text);
-      Navigator.push(
-        context,
-        _createRoute(OtpPage(email: emailController.text)),
-      );
-    }
+    OTPService.sendOTP(emailController.text);
+    Navigator.push(
+      context,
+      _createRoute(OtpPage(
+          email: emailController.text,
+          firstname: firstNameController.text,
+          lastname: lastNameController.text,
+          password: passwordController.text,
+          confirmPassword: confirmPasswordController.text,
+          dob: dobController.text)),
+    );
   }
 
   String? _validateEmail(String? value) {

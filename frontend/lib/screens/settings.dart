@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'changePassword.dart';
 import'aboutUs.dart';
-import 'navbar.dart';
+import '../widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Ensure this import points to the correct location of your navbar.dart
 
