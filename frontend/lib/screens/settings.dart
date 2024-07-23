@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'changePassword.dart';
-import'aboutUs.dart';
+import 'aboutUs.dart';
 import '../widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// Ensure this import points to the correct location of your navbar.dart
 
+import 'loginScreen.dart';
+
+// Ensure this import points to the correct location of your navbar.dart
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -54,11 +56,42 @@ class SettingsPageState extends State<SettingsPage> {
         const end = 1.0;
         const curve = Curves.easeInOut;
 
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return FadeTransition(
           opacity: animation.drive(tween),
           child: child,
+        );
+      },
+    );
+  }
+
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushAndRemoveUntil(
+                  createFadeRoute(const LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              child: const Text('Yes'),
+            ),
+          ],
         );
       },
     );
@@ -95,7 +128,8 @@ class SettingsPageState extends State<SettingsPage> {
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               // Handle change password action
-              Navigator.of(context).push(createFadeRoute(const ChangePasswordPage()));
+              Navigator.of(context)
+                  .push(createFadeRoute(const ChangePasswordPage()));
             },
           ),
           SwitchListTile(
@@ -120,7 +154,7 @@ class SettingsPageState extends State<SettingsPage> {
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               // Handle about us action
-              Navigator.of(context).push(createFadeRoute( AboutUsPage()));
+              Navigator.of(context).push(createFadeRoute(AboutUsPage()));
             },
           ),
           ListTile(
@@ -136,6 +170,11 @@ class SettingsPageState extends State<SettingsPage> {
             onTap: () {
               // Handle terms and conditions action
             },
+          ),
+          ListTile(
+            title: const Text('Logout'),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: _showLogoutConfirmationDialog,
           ),
         ],
       ),

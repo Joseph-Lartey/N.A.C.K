@@ -32,7 +32,6 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final loginResponse = await _authService.login(email, password);
-      print(loginResponse);
 
       if (loginResponse['success'] == true) {
         _loginSuccess = true;
@@ -40,9 +39,11 @@ class AuthProvider with ChangeNotifier {
         _token = loginResponse['token'];
         _socketChannel = loginResponse['socket-channel'];
 
-        // Get the profile details of the user
-        _user =
-            User.fromJson(await _authService.getProfile(loginResponse['id']));
+        final profileDetails =
+            await _authService.getProfile(loginResponse['id']);
+
+        _user = User.fromJson(profileDetails);
+        // print("user object: $_user");
       } else {
         _loginSuccess = false;
         _errorMessage = loginResponse['error'];
@@ -66,8 +67,6 @@ class AuthProvider with ChangeNotifier {
 
       if (registerResponse['success'] == true) {
         _registrationSuccess = true;
-
-        login(email, password);
       }
     } catch (e) {
       _registrationSuccess = false;

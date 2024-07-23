@@ -6,16 +6,19 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'interests.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:http_parser/http_parser.dart';
 
 class ProfileSetupPage extends StatefulWidget {
-  const ProfileSetupPage({Key? key}) : super(key: key);
+  final int? userId;
+
+  const ProfileSetupPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   _ProfileSetupPageState createState() => _ProfileSetupPageState();
 }
 
 class _ProfileSetupPageState extends State<ProfileSetupPage> {
-  int? userId;
   final ImagePicker _imagePicker = ImagePicker();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
@@ -46,33 +49,40 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         _imageSelected = File(image.path);
         _imageError = null;
       });
+
+      print(
+          "The image path is: ${path.extension(_imageSelected!.path).toLowerCase()}");
     }
   }
 
-  Future<void> uploadImage() async {
+  Future<void> uploadImage(int? userId) async {
     if (_imageSelected == null) return;
 
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final user = authProvider.user;
-
-    if (user == null) return;
-
-    userId = user.userId;
+    // Get and set the file type of the post request
+    final imageExtension =
+        path.extension(_imageSelected!.path).replaceAll('.', '');
+    final mediaType = MediaType('image', imageExtension);
 
     final uri =
         Uri.parse('http://16.171.150.101/N.A.C.K/backend/upload/$userId');
     final request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath(
-          'profile_image', _imageSelected!.path));
+          'profile_image', _imageSelected!.path,
+          contentType: mediaType));
     final response = await request.send();
     if (response.statusCode == 200) {
       print('Image uploaded successfully');
     } else {
+      final responseBody = await response.stream.bytesToString();
+
+      print("status code: ${response.statusCode}");
+      print("the response is: ${responseBody}");
       print('Failed to upload image');
     }
   }
 
   Route _createRoute(Widget page) {
+    print("called routing function");
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -130,6 +140,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         elevation: 0, // Remove the shadow
         backgroundColor: Colors.white, // Make the AppBar transparent
       ),

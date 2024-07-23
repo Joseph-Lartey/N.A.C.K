@@ -3,6 +3,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'homePage.dart';
+import 'forgottenPassword.dart'; // Import the ResetPasswordPage
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,7 +15,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   bool _isButtonEnabled = false;
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -25,31 +29,67 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _checkButtonState() {
     setState(() {
-      _isButtonEnabled = _emailController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty;
+      _isButtonEnabled = _formKey.currentState?.validate() ?? false;
     });
   }
 
-  // Log user in
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    }
+    RegExp emailRegExp = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegExp.hasMatch(value)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+    RegExp hasUppercase = RegExp(r'[A-Z]');
+    RegExp hasLowercase = RegExp(r'[a-z]');
+    RegExp hasDigit = RegExp(r'\d');
+    RegExp hasSpecialChar = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+
+    if (!hasUppercase.hasMatch(value)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!hasLowercase.hasMatch(value)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!hasDigit.hasMatch(value)) {
+      return 'Password must contain at least one digit';
+    }
+    if (!hasSpecialChar.hasMatch(value)) {
+      return 'Password must contain at least one special character';
+    }
+    return null;
+  }
+
   void _loginRequest(BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (_formKey.currentState?.validate() ?? false) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    await authProvider.login(_emailController.text, _passwordController.text);
+      await authProvider.login(_emailController.text, _passwordController.text);
 
-    // Check if the login request was successful
-    if (authProvider.loginSuccess == false) {
-      // print(authProvider.errorMessage);
-      QuickAlert.show(
-        context: context,
-        type: QuickAlertType.error,
-        title: 'Oops...',
-        text: "Wrong email or password",
-      );
-    } else {
-      Navigator.push(
-        context,
-        _createRoute(const HomePage()),
-      );
+      if (authProvider.loginSuccess == false) {
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Oops...',
+          text: "Wrong email or password",
+        );
+      } else {
+        Navigator.push(
+          context,
+          _createRoute(const HomePage()),
+        );
+      }
     }
   }
 
@@ -84,12 +124,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor:
-            const Color.fromARGB(255, 183, 66, 91), // Background color
+            const Color.fromARGB(255, 183, 66, 91),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: Colors.white, // Arrow icon
+          color: Colors.white,
           onPressed: () {
-            Navigator.of(context).pop(); // Pop the current screen
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -98,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Container(
             height: double.infinity,
             width: double.infinity,
-            color: const Color.fromARGB(255, 183, 66, 91), // Background color
+            color: const Color.fromARGB(255, 183, 66, 91),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -156,34 +196,52 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 50),
-                      TextField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.check,
-                            color: Colors.grey,
-                          ),
-                          labelText: 'Email',
-                          labelStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 183, 66, 91),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          labelText: 'Password',
-                          labelStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 183, 66, 91),
-                          ),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _emailController,
+                              validator: _validateEmail,
+                              decoration: const InputDecoration(
+                                suffixIcon: Icon(
+                                  Icons.check,
+                                  color: Colors.grey,
+                                ),
+                                labelText: 'Email',
+                                labelStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 183, 66, 91),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: !_isPasswordVisible,
+                              validator: _validatePassword,
+                              decoration: InputDecoration(
+                                suffixIcon: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isPasswordVisible = !_isPasswordVisible;
+                                    });
+                                  },
+                                  child: Icon(
+                                    _isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                labelText: 'Password',
+                                labelStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 183, 66, 91),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 30),
@@ -194,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 100,
-                              vertical: 15), // Adjusted padding
+                              vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -214,11 +272,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
-                          // Implement forgot password functionality here
+                          Navigator.push(
+                            context,
+                            _createRoute(const ResetPasswordPage()), // Navigate to ResetPasswordPage
+                          );
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(
-                              8.0), // Add padding for better touch response
+                          padding: const EdgeInsets.all(8.0),
                           child: const Text(
                             "Forgot password?",
                             style: TextStyle(
