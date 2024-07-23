@@ -66,6 +66,8 @@ class AuthProvider with ChangeNotifier {
 
       if (registerResponse['success'] == true) {
         _registrationSuccess = true;
+
+        login(email, password);
       }
     } catch (e) {
       _registrationSuccess = false;
