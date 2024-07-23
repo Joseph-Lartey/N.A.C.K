@@ -8,7 +8,9 @@ import 'interests.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileSetupPage extends StatefulWidget {
-  const ProfileSetupPage({Key? key}) : super(key: key);
+  final int? userId;
+
+  const ProfileSetupPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   _ProfileSetupPageState createState() => _ProfileSetupPageState();
@@ -121,189 +123,183 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        final userId = authProvider.user?.userId;
-
-        return Scaffold(
-          appBar: AppBar(
-            elevation: 0, // Remove the shadow
-            backgroundColor: Colors.white, // Make the AppBar transparent
-            // leading: IconButton(
-            //   icon: Icon(Icons.arrow_back, color: Colors.black),
-            //   onPressed: () {
-            //     // Handle back button press
-            //   },
-            // ),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                const SizedBox(height: 10),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Who Are ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      "YOU?",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        color: Color.fromARGB(255, 183, 66, 91),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Enter your details to set up your profile',
-                  textAlign: TextAlign.center,
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0, // Remove the shadow
+        backgroundColor: Colors.white, // Make the AppBar transparent
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.black),
+        //   onPressed: () {
+        //     // Handle back button press
+        //   },
+        // ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            const SizedBox(height: 10),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Who Are ",
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    // Handle profile picture upload
-                  },
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.grey[200],
-                        backgroundImage: _imageSelected != null
-                            ? FileImage(_imageSelected!)
-                            : null,
-                        child: _imageSelected == null
-                            ? Align(
-                                alignment: Alignment.center,
-                                child: IconButton(
-                                  icon: Icon(Icons.camera_alt,
-                                      color: Colors.grey[700], size: 30),
-                                  onPressed: selectImageFromGallery,
-                                ),
-                              )
-                            : null,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color.fromARGB(255, 183, 66, 91),
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                          onTap: () => selectImageFromGallery(),
-                        ),
-                      ),
-                    ],
+                Text(
+                  "YOU?",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    color: Color.fromARGB(255, 183, 66, 91),
                   ),
                 ),
-                const SizedBox(height: 30),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Username',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFFB7425B),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter your username',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _buildGenderSelector(),
-                const SizedBox(height: 20),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Bio',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFFB7425B),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _bioController,
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    hintText: 'Write a short bio',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 215, 215, 215)),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: _isButtonActive
-                        ? const Color.fromARGB(255, 183, 66, 91)
-                        : Colors.grey,
-                  ),
-                  onPressed:
-                      _isButtonActive ? () => _createProfile(userId) : null,
-                  child: const Text(
-                    'Continue',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
               ],
             ),
-          ),
-        );
-      },
+            const SizedBox(height: 8),
+            const Text(
+              'Enter your details to set up your profile',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
+                // Handle profile picture upload
+              },
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage: _imageSelected != null
+                        ? FileImage(_imageSelected!)
+                        : null,
+                    child: _imageSelected == null
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: IconButton(
+                              icon: Icon(Icons.camera_alt,
+                                  color: Colors.grey[700], size: 30),
+                              onPressed: selectImageFromGallery,
+                            ),
+                          )
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color.fromARGB(255, 183, 66, 91),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      onTap: () => selectImageFromGallery(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Username',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFFB7425B),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                hintText: 'Enter your username',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildGenderSelector(),
+            const SizedBox(height: 20),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Bio',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFFB7425B),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _bioController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: 'Write a short bio',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 215, 215, 215)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: _isButtonActive
+                    ? const Color.fromARGB(255, 183, 66, 91)
+                    : Colors.grey,
+              ),
+              onPressed:
+                  _isButtonActive ? () => _createProfile(widget.userId) : null,
+              child: const Text(
+                'Continue',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
     );
   }
 
