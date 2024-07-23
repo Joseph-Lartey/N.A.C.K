@@ -16,13 +16,14 @@ class _RegScreenState extends State<RegScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController classController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isButtonEnabled = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   void initState() {
@@ -371,14 +372,23 @@ class _RegScreenState extends State<RegScreen> {
                         const SizedBox(height: 30),
                         TextFormField(
                           controller: passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            suffixIcon: Icon(
-                              Icons.visibility_off,
-                              color: Colors.grey,
+                          obscureText: !_isPasswordVisible,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
                             ),
                             labelText: 'Password',
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color.fromARGB(255, 183, 66, 91),
                             ),
@@ -391,14 +401,24 @@ class _RegScreenState extends State<RegScreen> {
                         const SizedBox(height: 30),
                         TextFormField(
                           controller: confirmPasswordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            suffixIcon: Icon(
-                              Icons.visibility_off,
-                              color: Colors.grey,
+                          obscureText: !_isConfirmPasswordVisible,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isConfirmPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
+                                });
+                              },
                             ),
                             labelText: 'Confirm Password',
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color.fromARGB(255, 183, 66, 91),
                             ),

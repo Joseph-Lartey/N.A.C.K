@@ -73,7 +73,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Welcome to the NACK \n    Ashesi Dating App',
+                  'Welcome to the NACK \n   Ashesi Dating App',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,

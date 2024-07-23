@@ -3,6 +3,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'homePage.dart';
+import 'forgottenPassword.dart'; // Import the ResetPasswordPage
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isButtonEnabled = false;
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -69,25 +71,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  // void _submit() {
-  //   if (_formKey.currentState?.validate() ?? false) {
-  //     Navigator.push(
-  //       context,
-  //       _createRoute(const HomePage()),
-  //     );
-  //   }
-  // }
-
-  // Log user in
   void _loginRequest(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
       await authProvider.login(_emailController.text, _passwordController.text);
 
-      // Check if the login request was successful
       if (authProvider.loginSuccess == false) {
-        // print(authProvider.errorMessage);
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
@@ -134,12 +124,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor:
-            const Color.fromARGB(255, 183, 66, 91), // Background color
+            const Color.fromARGB(255, 183, 66, 91),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: Colors.white, // Arrow icon
+          color: Colors.white,
           onPressed: () {
-            Navigator.of(context).pop(); // Pop the current screen
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -148,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Container(
             height: double.infinity,
             width: double.infinity,
-            color: const Color.fromARGB(255, 183, 66, 91), // Background color
+            color: const Color.fromARGB(255, 183, 66, 91),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -228,15 +218,24 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 30),
                             TextFormField(
                               controller: _passwordController,
-                              obscureText: true,
+                              obscureText: !_isPasswordVisible,
                               validator: _validatePassword,
-                              decoration: const InputDecoration(
-                                suffixIcon: Icon(
-                                  Icons.visibility_off,
-                                  color: Colors.grey,
+                              decoration: InputDecoration(
+                                suffixIcon: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isPasswordVisible = !_isPasswordVisible;
+                                    });
+                                  },
+                                  child: Icon(
+                                    _isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 labelText: 'Password',
-                                labelStyle: TextStyle(
+                                labelStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 183, 66, 91),
                                 ),
@@ -253,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 100,
-                              vertical: 15), // Adjusted padding
+                              vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -273,11 +272,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
-                          // Implement forgot password functionality here
+                          Navigator.push(
+                            context,
+                            _createRoute(const ResetPasswordPage()), // Navigate to ResetPasswordPage
+                          );
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(
-                              8.0), // Add padding for better touch response
+                          padding: const EdgeInsets.all(8.0),
                           child: const Text(
                             "Forgot password?",
                             style: TextStyle(
