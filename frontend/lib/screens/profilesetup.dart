@@ -23,14 +23,18 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   String? _selectedGender;
-  bool _isButtonActive = false;
   File? _imageSelected;
+
+  bool _showUsernameError = false;
+  bool _showBioError = false;
+  bool _showImageError = false;
+  bool _showGenderError = false;
 
   @override
   void initState() {
     super.initState();
-    _usernameController.addListener(_updateButtonState);
-    _bioController.addListener(_updateButtonState);
+    _usernameController.addListener(_clearErrors);
+    _bioController.addListener(_clearErrors);
   }
 
   @override
@@ -40,11 +44,11 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     super.dispose();
   }
 
-  void _updateButtonState() {
+  void _clearErrors() {
     setState(() {
-      _isButtonActive = _usernameController.text.isNotEmpty &&
-          _bioController.text.isNotEmpty &&
-          _selectedGender != null;
+      _showUsernameError = false;
+      _showBioError = false;
+      _showGenderError = false;
     });
   }
 
@@ -56,6 +60,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     if (image != null) {
       setState(() {
         _imageSelected = File(image.path);
+        _showImageError = false;
       });
 
       print(
@@ -66,7 +71,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   Future<void> uploadImage(int? userId) async {
     if (_imageSelected == null) return;
 
-    // Get and set the file type of the post request
     final imageExtension =
         path.extension(_imageSelected!.path).replaceAll('.', '');
     final mediaType = MediaType('image', imageExtension);
@@ -109,11 +113,26 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     );
   }
 
-  // Create a profile
+  void _validateAndContinue() {
+    setState(() {
+      _showUsernameError = _usernameController.text.isEmpty ||
+          !_usernameController.text.startsWith(RegExp(r'^[A-Za-z]'));
+      _showBioError = _bioController.text.isEmpty;
+      _showGenderError = _selectedGender == null;
+      _showImageError = _imageSelected == null;
+    });
+
+    if (!_showUsernameError &&
+        !_showBioError &&
+        !_showGenderError &&
+        !_showImageError) {
+      _createProfile(widget.userId);
+    }
+  }
+
   void _createProfile(int? userId) async {
     print("working");
-    // create profile
-    // TODO: test that profile endpoint works
+
     final response = await http.post(
         Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
         headers: {'Content-Type': 'application/json'},
@@ -129,11 +148,9 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     if (response.statusCode == 500 || response.statusCode == 503) {
       throw Exception("Server error");
     } else {
-      // Upload user profile
       await uploadImage(userId);
 
       print("route");
-      // Navigate to next page
       Navigator.of(context).push(_createRoute(InterestsPage(userId: userId!)));
     }
   }
@@ -143,14 +160,8 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        elevation: 0, // Remove the shadow
-        backgroundColor: Colors.white, // Make the AppBar transparent
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back, color: Colors.black),
-        //   onPressed: () {
-        //     // Handle back button press
-        //   },
-        // ),
+        elevation: 0,
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -190,9 +201,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
             ),
             const SizedBox(height: 20),
             GestureDetector(
-              onTap: () {
-                // Handle profile picture upload
-              },
+              onTap: selectImageFromGallery,
               child: Stack(
                 children: [
                   CircleAvatar(
@@ -231,10 +240,21 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                           ),
                         ),
                       ),
-                      onTap: () => selectImageFromGallery(),
+                      onTap: selectImageFromGallery,
                     ),
                   ),
                 ],
+              ),
+            ),
+            if (_showImageError) const SizedBox(height: 10),
+            const Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Please select an image.',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 12,
+                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -261,10 +281,24 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                errorText: _showUsernameError
+                    ? 'Username is required and must start with a letter.'
+                    : null,
               ),
             ),
             const SizedBox(height: 20),
             _buildGenderSelector(),
+            if (_showGenderError)
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Please select a gender.',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
             const SizedBox(height: 20),
             const Align(
               alignment: Alignment.centerLeft,
@@ -291,6 +325,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                errorText: _showBioError ? 'Bio is required.' : null,
               ),
             ),
             const SizedBox(height: 30),
@@ -300,12 +335,9 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 minimumSize: const Size(double.infinity, 50),
-                backgroundColor: _isButtonActive
-                    ? const Color.fromARGB(255, 183, 66, 91)
-                    : Colors.grey,
+                backgroundColor: const Color.fromARGB(255, 183, 66, 91),
               ),
-              onPressed:
-                  _isButtonActive ? () => _createProfile(widget.userId) : null,
+              onPressed: _validateAndContinue,
               child: const Text(
                 'Continue',
                 style: TextStyle(
@@ -351,7 +383,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           onChanged: (String? newValue) {
             setState(() {
               _selectedGender = newValue;
-              _updateButtonState();
+              _showGenderError = false;
             });
           },
           items: <String>['Male', 'Female', 'Other', 'Prefer not to say']
