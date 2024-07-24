@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled3/providers/auth_provider.dart';
 import '../services/otp.dart'; // Import the OTP service
 import 'otpPage.dart'; // Import the OTP page
 import 'loginScreen.dart';
@@ -16,7 +18,8 @@ class _RegScreenState extends State<RegScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController classController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -65,16 +68,25 @@ class _RegScreenState extends State<RegScreen> {
 
   void _sendOTP() {
     if (_formKey.currentState?.validate() ?? false) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      // Store registration details in AuthProvider
+      authProvider.setRegistrationDetails({
+        'firstname': firstNameController.text,
+        'lastname': lastNameController.text,
+        'email': emailController.text,
+        'password': passwordController.text,
+        'dob': dobController.text,
+        'username': firstNameController.text,
+      });
+
+      // Send OTP
       OTPService.sendOTP(emailController.text);
+
+      // Navigate to OtpPage
       Navigator.push(
         context,
-        _createRoute(OtpPage(
-            email: emailController.text,
-            firstname: firstNameController.text,
-            lastname: lastNameController.text,
-            password: passwordController.text,
-            confirmPassword: confirmPasswordController.text,
-            dob: dobController.text)),
+        MaterialPageRoute(builder: (context) => OtpPage()),
       );
     }
   }

@@ -5,23 +5,6 @@ import '../services/otp.dart'; // Import the OTP service
 import 'profilesetup.dart'; // Import the InterestsPage
 
 class OtpPage extends StatefulWidget {
-  final String email;
-  final String firstname;
-  final String lastname;
-  final String password;
-  final String confirmPassword;
-  final String dob;
-
-  const OtpPage(
-      {Key? key,
-      required this.email,
-      required this.firstname,
-      required this.lastname,
-      required this.password,
-      required this.confirmPassword,
-      required this.dob})
-      : super(key: key);
-
   @override
   State<OtpPage> createState() => _OtpPageState();
 }
@@ -32,7 +15,7 @@ class _OtpPageState extends State<OtpPage> {
   bool _isButtonEnabled = false;
   bool _otpVisible = false;
 
-  void _verifyOTP() async {
+  Future<void> _verifyOTP(BuildContext context) async {
     bool isValid = OTPService.verifyOTP(otpController.text);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
@@ -41,38 +24,13 @@ class _OtpPageState extends State<OtpPage> {
         const SnackBar(content: Text('OTP verified successfully!')),
       );
 
-      // make register request to api
-      await authProvider.register(
-        widget.firstname,
-        widget.lastname,
-        widget.firstname,
-        widget.email,
-        widget.password,
-        widget.dob,
+      // Navigate to ProfileSetupPage
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfileSetupPage(),
+        ),
       );
-
-      if (authProvider.registrationSuccess == true) {
-        // Log user in to set up user
-        await authProvider.login(widget.email, widget.password);
-
-        print("registration finished");
-        print(authProvider.user);
-
-        if (authProvider.user == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User login failed!')),
-          );
-          return;
-        }
-
-        // navigate to profile setup page
-        Navigator.push(
-          context,
-          _createRoute(ProfileSetupPage(
-            userId: authProvider.user?.userId,
-          )), // Using custom route transition
-        );
-      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Invalid OTP! Please try again.')),
@@ -222,8 +180,7 @@ class _OtpPageState extends State<OtpPage> {
                                       : Colors.grey,
                                 ),
                                 child: TextButton(
-                                  onPressed:
-                                      _isButtonEnabled ? _verifyOTP : null,
+                                  onPressed: () => _verifyOTP(context),
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16),
