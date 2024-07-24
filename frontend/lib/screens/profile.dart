@@ -108,33 +108,45 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> fetchUserData() async {
-    final userId = Provider.of<AuthProvider>(context, listen: false).user?.userId;
-    if (userId == null) return;
+    final userId =
+        Provider.of<AuthProvider>(context, listen: false).user?.userId;
+    if (userId == null) {
+      print('User ID is null');
+      return;
+    }
 
-    final response = await http.get(
-      Uri.parse('http://16.171.150.101/N.A.C.K/backend/user/$userId'),
-    );
+    try {
+      print('Fetching user data for user ID: $userId');
+      final response = await http.get(
+        Uri.parse('http://16.171.150.101/N.A.C.K/backend/users/$userId'),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      setState(() {
-        authProvider.user?.username = data['username'];
-        authProvider.user?.bio = data['bio'];
-        authProvider.user?.firstName = data['firstName'];
-        authProvider.user?.lastName = data['lastName'];
-        authProvider.user?.email = data['email'];
-        authProvider.user?.profileImage = data['profileImage'];
-      });
-    } else {
-      print('Failed to fetch user data');
+      if (response.statusCode == 200) {
+        print('User data fetched successfully');
+        final data = jsonDecode(response.body);
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        setState(() {
+          authProvider.user?.username = data['username'];
+          authProvider.user?.bio = data['bio'];
+          authProvider.user?.firstName = data['firstName'];
+          authProvider.user?.lastName = data['lastName'];
+          authProvider.user?.email = data['email'];
+          authProvider.user?.profileImage = data['profileImage'];
+        });
+      } else {
+        print('Failed to fetch user data');
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
     }
   }
 
   Future<void> _handleRefresh() async {
-    // Fetch the latest user data
+    print('Pull to refresh started');
     await fetchUserData();
-    // Simulate network delay
+    setState(() {}); // Refresh the state to update the UI
     await Future.delayed(Duration(seconds: 2));
     print('Refresh complete');
   }
@@ -153,10 +165,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 183, 66, 91),
-          elevation: 0, // Remove shadow
-          automaticallyImplyLeading: false,
-        ),
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+        elevation: 0, // Remove shadow
+        automaticallyImplyLeading: false,
+      ),
       body: LiquidPullToRefresh(
         onRefresh: _handleRefresh,
         color: Color.fromARGB(255, 183, 66, 91),
