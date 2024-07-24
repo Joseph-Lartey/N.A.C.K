@@ -9,6 +9,7 @@ import 'package:http_parser/http_parser.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/navbar.dart';
 import '../services/auth_services.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -150,6 +151,15 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Future<void> _handleRefresh() async {
+    // Simulate network delay
+    await Future.delayed(Duration(seconds: 2));
+    // Refresh the user data here
+    setState(() {
+      // You can call a method to fetch the user data from your backend
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -163,144 +173,128 @@ class _ProfilePageState extends State<ProfilePage> {
     _lastNameController.text = user?.lastName ?? '';
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              color: const Color.fromARGB(255, 183, 66, 91),
-              height: 300, // Adjust the height as needed
-            ),
-            Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(80),
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: NetworkImage(userProfileImage),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: -10,
-                            child: IconButton(
-                              icon: const Icon(Icons.camera_alt,
-                                  color: Colors.white),
-                              onPressed: selectImageFromGallery,
+      body: LiquidPullToRefresh(
+        onRefresh: _handleRefresh,
+        color: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+        height: 100,
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Container(
+                color: const Color.fromARGB(255, 183, 66, 91),
+                height: 300, // Adjust the height as needed
+              ),
+              Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(80),
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage: NetworkImage(userProfileImage),
                             ),
+                            Positioned(
+                              bottom: 0,
+                              right: -10,
+                              child: IconButton(
+                                icon: const Icon(Icons.camera_alt,
+                                    color: Colors.white),
+                                onPressed: () {
+                                  // Add your camera button action here
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      Text(
-                        '@${user?.username ?? ''}',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
+                        Text(
+                          '@${user?.username ?? ''}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
+                        const SizedBox(height: 20),
+                      ],
                     ),
                   ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ProfileInfoRow(
-                        label: 'First Name',
-                        value: _firstNameController.text,
-                        onEdit: (newValue) {
-                          setState(() {
-                            _firstNameController.text = newValue;
-                          });
-                          updateUserInfo(
-                            user?.userId.toString() ?? '',
-                            _usernameController.text,
-                            _firstNameController.text,
-                            _lastNameController.text,
-                            _bioController.text,
-                          );
-                        },
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
                       ),
-                      ProfileInfoRow(
-                        label: 'Last Name',
-                        value: _lastNameController.text,
-                        onEdit: (newValue) {
-                          setState(() {
-                            _lastNameController.text = newValue;
-                          });
-                          updateUserInfo(
-                            user?.userId.toString() ?? '',
-                            _usernameController.text,
-                            _firstNameController.text,
-                            _lastNameController.text,
-                            _bioController.text,
-                          );
-                        },
-                      ),
-                      ProfileInfoRow(
-                        label: 'Username',
-                        value: _usernameController.text,
-                        onEdit: (newValue) {
-                          setState(() {
-                            _usernameController.text = newValue;
-                          });
-                          updateUserInfo(
-                            user?.userId.toString() ?? '',
-                            _usernameController.text,
-                            _firstNameController.text,
-                            _lastNameController.text,
-                            _bioController.text,
-                          );
-                        },
-                      ),
-                      ProfileInfoRow(
-                        label: 'Bio',
-                        value: _bioController.text,
-                        onEdit: (newValue) {
-                          setState(() {
-                            _bioController.text = newValue;
-                          });
-                          updateUserInfo(
-                            user?.userId.toString() ?? '',
-                            _usernameController.text,
-                            _firstNameController.text,
-                            _lastNameController.text,
-                            _bioController.text,
-                          );
-                        },
-                      ),
-                      ProfileInfoRow(
-                        label: 'Email Address',
-                        value: user?.email ?? '',
-                        onEdit: null, // No editing for email
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ProfileInfoRow(
+                          label: 'First Name',
+                          value: user?.firstName ?? '',
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.firstName = newValue;
+                            });
+                          },
+                        ),
+                        ProfileInfoRow(
+                          label: 'Last Name',
+                          value: user?.lastName ?? '',
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.lastName = newValue;
+                            });
+                          },
+                        ),
+                        ProfileInfoRow(
+                          label: 'Username',
+                          value: user?.username ?? '',
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.username = newValue;
+                            });
+                          },
+                        ),
+                        ProfileInfoRow(
+                          label: 'Email Address',
+                          value: user?.email ?? '',
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.email = newValue;
+                            });
+                          },
+                        ),
+                        ProfileInfoRow(
+                          label: 'Bio',
+                          value: user?.bio ?? '',
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.bio = newValue;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const CustomBottomAppBar(),
