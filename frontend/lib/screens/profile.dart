@@ -79,7 +79,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       ProfileInfoRow(
                         label: 'Bio',
-                        value: 'Hey there! I',
+                        value: user?.bio ?? '',
                       ),
                       SizedBox(height: 20),
                     ],
