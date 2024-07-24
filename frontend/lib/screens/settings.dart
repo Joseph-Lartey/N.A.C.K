@@ -10,6 +10,7 @@ import 'loginScreen.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
+
   @override
   SettingsPageState createState() => SettingsPageState();
 }
@@ -189,9 +190,18 @@ class SettingsPageState extends State<SettingsPage> {
             title: const Text('Change password'),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
-              // Handle change password action
-              Navigator.of(context)
-                  .push(createFadeRoute(const ChangePasswordPage()));
+              if (user?.userId != null) {
+                Navigator.of(context).push(
+                  createFadeRoute(ChangePasswordPage(userId: user?.userId)),
+                );
+              } else {
+                // Handle case where userId is not available
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('UserId is null.'),
+                  ),
+                );
+              }
             },
           ),
           SwitchListTile(
