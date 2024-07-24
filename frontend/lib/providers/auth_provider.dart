@@ -75,4 +75,10 @@ class AuthProvider with ChangeNotifier {
 
     setLoading(false);
   }
+
+  // Update user information
+  void updateUser(User updatedUser) {
+    _user = updatedUser;
+    notifyListeners();
+  }
 }

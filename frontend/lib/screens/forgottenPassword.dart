@@ -14,7 +14,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
 
   Future<void> sendOtp(String email) async {
-    final url = Uri.parse('http://16.171.150.101/N.A.C.K/backend/users/reset_password');
+    final url =
+        Uri.parse('http://16.171.150.101/N.A.C.K/backend/users/reset_password');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -27,14 +28,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      if (responseData['message'] == 'An OTP has been sent to your email address.') {
+      if (responseData['success'] == true) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('OTP Sent'),
               content: const Text(
-                'An OTP has been sent to your email. Please input that OTP as your password on the login page. You will be required to change your password right after logging in using the OTP.',
+                'Password reset. Check your email for the new password. You will be required to change your password right after logging in using the new password.',
               ),
               actions: <Widget>[
                 TextButton(
@@ -122,7 +123,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 100, vertical: 15.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),

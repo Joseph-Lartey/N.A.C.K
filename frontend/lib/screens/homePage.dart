@@ -214,6 +214,7 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.white, size: 30),
                                   onPressed: () => _likeUser(
                                       _profiles[_currentIndex]),
+
                                 ),
                               ),
                             ],
