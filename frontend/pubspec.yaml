@@ -36,6 +36,8 @@ dependencies:
   # microphone: ^0.1.0
   # image_picker: ^0.8.4+4
   image_picker:
+  firebase_core:
+  firebase_auth:
   flutter:
     sdk: flutter
 
@@ -50,6 +52,7 @@ dependencies:
   http:
   provider:
   quickalert:
+  cloud_firestore: ^5.1.0
 
 dev_dependencies:
   flutter_test:
