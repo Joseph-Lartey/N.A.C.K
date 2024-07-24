@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled3/providers/auth_provider.dart';
 import 'changePassword.dart';
 import 'aboutUs.dart';
 import '../widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'loginScreen.dart';
 
 // Ensure this import points to the correct location of your navbar.dart
@@ -99,21 +100,25 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.user;
+    final userProfileImage =
+        'http://16.171.150.101/N.A.C.K/backend/public/profile_images/${user?.profileImage ?? 'default_user.png'}';
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           const SizedBox(height: 120), // Add spacing at the top
-          const Center(
+          Center(
             child: Column(
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: AssetImage('assets/img2.jpg'),
+                  backgroundImage: NetworkImage(userProfileImage),
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Jhon Abraham',
+                  '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
