@@ -130,12 +130,20 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: GestureDetector(
+          child: GestureDetector(
           child: Padding(
-            padding: EdgeInsets.all(6.5),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(userProfileImage),
-              radius: 5,
-            ),
+              padding: EdgeInsets.all(6.5),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(userProfileImage),
+                radius: 5,
+              ),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              _createRoute(const ProfilePage()),
+            );
+          },
           ),
           onTap: () {
             Navigator.push(
