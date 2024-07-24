@@ -234,20 +234,6 @@ class SettingsPageState extends State<SettingsPage> {
             },
           ),
           ListTile(
-            title: const Text('Privacy policy'),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              // Handle privacy policy action
-            },
-          ),
-          ListTile(
-            title: const Text('Terms and conditions'),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              // Handle terms and conditions action
-            },
-          ),
-          ListTile(
             title: const Text('Logout'),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: _showLogoutConfirmationDialog,
