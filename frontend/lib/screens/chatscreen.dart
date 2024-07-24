@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'messages.dart'; // Ensure this file contains the Message class definition
+import 'callpage.dart'; // Import CallPage
 
 class ChatScreen extends StatefulWidget {
   final Message message;
@@ -127,8 +128,22 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.phone_outlined),
-            onPressed: () {
-              // Action for phone call
+            onPressed: () async {
+              // Fetch userID and userName from your authentication service
+              final userID = 'exampleUserID'; // Replace with actual user ID
+              final userName = 'exampleUserName'; // Replace with actual user name
+              final callID = '${widget.message.id}_${DateTime.now().millisecondsSinceEpoch}'; // Generate a unique call ID
+
+              // Navigate to the CallPage when the call button is pressed
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CallPage(
+                    callID: callID,
+                    userID: userID,
+                    userName: userName,
+                  ),
+                ),
+              );
             },
           ),
         ],
