@@ -73,10 +73,7 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseBody = jsonDecode(response.body);
 
-
-
         if (responseBody["message"] == "Match has been created") {
-
           _goToMatchPage(user.profileImage, currentUser.profileImage);
         } else {
           _nextProfile();
@@ -174,9 +171,9 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: userProvider.isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: Text('Loading...'))
           : _profiles.isEmpty
-              ? Center(child: CircularProgressIndicator())
+              ? Center(child: Text('No profiles available'))
               : Stack(
                   children: [
                     Positioned.fill(
@@ -214,14 +211,13 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.white, size: 30),
                                   onPressed: () => _likeUser(
                                       _profiles[_currentIndex]),
-
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            '${_profiles[_currentIndex].firstName} ${_profiles[_currentIndex].lastName}, ${12}',
+                            '${_profiles[_currentIndex].firstName} ${_profiles[_currentIndex].lastName}, ${_profiles[_currentIndex].lastName}, ${12}',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -231,8 +227,6 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              // const Icon(Icons.location_on,
-                              //     color: Colors.white),
                               const SizedBox(width: 4),
                               Text(
                                 _profiles[_currentIndex].userName,
