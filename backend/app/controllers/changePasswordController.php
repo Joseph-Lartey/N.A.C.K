@@ -13,19 +13,24 @@ class ChangePasswordController
 
     public function changePassword($data)
     {
-        if (!isset($data['email']) || !isset($data['oldPassword']) || !isset($data['newPassword'])) {
+        if (!isset($data['userId']) || !isset($data['oldPassword']) || !isset($data['newPassword']) || !isset($data['confirmPassword'])) {
             return ['status' => 'error', 'message' => 'Invalid input'];
         }
 
-        $email = $data['email'];
+        $userId = (int)$data['userId'];
         $oldPassword = $data['oldPassword'];
         $newPassword = $data['newPassword'];
+        $confirmPassword = $data['confirmPassword'];
+
+        if ($newPassword !== $confirmPassword) {
+            return ['status' => 'error', 'message' => 'Passwords do not match'];
+        }
 
         if (!$this->isValidPassword($newPassword)) {
             return ['status' => 'error', 'message' => 'Password does not meet the criteria'];
         }
 
-        $result = $this->userModel->changePassword($email, $oldPassword, $newPassword);
+        $result = $this->userModel->changePassword($userId, $oldPassword, $newPassword);
 
         if ($result) {
             return ['status' => 'success', 'message' => 'Password changed successfully'];
@@ -43,4 +48,3 @@ class ChangePasswordController
         return $lengthValid && $capitalLetterValid && $symbolValid;
     }
 }
-?>

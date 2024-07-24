@@ -211,12 +211,15 @@ $router->map('POST', '/users/reset_password', function () use ($forgetPasswordCo
 $router->map('POST', '/users/change_password', function () use ($changePasswordController) {
     $data = json_decode(file_get_contents('php://input'), true);
     ValidationMiddleWare::handle($data, [
-        'email' => 'email',
+        'userId' => 'integer',
         'oldPassword' => 'string',
-        'newPassword' => 'string'
+        'newPassword' => 'string',
+        'confirmPassword' => 'string'
     ]);
     echo json_encode($changePasswordController->changePassword($data));
 });
+
+
 
 
 $match = $router->match();
