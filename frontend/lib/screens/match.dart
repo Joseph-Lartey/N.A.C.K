@@ -4,12 +4,22 @@ import 'homePage.dart';
 import 'messages.dart';
 
 class MatchPage extends StatefulWidget {
-  const MatchPage({Key? key}) : super(key: key);
+  final String userId1;
+  final String? userId2;
+
+  const MatchPage({
+    Key? key,
+    required this.userId1,
+    required this.userId2,
+  }) : super(key: key);
   @override
   MatchPageState createState() => MatchPageState();
 }
 
 class MatchPageState extends State<MatchPage> {
+  final String baseUrl =
+      "http://16.171.150.101/N.A.C.K/backend/public/profile_images";
+
   Route createFadeRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -69,8 +79,8 @@ class MatchPageState extends State<MatchPage> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            image: const DecorationImage(
-                              image: AssetImage('assets/img1.jpg'),
+                            image: DecorationImage(
+                              image: NetworkImage("$baseUrl/${widget.userId1}"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -86,8 +96,8 @@ class MatchPageState extends State<MatchPage> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            image: const DecorationImage(
-                              image: AssetImage('assets/img2.jpg'),
+                            image: DecorationImage(
+                              image: NetworkImage("$baseUrl/${widget.userId1}"),
                               fit: BoxFit.cover,
                             ),
                           ),

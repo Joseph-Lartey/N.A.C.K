@@ -48,11 +48,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Like a user feature
-  void _likeUser(int userId) async {
+  void _likeUser(OtherUser user) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final currentUserId = authProvider.user?.userId;
+    final currentUser = authProvider.user;
 
-    if (currentUserId == null) {
+    if (currentUser == null) {
       // Handle the case where the user is not authenticated
       return;
     }
@@ -65,16 +65,19 @@ class _HomePageState extends State<HomePage> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'liked_userId': userId,
-          'userId': currentUserId,
+          'liked_userId': user.userId,
+          'userId': currentUser.userId,
         }),
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseBody = jsonDecode(response.body);
 
+
+
         if (responseBody["message"] == "Match has been created") {
-          _goToMatchPage();
+
+          _goToMatchPage(user.profileImage, currentUser.profileImage);
         } else {
           _nextProfile();
         }
@@ -88,13 +91,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _goToMatchPage() {
+  void _goToMatchPage(String user1, String? user2) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MatchPage()),
+      MaterialPageRoute(
+          builder: (context) => MatchPage(
+                userId1: user1,
+                userId2: user2,
+              )),
     );
   }
-
 
   Route _createRoute(Widget page) {
     return PageRouteBuilder(
@@ -114,7 +120,7 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-  
+
   int _currentIndex = 0;
 
   @override
@@ -206,7 +212,8 @@ class _HomePageState extends State<HomePage> {
                                 child: IconButton(
                                   icon: const Icon(Icons.favorite,
                                       color: Colors.white, size: 30),
-                                  onPressed: () => _likeUser(_profiles[_currentIndex].userId),
+                                  onPressed: () => _likeUser(
+                                      _profiles[_currentIndex]),
                                 ),
                               ),
                             ],
