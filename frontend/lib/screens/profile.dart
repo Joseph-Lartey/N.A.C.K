@@ -11,8 +11,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  void editProfileInfo(BuildContext context, String label, String currentValue, Function(String) onSave) {
-    TextEditingController controller = TextEditingController(text: currentValue);
+  void editProfileInfo(BuildContext context, String label, String currentValue,
+      Function(String) onSave) {
+    TextEditingController controller =
+        TextEditingController(text: currentValue);
 
     showDialog(
       context: context,
@@ -76,7 +78,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             bottom: 0,
                             right: -10,
                             child: IconButton(
-                              icon: const Icon(Icons.camera_alt, color: Colors.black),
+                              icon: const Icon(Icons.camera_alt,
+                                  color: Colors.black),
                               onPressed: () {
                                 // Add your camera button action here
                               },
@@ -225,8 +228,10 @@ class ProfileInfoRow extends StatelessWidget {
     );
   }
 
-  void editProfileInfo(BuildContext context, String label, String currentValue, Function(String) onSave) {
-    TextEditingController controller = TextEditingController(text: currentValue);
+  void editProfileInfo(BuildContext context, String label, String currentValue,
+      Function(String) onSave) {
+    TextEditingController controller =
+        TextEditingController(text: currentValue);
 
     showDialog(
       context: context,
