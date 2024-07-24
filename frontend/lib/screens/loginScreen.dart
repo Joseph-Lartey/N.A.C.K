@@ -18,20 +18,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _isButtonEnabled = false;
   bool _isPasswordVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _emailController.addListener(_checkButtonState);
-    _passwordController.addListener(_checkButtonState);
-  }
-
-  void _checkButtonState() {
-    setState(() {
-      _isButtonEnabled = _formKey.currentState?.validate() ?? false;
-    });
   }
 
   String? _validateEmail(String? value) {
@@ -124,8 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:
-            const Color.fromARGB(255, 183, 66, 91),
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: Colors.white,
@@ -134,7 +124,6 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               MaterialPageRoute(builder: (context) => const WelcomeScreen()),
             );
-
           },
         ),
       ),
@@ -251,19 +240,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 30),
                       ElevatedButton(
-                        onPressed: _isButtonEnabled
-                            ? () => _loginRequest(context)
-                            : null,
+                        onPressed: () {
+                          if (_emailController.text.isEmpty) {
+                            _validateEmail(_emailController.text);
+                          }
+                          if (_passwordController.text.isEmpty) {
+                            _validatePassword(_passwordController.text);
+                          }
+                          _loginRequest(context);
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 100,
-                              vertical: 15),
+                              horizontal: 100, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          backgroundColor: _isButtonEnabled
-                              ? const Color.fromARGB(255, 183, 66, 91)
-                              : Colors.grey,
+                          backgroundColor:
+                              const Color.fromARGB(255, 183, 66, 91),
                         ),
                         child: const Text(
                           'Login',
@@ -279,7 +272,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            _createRoute(const ResetPasswordPage()), // Navigate to ResetPasswordPage
+                            _createRoute(
+                                const ResetPasswordPage()), // Navigate to ResetPasswordPage
                           );
                         },
                         child: Container(

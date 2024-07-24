@@ -108,10 +108,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _handleRefresh() async {
-    // Simulate a network delay
-    await Future.delayed(const Duration(seconds: 2));
+    // Simulate network delay
+    await Future.delayed(Duration(seconds: 2));
     // Refresh the user data here
-    setState(() {});
+    setState(() {
+      // You can call a method to fetch the user data from your backend
+    });
   }
 
   @override
@@ -137,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Container(
                 color: const Color.fromARGB(255, 183, 66, 91),
-                height: 300,
+                height: 300, // Adjust the height as needed
               ),
               Column(
                 children: [
@@ -157,7 +159,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: IconButton(
                                 icon: const Icon(Icons.camera_alt,
                                     color: Colors.white),
-                                onPressed: selectImageFromGallery,
+                                onPressed: () {
+                                  // Add your camera button action here
+                                },
                               ),
                             ),
                           ],
@@ -197,12 +201,20 @@ class _ProfilePageState extends State<ProfilePage> {
                         ProfileInfoRow(
                           label: 'First Name',
                           value: user?.firstName ?? '',
-                          onEdit: null, // Edit icon removed
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.firstName = newValue;
+                            });
+                          },
                         ),
                         ProfileInfoRow(
                           label: 'Last Name',
                           value: user?.lastName ?? '',
-                          onEdit: null, // Edit icon removed
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.lastName = newValue;
+                            });
+                          },
                         ),
                         ProfileInfoRow(
                           label: 'Username',
@@ -210,15 +222,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           onEdit: (newValue) {
                             setState(() {
                               user?.username = newValue;
-                              updateUserInfo(user!.userId.toString(), newValue,
-                                  user.bio ?? '');
                             });
                           },
                         ),
                         ProfileInfoRow(
                           label: 'Email Address',
                           value: user?.email ?? '',
-                          onEdit: null, // Edit icon removed
+                          onEdit: (newValue) {
+                            setState(() {
+                              user?.email = newValue;
+                            });
+                          },
                         ),
                         ProfileInfoRow(
                           label: 'Bio',
@@ -226,8 +240,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           onEdit: (newValue) {
                             setState(() {
                               user?.bio = newValue;
-                              updateUserInfo(user!.userId.toString(),
-                                  user.username ?? '', newValue);
                             });
                           },
                         ),
