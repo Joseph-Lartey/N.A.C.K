@@ -16,8 +16,7 @@ class _RegScreenState extends State<RegScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController classController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
