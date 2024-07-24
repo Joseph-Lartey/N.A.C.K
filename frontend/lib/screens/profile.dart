@@ -1,7 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled3/providers/auth_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
+import 'package:http_parser/http_parser.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/navbar.dart';
+import '../services/auth_services.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,6 +18,102 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  File? _imageSelected;
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _bioController = TextEditingController();
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
+  // Add a gender controller if needed, for now, we can use a default value
+  String _gender = 'not_specified'; // Default value for gender
+
+  Future<void> selectImageFromGallery() async {
+    final ImagePicker _imagePicker = ImagePicker();
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (image != null) {
+      setState(() {
+        _imageSelected = File(image.path);
+      });
+
+      // Call the uploadImage function here after selecting the image
+      final userId =
+          Provider.of<AuthProvider>(context, listen: false).user?.userId;
+      if (userId != null) {
+        await uploadImage(userId.toString());
+      }
+    }
+  }
+
+  Future<void> uploadImage(String userId) async {
+    if (_imageSelected == null) return;
+
+    final imageExtension =
+        path.extension(_imageSelected!.path).replaceAll('.', '');
+    final mediaType = MediaType('image', imageExtension);
+
+    final uri =
+        Uri.parse('http://16.171.150.101/N.A.C.K/backend/upload/$userId');
+    final request = http.MultipartRequest('POST', uri)
+      ..files.add(await http.MultipartFile.fromPath(
+          'profile_image', _imageSelected!.path,
+          contentType: mediaType));
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Image uploaded successfully')),
+      );
+    } else {
+      final responseBody = await response.stream.bytesToString();
+
+      print("status code: ${response.statusCode}");
+      print("the response is: ${responseBody}");
+      print('Failed to upload image');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload image')),
+      );
+    }
+  }
+
+  Future<void> updateUserInfo(String userId, String username, String firstName,
+      String lastName, String bio) async {
+    final response = await http.post(
+      Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'userId': userId,
+        'username': username,
+        'firstName': firstName,
+        'lastName': lastName,
+        'bio': bio,
+        'gender': _gender,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Profile updated successfully');
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      setState(() {
+        authProvider.user?.username = username;
+        authProvider.user?.firstName = firstName;
+        authProvider.user?.lastName = lastName;
+        authProvider.user?.bio = bio;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile updated successfully')),
+      );
+    } else {
+      print('Failed to update profile');
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile')),
+      );
+    }
+  }
+
   void editProfileInfo(BuildContext context, String label, String currentValue,
       Function(String) onSave) {
     TextEditingController controller =
@@ -54,6 +157,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final userProfileImage =
         'http://16.171.150.101/N.A.C.K/backend/public/profile_images/${user?.profileImage ?? 'default_user.png'}';
 
+    _usernameController.text = user?.username ?? '';
+    _bioController.text = user?.bio ?? '';
+    _firstNameController.text = user?.firstName ?? '';
+    _lastNameController.text = user?.lastName ?? '';
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Stack(
@@ -80,9 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: IconButton(
                               icon: const Icon(Icons.camera_alt,
                                   color: Colors.white),
-                              onPressed: () {
-                                // Add your camera button action here
-                              },
+                              onPressed: selectImageFromGallery,
                             ),
                           ),
                         ],
@@ -121,48 +227,72 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       ProfileInfoRow(
                         label: 'First Name',
-                        value: user?.firstName ?? '',
+                        value: _firstNameController.text,
                         onEdit: (newValue) {
                           setState(() {
-                            user?.firstName = newValue;
+                            _firstNameController.text = newValue;
                           });
+                          updateUserInfo(
+                            user?.userId.toString() ?? '',
+                            _usernameController.text,
+                            _firstNameController.text,
+                            _lastNameController.text,
+                            _bioController.text,
+                          );
                         },
                       ),
                       ProfileInfoRow(
                         label: 'Last Name',
-                        value: user?.lastName ?? '',
+                        value: _lastNameController.text,
                         onEdit: (newValue) {
                           setState(() {
-                            user?.lastName = newValue;
+                            _lastNameController.text = newValue;
                           });
+                          updateUserInfo(
+                            user?.userId.toString() ?? '',
+                            _usernameController.text,
+                            _firstNameController.text,
+                            _lastNameController.text,
+                            _bioController.text,
+                          );
                         },
                       ),
                       ProfileInfoRow(
                         label: 'Username',
-                        value: user?.username ?? '',
+                        value: _usernameController.text,
                         onEdit: (newValue) {
                           setState(() {
-                            user?.username = newValue;
+                            _usernameController.text = newValue;
                           });
+                          updateUserInfo(
+                            user?.userId.toString() ?? '',
+                            _usernameController.text,
+                            _firstNameController.text,
+                            _lastNameController.text,
+                            _bioController.text,
+                          );
+                        },
+                      ),
+                      ProfileInfoRow(
+                        label: 'Bio',
+                        value: _bioController.text,
+                        onEdit: (newValue) {
+                          setState(() {
+                            _bioController.text = newValue;
+                          });
+                          updateUserInfo(
+                            user?.userId.toString() ?? '',
+                            _usernameController.text,
+                            _firstNameController.text,
+                            _lastNameController.text,
+                            _bioController.text,
+                          );
                         },
                       ),
                       ProfileInfoRow(
                         label: 'Email Address',
                         value: user?.email ?? '',
-                        onEdit: (newValue) {
-                          setState(() {
-                            user?.email = newValue;
-                          });
-                        },
-                      ),
-                      ProfileInfoRow(
-                        label: 'Bio',
-                        value: user?.bio ?? '',
-                        onEdit: (newValue) {
-                          setState(() {
-                            user?.bio = newValue;
-                          });
-                        },
+                        onEdit: null, // No editing for email
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -181,12 +311,12 @@ class _ProfilePageState extends State<ProfilePage> {
 class ProfileInfoRow extends StatelessWidget {
   final String label;
   final String value;
-  final Function(String) onEdit;
+  final Function(String)? onEdit;
 
   const ProfileInfoRow({
     required this.label,
     required this.value,
-    required this.onEdit,
+    this.onEdit,
   });
 
   @override
@@ -217,12 +347,13 @@ class ProfileInfoRow extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.grey),
-            onPressed: () {
-              editProfileInfo(context, label, value, onEdit);
-            },
-          ),
+          if (onEdit != null)
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.grey),
+              onPressed: () {
+                editProfileInfo(context, label, value, onEdit!);
+              },
+            ),
         ],
       ),
     );
