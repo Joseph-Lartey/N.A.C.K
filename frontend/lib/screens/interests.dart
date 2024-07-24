@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:untitled3/homePage.dart';
+import 'package:untitled3/screens/homePage.dart';
+import 'package:http/http.dart' as http;
 
 class InterestsPage extends StatefulWidget {
-  const InterestsPage({Key? key}) : super(key: key);
+  final int? userId;
+  const InterestsPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   InterestsPageState createState() => InterestsPageState();
@@ -25,6 +29,70 @@ class InterestsPageState extends State<InterestsPage> {
     return selectedInterests.isNotEmpty;
   }
 
+  Future<void> submitInterests() async {
+    final interestMap = {
+      'Photography': 1,
+      'Shopping': 2,
+      'Karaoke': 3,
+      'Yoga': 4,
+      'Cooking': 5,
+      'Tennis': 6,
+      'Run': 7,
+      'Swimming': 8,
+      'Art': 9,
+      'Traveling': 10,
+      'Extreme': 11,
+      'Music': 12,
+      'Drink': 13,
+      'Video games': 14
+    };
+
+    final List<int> interestIds =
+        selectedInterests.map((interest) => interestMap[interest]!).toList();
+
+    for (int interestId in interestIds) {
+      final payload = {
+        'userId': widget.userId,
+        'interestId': interestId, // Send single interestId
+      };
+
+      print('Payload: $payload'); // Print the payload for debugging
+
+      try {
+        final response = await http.post(
+          Uri.parse('http://16.171.150.101/N.A.C.K/backend/users/interests'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(payload), // Send single object
+        );
+
+        if (response.statusCode != 200) {
+          // Log error details if one of the requests fails
+          print(
+              'Failed to submit interestId $interestId: ${response.statusCode}');
+          print('Response body: ${response.body}');
+          // Handle error response
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to submit interests')),
+          );
+          return;
+        }
+      } catch (e) {
+        // Log exception details if one of the requests fails
+        print('Exception occurred: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+        return;
+      }
+    }
+
+    // If all requests succeed, navigate to the HomePage
+    Navigator.push(
+      context,
+      _createRoute(const HomePage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,13 +108,11 @@ class InterestsPageState extends State<InterestsPage> {
             onPressed: () {
               Navigator.push(
                 context,
-
                 _createRoute(const HomePage()),
-
               );
             },
             child: const Text(
-              "Skip",
+              "",
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
@@ -78,7 +144,6 @@ class InterestsPageState extends State<InterestsPage> {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-
                       "Select a few of your interests and let everyone know what you're passionate about.",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
@@ -123,11 +188,7 @@ class InterestsPageState extends State<InterestsPage> {
                       child: ElevatedButton(
                         onPressed: canContinue()
                             ? () {
-                                Navigator.push(
-                                  context,
-
-                                  _createRoute(const HomePage()),
-                                );
+                                submitInterests();
                               }
                             : null, // Disable button if no interests selected
                         style: ElevatedButton.styleFrom(

@@ -116,6 +116,27 @@ $router->map('POST', '/users/like', function () use ($likeController) {
     echo json_encode($likeController->likeUser($data));
 });
 
+// Cater for user creating thier profile
+$router->map('POST', '/profile', function () use ($userController) {
+
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    //validate data
+    ValidationMiddleWare::handle($data, [
+        'userId' => 'integer',
+        'username' => 'string',
+        'gender' => 'string',
+        'bio' => 'string'
+    ]);
+
+    echo json_encode(
+        $userController->createProfile(
+            $data['userId'], $data['username'], 
+            $data['gender'], $data['bio']
+        )
+    );
+});
+
 // Catering for fetching the matches of a user
 $router->map('GET', '/matches/[*:userId]', function ($userId) use ($likeController) {
 
