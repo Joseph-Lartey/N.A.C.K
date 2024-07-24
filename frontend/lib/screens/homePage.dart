@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled3/screens/profile.dart';
 import '../widgets/navbar.dart';
 import 'match.dart'; // Import MatchPage
 import '../providers/auth_provider.dart'; // Import AuthProvider
@@ -54,6 +55,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Route _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset(0.0, 0.0);
+        const curve = Curves.ease;
+
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentProfile = _profiles[_currentIndex];
@@ -66,12 +86,20 @@ class _HomePageState extends State<HomePage> {
       extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: Padding(
-          padding: EdgeInsets.all(6.5),
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(userProfileImage),
-            radius: 5,
+        leading: GestureDetector(
+          child: Padding(
+            padding: EdgeInsets.all(6.5),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(userProfileImage),
+              radius: 5,
+            ),
           ),
+          onTap: () {
+            Navigator.push(
+              context,
+              _createRoute(const ProfilePage()),
+            );
+          },
         ),
         title: const Text(
           'Home',
