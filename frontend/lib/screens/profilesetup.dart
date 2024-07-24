@@ -92,90 +92,103 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   }
 
   Future<void> _registerAndLogin() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final email = authProvider.registrationDetails['email'];
-    final firstname = authProvider.registrationDetails['firstname'];
-    final lastname = authProvider.registrationDetails['lastname'];
-    final username = authProvider.registrationDetails['username'];
-    final password = authProvider.registrationDetails['password'];
-    final passwordx = authProvider.registrationDetails['password'];
-    final dob = authProvider.registrationDetails['dob'];
+  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  final email = authProvider.registrationDetails['email'];
+  final firstname = authProvider.registrationDetails['firstname'];
+  final lastname = authProvider.registrationDetails['lastname'];
+  final username = authProvider.registrationDetails['username'];
+  final password = authProvider.registrationDetails['password'];
+  final passwordx = authProvider.registrationDetails['password'];
+  final dob = authProvider.registrationDetails['dob'];
 
-    print('Attempting registration with email: $email, username: $username');
-    print(
-        'Registration details - firstname: $firstname, lastname: $lastname, dob: $dob, password:$password , confirmpassword:$passwordx');
+  print('Attempting registration with email: $email, username: $username');
+  print(
+      'Registration details - firstname: $firstname, lastname: $lastname, dob: $dob, password:$password , confirmpassword:$passwordx');
 
-    if (email != null &&
-        password != null &&
-        firstname != null &&
-        lastname != null &&
-        dob != null) {
-      final response = await http.post(
-        Uri.parse('http://16.171.150.101/N.A.C.K/backend/users'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-          'confirm_password': passwordx,
-          'firstname': firstname,
-          'lastname': lastname,
-          'username': username,
-          'dob': dob,
-        }),
-      );
-      print('Registration response status: ${response.statusCode}');
-      print('Registration response body: ${response.body}');
+  if (email != null &&
+      password != null &&
+      firstname != null &&
+      lastname != null &&
+      dob != null) {
+    final response = await http.post(
+      Uri.parse('http://16.171.150.101/N.A.C.K/backend/users'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'confirm_password': passwordx,
+        'firstname': firstname,
+        'lastname': lastname,
+        'username': username,
+        'dob': dob,
+      }),
+    );
+    print('Registration response status: ${response.statusCode}');
+    print('Registration response body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        if (responseBody['success']) {
-          // Registration successful, login the user
-          await authProvider.login(email, password);
-          if (authProvider.user != null) {
-            final userId = authProvider.user!.userId;
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+        // Registration successful, login the user
+        await authProvider.login(email, password);
+        if (authProvider.user != null) {
+          final userId = authProvider.user!.userId;
 
-            // Create profile
-            final profileResponse = await http.post(
-              Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
-              headers: {'Content-Type': 'application/json'},
-              body: jsonEncode({
-                'userId': userId,
-                'username': _usernameController.text,
-                'gender': _selectedGender,
-                'bio': _bioController.text,
-              }),
-            );
+          // Create profile
+          final profileResponse = await http.post(
+            Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'userId': userId,
+              'username': _usernameController.text,
+              'gender': _selectedGender,
+              'bio': _bioController.text,
+            }),
+          );
 
-            print(
-                'Profile creation response status: ${profileResponse.statusCode}');
-            print('Profile creation response body: ${profileResponse.body}');
+          print(
+              'Profile creation response status: ${profileResponse.statusCode}');
+          print('Profile creation response body: ${profileResponse.body}');
 
-            if (profileResponse.statusCode == 200) {
-              final profileResponseBody = jsonDecode(profileResponse.body);
-              if (profileResponseBody['success']) {
-                await uploadImage(userId);
-                Navigator.of(context).push(_createRoute(InterestsPage(
-                  userId: userId,
-                )));
-              } else {
-                print('Profile creation failed!');
-              }
+          if (profileResponse.statusCode == 200) {
+            final profileResponseBody = jsonDecode(profileResponse.body);
+            if (profileResponseBody['success']) {
+              await uploadImage(userId);
+              Navigator.of(context).pop(); // Close the loading dialog
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Profile setup successfully'),
+                ),
+              );
+              Navigator.of(context).push(_createRoute(InterestsPage(
+                userId: userId,
+              )));
             } else {
-              print('Profile creation request failed!');
+              Navigator.of(context).pop(); // Close the loading dialog
+              print('Profile creation failed!');
             }
           } else {
-            print('Login failed!');
+            Navigator.of(context).pop(); // Close the loading dialog
+            print('Profile creation request failed!');
           }
         } else {
-          print('Registration failed!');
+          Navigator.of(context).pop(); // Close the loading dialog
+          print('Login failed!');
         }
       } else {
-        print('Registration request failed!');
+        Navigator.of(context).pop(); // Close the loading dialog
+        print('Registration failed!');
       }
     } else {
-      print('Required registration details are missing!');
+      Navigator.of(context).pop(); // Close the loading dialog
+      print('Registration request failed!');
     }
+  } else {
+    Navigator.of(context).pop(); // Close the loading dialog
+    print('Required registration details are missing!');
   }
+}
+
 
   Route _createRoute(Widget page) {
     print("called routing function");
@@ -198,21 +211,37 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   }
 
   void _validateAndContinue() {
-    setState(() {
-      _showUsernameError = _usernameController.text.isEmpty ||
-          !_usernameController.text.startsWith(RegExp(r'^[A-Za-z]'));
-      _showBioError = _bioController.text.isEmpty;
-      _showGenderError = _selectedGender == null;
-      _showImageError = _imageSelected == null;
-    });
+  setState(() {
+    _showUsernameError = _usernameController.text.isEmpty ||
+        !_usernameController.text.startsWith(RegExp(r'^[A-Za-z]'));
+    _showBioError = _bioController.text.isEmpty;
+    _showGenderError = _selectedGender == null;
+    _showImageError = _imageSelected == null;
+  });
 
-    if (!_showUsernameError &&
-        !_showBioError &&
-        !_showGenderError &&
-        !_showImageError) {
-      _registerAndLogin();
-    }
+  if (!_showUsernameError &&
+      !_showBioError &&
+      !_showGenderError &&
+      !_showImageError) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Setting up profile..."),
+            ],
+          ),
+        );
+      },
+    );
+    _registerAndLogin();
   }
+}
+
 
   // void _createProfile(int? userId) async {
   //   print("working");
