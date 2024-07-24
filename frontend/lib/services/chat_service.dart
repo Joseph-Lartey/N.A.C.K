@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../models/message.dart';
 
-class ChatSErvice extends ChangeNotifier {
+class ChatService extends ChangeNotifier {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   // Send message to chat room

@@ -6,6 +6,7 @@ class UserProvider with ChangeNotifier {
   final UserService _userService = UserService();
 
   List<OtherUser> _users = [];
+  List<OtherUser> _matchedUsers = [];
   bool _isLoading = false;
   String? _errorMessage;
 
