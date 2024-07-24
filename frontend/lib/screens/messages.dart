@@ -159,13 +159,19 @@ class _MessagesPageState extends State<MessagesPage> {
                           vertical: 5.0,
                         ),
                         onTap: () {
-                          // Navigate to chat screen
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => ChatScreen(user),
-                          //   ),
-                          // );
+                          final matchId =
+                              userProvider.userMatchIds[user.userId];
+                          if (matchId != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                    otherUser: user, matchId: matchId),
+                              ),
+                            );
+                          } else {
+                            print("Not a match");
+                          }
                         },
                         leading: Stack(
                           children: [

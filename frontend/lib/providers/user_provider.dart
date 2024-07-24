@@ -10,11 +10,13 @@ class UserProvider with ChangeNotifier {
   List<OtherUser> _matchedUsers = [];
   bool _isLoading = false;
   String? _errorMessage;
+  Map<int, int> _userMatchIds = {};
 
   List<OtherUser> get users => _users;
   List<OtherUser> get matchedUsers => _matchedUsers;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  Map<int, int> get userMatchIds => _userMatchIds;
 
   // Fetch all users
   Future<void> fetchAllUsers() async {
@@ -38,10 +40,21 @@ class UserProvider with ChangeNotifier {
     _notifyListenersSafely();
 
     try {
-      final matchUserIds = await _userService.getMatchesForUser(userId);
+      // Fetch matches for the user
+      final matchMap = await _userService.getMatchesForUser(userId);
 
-      _matchedUsers =
-          _users.where((user) => matchUserIds.contains(user.userId)).toList();
+      // Update _matchedUsers and _userMatchIds
+      _matchedUsers = _users.where((user) {
+        final isMatched = matchMap.containsKey(user.userId);
+        if (isMatched) {
+          // Update the _userMatchIds map
+          _userMatchIds[user.userId] = matchMap[user.userId]!;
+        }
+        return isMatched;
+      }).toList();
+
+      print("happily converted");
+
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();
@@ -49,6 +62,10 @@ class UserProvider with ChangeNotifier {
 
     _isLoading = false;
     _notifyListenersSafely();
+  }
+
+  int? getMatchIdForUser(int userId) {
+    return _userMatchIds[userId];
   }
 
   // Notify listeners safely

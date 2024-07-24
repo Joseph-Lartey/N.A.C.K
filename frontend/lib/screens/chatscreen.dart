@@ -3,12 +3,20 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import '../models/other_user.dart';
+import '../providers/auth_provider.dart';
 import 'messages.dart'; // Ensure this file contains the Message class definition
 
 class ChatScreen extends StatefulWidget {
-  final  message;
+  final OtherUser otherUser;
+  final int matchId;
 
-  const ChatScreen(this.message, {Key? key}) : super(key: key);
+  const ChatScreen({
+    Key? key,
+    required this.otherUser,
+    required this.matchId,
+  }) : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -16,6 +24,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
+  final String baseProfileDir =
+      'http://16.171.150.101/N.A.C.K/backend/public/profile_images/';
   final List<Map<String, dynamic>> _messages = [
     {'text': 'Hi there!', 'isSentByMe': false},
     {'text': 'Hello!', 'isSentByMe': true},
@@ -109,17 +119,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage:
-                  AssetImage(widget.message.avatar), // Avatar image
-            ),
+              backgroundImage: NetworkImage(
+                  '$baseProfileDir${widget.otherUser.profileImage}'), // Avatar image for received messages
+            ), // Avatar image
             const SizedBox(width: 10),
             Text(
-              widget.message.name,
+              '${widget.otherUser.firstName} ${widget.otherUser.lastName}',
               style: const TextStyle(fontSize: 20),
             ),
           ],
@@ -164,8 +176,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         if (!message['isSentByMe'])
                           CircleAvatar(
                             radius: 20,
-                            backgroundImage: AssetImage(widget.message
-                                .avatar), // Avatar image for received messages
+                            backgroundImage: NetworkImage(
+                                '$baseProfileDir${widget.otherUser.profileImage}'), // Avatar image for received messages
                           ),
                         if (!message['isSentByMe'])
                           const SizedBox(
@@ -225,9 +237,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         if (message['isSentByMe'])
                           CircleAvatar(
                             radius: 20,
-                            backgroundImage: AssetImage(
-                                'assets/your_avatar.png'), // Replace with sender's avatar image
-                          ),
+                            backgroundImage: NetworkImage(
+                                '$baseProfileDir${authProvider.user?.profileImage}'), // Replace with sender's avatar image
+                          ), //TODO: Change router
                       ],
                     );
                   },
