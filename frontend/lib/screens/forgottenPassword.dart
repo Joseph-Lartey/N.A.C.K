@@ -17,7 +17,7 @@ class ResetPasswordPage extends StatelessWidget {
         title: const Text('Reset Password'),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

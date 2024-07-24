@@ -134,7 +134,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
 
       print("route");
       // Navigate to next page
-      Navigator.of(context).push(_createRoute(const InterestsPage()));
+      Navigator.of(context).push(_createRoute(InterestsPage(userId: userId!)));
     }
   }
 
