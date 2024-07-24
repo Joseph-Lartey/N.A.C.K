@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled3/providers/auth_provider.dart';
 import '../widgets/navbar.dart'; // Ensure CustomBottomAppBar is implemented here
 import 'chatscreen.dart'; // Ensure ChatScreen is implemented correctly
 
@@ -21,6 +23,10 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider =
+        Provider.of<AuthProvider>(context); // Access AuthProvider
+    final userProfileImage =
+        'http://16.171.150.101/N.A.C.K/backend/public/profile_images/${authProvider.user?.profileImage ?? 'default_user.png'}'; // Get user's profile picture or default
     return Scaffold(
       extendBody: true,
       appBar: PreferredSize(
@@ -29,10 +35,10 @@ class _MessagesPageState extends State<MessagesPage> {
         child: AppBar(
           backgroundColor: Colors.white, // WhatsApp green
           elevation: 0,
-          leading: const Padding(
+          leading: Padding(
             padding: EdgeInsets.all(10.0),
             child: CircleAvatar(
-              backgroundImage: AssetImage('assets/img2.jpg'),
+              backgroundImage: NetworkImage(userProfileImage),
             ),
           ),
           title: const Text(

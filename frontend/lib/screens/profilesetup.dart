@@ -151,6 +151,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       await uploadImage(userId);
 
       print("route");
+      // Navigate to next page
       Navigator.of(context).push(_createRoute(InterestsPage(userId: userId!)));
     }
   }
