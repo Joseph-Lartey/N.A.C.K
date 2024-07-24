@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled3/providers/auth_provider.dart';
+import 'providers/user_provider.dart';
 import 'services/otp.dart'; // Import the OTP service
 import 'screens/WelcomeScreen.dart';
 
@@ -10,8 +11,11 @@ void main() {
     statusBarColor: Colors.transparent,
   ));
   OTPService.configure(); // Configure the OTP service
-  runApp(ChangeNotifierProvider(
-    create: (context) => AuthProvider(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+    ],
     child: const MyApp(),
   ));
 }

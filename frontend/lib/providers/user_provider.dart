@@ -21,13 +21,11 @@ class UserProvider with ChangeNotifier {
     try {
       _users = await _userService.getAllUsers();
       _errorMessage = null;
-
     } catch (e) {
       _errorMessage = e.toString();
     }
 
     _isLoading = false;
     notifyListeners();
-
   }
 }

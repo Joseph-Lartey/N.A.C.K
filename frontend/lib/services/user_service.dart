@@ -9,7 +9,7 @@ class UserService {
   // get all users in the database
   Future<List<OtherUser>> getAllUsers() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await http.get(Uri.parse('$baseUrl/users'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -18,8 +18,6 @@ class UserService {
           List<dynamic> usersJson = data['data'];
           List<OtherUser> users =
               usersJson.map((json) => OtherUser.fromJson(json)).toList();
-          // BUG: check if users are diplsyed
-          print('The users are $users');
           return users;
         } else {
           throw Exception('Error: ${data['error']}');
@@ -31,6 +29,4 @@ class UserService {
       throw Exception('Failed to load users: $e');
     }
   }
-
-  
 }
