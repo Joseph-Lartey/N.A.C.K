@@ -95,6 +95,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
   Route _createRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -113,7 +114,7 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-
+=======
   int _currentIndex = 0;
 
   @override
@@ -130,20 +131,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: GestureDetector(
-          child: GestureDetector(
           child: Padding(
-              padding: EdgeInsets.all(6.5),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(userProfileImage),
-                radius: 5,
-              ),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              _createRoute(const ProfilePage()),
-            );
-          },
+            padding: EdgeInsets.all(6.5),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(userProfileImage),
+              radius: 5,
+            ),
           ),
           onTap: () {
             Navigator.push(
@@ -213,8 +206,7 @@ class _HomePageState extends State<HomePage> {
                                 child: IconButton(
                                   icon: const Icon(Icons.favorite,
                                       color: Colors.white, size: 30),
-                                  onPressed: () => _likeUser(
-                                      _profiles[_currentIndex].userId),
+                                  onPressed: () => _likeUser(_profiles[_currentIndex].userId),
                                 ),
                               ),
                             ],
