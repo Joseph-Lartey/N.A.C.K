@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/other_user.dart';
 import '../providers/user_provider.dart';
 import '../widgets/navbar.dart';
+import 'package:http/http.dart' as http;
 import 'match.dart'; // Import MatchPage
 import '../providers/auth_provider.dart'; // Import AuthProvider
 
@@ -41,6 +44,47 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _currentIndex = (_currentIndex + 1) % _profiles.length;
     });
+  }
+
+  // Like a user feature
+  void _likeUser(int userId) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final currentUserId = authProvider.user?.userId;
+
+    if (currentUserId == null) {
+      // Handle the case where the user is not authenticated
+      return;
+    }
+
+    final url = Uri.parse(
+        'http://16.171.150.101/N.A.C.K/backend/users/like'); // Update with your endpoint
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'liked_userId': userId,
+          'userId': currentUserId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+
+        if (responseBody["message"] == "Match has been created") {
+          _goToMatchPage();
+        } else {
+          _nextProfile();
+        }
+
+        print('User liked successfully');
+      } else {
+        print('Failed to like user. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   void _goToMatchPage() {
@@ -133,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                                 child: IconButton(
                                   icon: const Icon(Icons.favorite,
                                       color: Colors.white, size: 30),
-                                  onPressed: _goToMatchPage,
+                                  onPressed: () => _likeUser(_profiles[_currentIndex].userId),
                                 ),
                               ),
                             ],
