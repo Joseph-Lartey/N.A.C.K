@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'messages.dart'; // Ensure this file contains the Message class definition
 
 class ChatScreen extends StatefulWidget {
-  final Message message;
+  final  message;
 
   const ChatScreen(this.message, {Key? key}) : super(key: key);
 
