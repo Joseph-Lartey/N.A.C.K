@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({Key? key}) : super(key: key);
+  final int? userId;
+
+  const ChangePasswordPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   ChangePasswordPageState createState() => ChangePasswordPageState();
@@ -52,30 +58,79 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
     });
   }
 
-  void _handleSubmit() {
-    // Perform password change logic here (simulate success)
-    // For demonstration purposes, we'll just show a SnackBar
+Future<void> _handleSubmit() async {
+  final userId = widget.userId;
+  final currentPassword = _currentPasswordController.text;
+  final newPassword = _newPasswordController.text;
+  final confirmPassword = _confirmPasswordController.text;
+
+  if (userId == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('User ID not found.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  if (!(_doPasswordsMatch && !_isSubmitDisabled)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Passwords do not match or do not meet requirements.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  final url = 'http://16.171.150.101/N.A.C.K/backend/users/change_password';
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'userId': userId,
+      'oldPassword': currentPassword,
+      'newPassword': newPassword,
+      'confirmPassword': confirmPassword,
+    }),
+  );
+
+  // Debugging: log the response body
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  if (response.statusCode == 200) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Password changed successfully!'),
         duration: Duration(seconds: 3),
       ),
     );
-
-    // Clear form fields or perform any other necessary cleanup
-    _currentPasswordController.clear();
-    _newPasswordController.clear();
-    _confirmPasswordController.clear();
-    setState(() {
-      _isMinLength = false;
-      _hasUppercase = false;
-      _hasLowercase = false;
-      _hasNumber = false;
-      _hasSpecialChar = false;
-      _doPasswordsMatch = true;
-      _isSubmitDisabled = true; // Disable submit button again
-    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to change password: ${response.body}'),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
+
+  // Clear form fields or perform any other necessary cleanup
+  _currentPasswordController.clear();
+  _newPasswordController.clear();
+  _confirmPasswordController.clear();
+  setState(() {
+    _isMinLength = false;
+    _hasUppercase = false;
+    _hasLowercase = false;
+    _hasNumber = false;
+    _hasSpecialChar = false;
+    _doPasswordsMatch = true;
+    _isSubmitDisabled = true; // Disable submit button again
+  });
+}
+
 
   @override
   void dispose() {
