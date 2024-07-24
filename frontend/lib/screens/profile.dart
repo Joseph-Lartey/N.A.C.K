@@ -114,6 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       // You can call a method to fetch the user data from your backend
     });
+    print('Refresh complete');
   }
 
   @override
@@ -134,6 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Colors.white,
         backgroundColor: const Color.fromARGB(255, 183, 66, 91),
         height: 100,
+        showChildOpacityTransition: false,
         child: SingleChildScrollView(
           child: Stack(
             children: [
@@ -159,9 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: IconButton(
                                 icon: const Icon(Icons.camera_alt,
                                     color: Colors.white),
-                                onPressed: () {
-                                  // Add your camera button action here
-                                },
+                                onPressed: selectImageFromGallery,
                               ),
                             ),
                           ],
@@ -201,20 +201,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         ProfileInfoRow(
                           label: 'First Name',
                           value: user?.firstName ?? '',
-                          onEdit: (newValue) {
-                            setState(() {
-                              user?.firstName = newValue;
-                            });
-                          },
                         ),
                         ProfileInfoRow(
                           label: 'Last Name',
                           value: user?.lastName ?? '',
-                          onEdit: (newValue) {
-                            setState(() {
-                              user?.lastName = newValue;
-                            });
-                          },
                         ),
                         ProfileInfoRow(
                           label: 'Username',
@@ -223,16 +213,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             setState(() {
                               user?.username = newValue;
                             });
+                            if (user != null) {
+                              updateUserInfo(user.userId.toString(), newValue,
+                                  user.bio ?? '');
+                            }
                           },
                         ),
                         ProfileInfoRow(
                           label: 'Email Address',
                           value: user?.email ?? '',
-                          onEdit: (newValue) {
-                            setState(() {
-                              user?.email = newValue;
-                            });
-                          },
                         ),
                         ProfileInfoRow(
                           label: 'Bio',
@@ -241,6 +230,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             setState(() {
                               user?.bio = newValue;
                             });
+                            if (user != null) {
+                              updateUserInfo(user.userId.toString(),
+                                  user.username ?? '', newValue);
+                            }
                           },
                         ),
                         const SizedBox(height: 20),
