@@ -95,7 +95,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
   Route _createRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -114,7 +113,7 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-=======
+
   int _currentIndex = 0;
 
   @override
@@ -206,7 +205,8 @@ class _HomePageState extends State<HomePage> {
                                 child: IconButton(
                                   icon: const Icon(Icons.favorite,
                                       color: Colors.white, size: 30),
-                                  onPressed: () => _likeUser(_profiles[_currentIndex].userId),
+                                  onPressed: () => _likeUser(
+                                      _profiles[_currentIndex].userId),
                                 ),
                               ),
                             ],
