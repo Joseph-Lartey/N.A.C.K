@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/navbar.dart';
 import 'match.dart'; // Import MatchPage
+import '../providers/auth_provider.dart'; // Import AuthProvider
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,21 +18,24 @@ class _HomePageState extends State<HomePage> {
       'name': 'Amy',
       'age': '21',
       'location': 'Dufie Annex',
-      'bio': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et lorem et massa vestibulum bibendum.',
+      'bio':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et lorem et massa vestibulum bibendum.',
     },
     {
       'image': 'assets/img2.jpg',
       'name': 'John',
       'age': '25',
       'location': 'Downtown',
-      'bio': 'Passionate about photography and travel. Always looking for new adventures.',
+      'bio':
+          'Passionate about photography and travel. Always looking for new adventures.',
     },
     {
       'image': 'assets/img3.jpg',
       'name': 'Emma',
       'age': '23',
       'location': 'Green Park',
-      'bio': 'Love cooking, reading, and spending time with my cat. Looking for someone to share life’s moments.',
+      'bio':
+          'Love cooking, reading, and spending time with my cat. Looking for someone to share life’s moments.',
     },
     // Add more profiles here
   ];
@@ -45,22 +50,26 @@ class _HomePageState extends State<HomePage> {
   void _goToMatchPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) =>  MatchPage()),
+      MaterialPageRoute(builder: (context) => MatchPage()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final currentProfile = _profiles[_currentIndex];
+    final authProvider =
+        Provider.of<AuthProvider>(context); // Access AuthProvider
+    final userProfileImage =
+        'http://16.171.150.101/N.A.C.K/backend/public/profile_images/${authProvider.user?.profileImage ?? 'default_user.png'}'; // Get user's profile picture or default
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: const Padding(
+        leading: Padding(
           padding: EdgeInsets.all(6.5),
           child: CircleAvatar(
-            backgroundImage: AssetImage('assets/img2.jpg'),
+            backgroundImage: NetworkImage(userProfileImage),
             radius: 5,
           ),
         ),
@@ -108,7 +117,8 @@ class _HomePageState extends State<HomePage> {
                       radius: 30,
                       backgroundColor: Colors.white,
                       child: IconButton(
-                        icon: const Icon(Icons.close, color: Colors.black, size: 30),
+                        icon: const Icon(Icons.close,
+                            color: Colors.black, size: 30),
                         onPressed: _nextProfile,
                       ),
                     ),
@@ -117,7 +127,8 @@ class _HomePageState extends State<HomePage> {
                       radius: 30,
                       backgroundColor: const Color.fromARGB(255, 183, 66, 91),
                       child: IconButton(
-                        icon: const Icon(Icons.favorite, color: Colors.white, size: 30),
+                        icon: const Icon(Icons.favorite,
+                            color: Colors.white, size: 30),
                         onPressed: _goToMatchPage,
                       ),
                     ),
@@ -169,4 +180,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
