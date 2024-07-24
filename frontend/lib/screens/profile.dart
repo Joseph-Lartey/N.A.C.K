@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             right: -10,
                             child: IconButton(
                               icon: const Icon(Icons.camera_alt,
-                                  color: Colors.black),
+                                  color: Colors.white),
                               onPressed: () {
                                 // Add your camera button action here
                               },
