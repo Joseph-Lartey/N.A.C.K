@@ -107,13 +107,35 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> fetchUserData() async {
+    final userId = Provider.of<AuthProvider>(context, listen: false).user?.userId;
+    if (userId == null) return;
+
+    final response = await http.get(
+      Uri.parse('http://16.171.150.101/N.A.C.K/backend/user/$userId'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      setState(() {
+        authProvider.user?.username = data['username'];
+        authProvider.user?.bio = data['bio'];
+        authProvider.user?.firstName = data['firstName'];
+        authProvider.user?.lastName = data['lastName'];
+        authProvider.user?.email = data['email'];
+        authProvider.user?.profileImage = data['profileImage'];
+      });
+    } else {
+      print('Failed to fetch user data');
+    }
+  }
+
   Future<void> _handleRefresh() async {
+    // Fetch the latest user data
+    await fetchUserData();
     // Simulate network delay
     await Future.delayed(Duration(seconds: 2));
-    // Refresh the user data here
-    setState(() {
-      // You can call a method to fetch the user data from your backend
-    });
     print('Refresh complete');
   }
 
