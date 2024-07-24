@@ -130,120 +130,127 @@ class _ProfilePageState extends State<ProfilePage> {
     _lastNameController.text = user?.lastName ?? '';
 
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+          elevation: 0, // Remove shadow
+          automaticallyImplyLeading: false,
+        ),
       body: LiquidPullToRefresh(
         onRefresh: _handleRefresh,
-        color: Colors.white,
-        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+        color: Color.fromARGB(255, 183, 66, 91),
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         height: 100,
         showChildOpacityTransition: false,
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Container(
-                color: const Color.fromARGB(255, 183, 66, 91),
-                height: 300, // Adjust the height as needed
-              ),
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(80),
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage: NetworkImage(userProfileImage),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: -10,
-                              child: IconButton(
-                                icon: const Icon(Icons.camera_alt,
-                                    color: Colors.white),
-                                onPressed: selectImageFromGallery,
+        child: ListView(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  color: const Color.fromARGB(255, 183, 66, 91),
+                  height: 300, // Adjust the height as needed
+                ),
+                Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(80),
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(userProfileImage),
                               ),
+                              Positioned(
+                                bottom: 0,
+                                right: -10,
+                                child: IconButton(
+                                  icon: const Icon(Icons.camera_alt,
+                                      color: Colors.white),
+                                  onPressed: selectImageFromGallery,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        Text(
-                          '@${user?.username ?? ''}',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
+                          Text(
+                            '@${user?.username ?? ''}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ProfileInfoRow(
-                          label: 'First Name',
-                          value: user?.firstName ?? '',
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
                         ),
-                        ProfileInfoRow(
-                          label: 'Last Name',
-                          value: user?.lastName ?? '',
-                        ),
-                        ProfileInfoRow(
-                          label: 'Username',
-                          value: user?.username ?? '',
-                          onEdit: (newValue) {
-                            setState(() {
-                              user?.username = newValue;
-                            });
-                            if (user != null) {
-                              updateUserInfo(user.userId.toString(), newValue,
-                                  user.bio ?? '');
-                            }
-                          },
-                        ),
-                        ProfileInfoRow(
-                          label: 'Email Address',
-                          value: user?.email ?? '',
-                        ),
-                        ProfileInfoRow(
-                          label: 'Bio',
-                          value: user?.bio ?? '',
-                          onEdit: (newValue) {
-                            setState(() {
-                              user?.bio = newValue;
-                            });
-                            if (user != null) {
-                              updateUserInfo(user.userId.toString(),
-                                  user.username ?? '', newValue);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                      ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileInfoRow(
+                            label: 'First Name',
+                            value: user?.firstName ?? '',
+                          ),
+                          ProfileInfoRow(
+                            label: 'Last Name',
+                            value: user?.lastName ?? '',
+                          ),
+                          ProfileInfoRow(
+                            label: 'Username',
+                            value: user?.username ?? '',
+                            onEdit: (newValue) {
+                              setState(() {
+                                user?.username = newValue;
+                              });
+                              if (user != null) {
+                                updateUserInfo(user.userId.toString(), newValue,
+                                    user.bio ?? '');
+                              }
+                            },
+                          ),
+                          ProfileInfoRow(
+                            label: 'Email Address',
+                            value: user?.email ?? '',
+                          ),
+                          ProfileInfoRow(
+                            label: 'Bio',
+                            value: user?.bio ?? '',
+                            onEdit: (newValue) {
+                              setState(() {
+                                user?.bio = newValue;
+                              });
+                              if (user != null) {
+                                updateUserInfo(user.userId.toString(),
+                                    user.username ?? '', newValue);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: const CustomBottomAppBar(),
