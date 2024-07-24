@@ -10,9 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:http_parser/http_parser.dart';
 
 class ProfileSetupPage extends StatefulWidget {
-  final int? userId;
-
-  const ProfileSetupPage({Key? key, required this.userId}) : super(key: key);
+  const ProfileSetupPage({Key? key}) : super(key: key);
 
   @override
   _ProfileSetupPageState createState() => _ProfileSetupPageState();
@@ -93,6 +91,92 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     }
   }
 
+  Future<void> _registerAndLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final email = authProvider.registrationDetails['email'];
+    final firstname = authProvider.registrationDetails['firstname'];
+    final lastname = authProvider.registrationDetails['lastname'];
+    final username = authProvider.registrationDetails['username'];
+    final password = authProvider.registrationDetails['password'];
+    final passwordx = authProvider.registrationDetails['password'];
+    final dob = authProvider.registrationDetails['dob'];
+
+    print('Attempting registration with email: $email, username: $username');
+    print(
+        'Registration details - firstname: $firstname, lastname: $lastname, dob: $dob, password:$password , confirmpassword:$passwordx');
+
+    if (email != null &&
+        password != null &&
+        firstname != null &&
+        lastname != null &&
+        dob != null) {
+      final response = await http.post(
+        Uri.parse('http://16.171.150.101/N.A.C.K/backend/users'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'confirm_password': passwordx,
+          'firstname': firstname,
+          'lastname': lastname,
+          'username': username,
+          'dob': dob,
+        }),
+      );
+      print('Registration response status: ${response.statusCode}');
+      print('Registration response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['success']) {
+          // Registration successful, login the user
+          await authProvider.login(email, password);
+          if (authProvider.user != null) {
+            final userId = authProvider.user!.userId;
+
+            // Create profile
+            final profileResponse = await http.post(
+              Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({
+                'userId': userId,
+                'username': _usernameController.text,
+                'gender': _selectedGender,
+                'bio': _bioController.text,
+              }),
+            );
+
+            print(
+                'Profile creation response status: ${profileResponse.statusCode}');
+            print('Profile creation response body: ${profileResponse.body}');
+
+            if (profileResponse.statusCode == 200) {
+              final profileResponseBody = jsonDecode(profileResponse.body);
+              if (profileResponseBody['success']) {
+                await uploadImage(userId);
+                Navigator.of(context).push(_createRoute(InterestsPage(
+                  userId: userId,
+                )));
+              } else {
+                print('Profile creation failed!');
+              }
+            } else {
+              print('Profile creation request failed!');
+            }
+          } else {
+            print('Login failed!');
+          }
+        } else {
+          print('Registration failed!');
+        }
+      } else {
+        print('Registration request failed!');
+      }
+    } else {
+      print('Required registration details are missing!');
+    }
+  }
+
   Route _createRoute(Widget page) {
     print("called routing function");
     return PageRouteBuilder(
@@ -126,35 +210,37 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         !_showBioError &&
         !_showGenderError &&
         !_showImageError) {
-      _createProfile(widget.userId);
+      _registerAndLogin();
     }
   }
 
-  void _createProfile(int? userId) async {
-    print("working");
+  // void _createProfile(int? userId) async {
+  //   print("working");
 
-    final response = await http.post(
-        Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'userId': userId,
-          'username': _usernameController.text,
-          'gender': _selectedGender,
-          'bio': _bioController.text,
-        }));
+  //   final response = await http.post(
+  //       Uri.parse('http://16.171.150.101/N.A.C.K/backend/profile'),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode({
+  //         'userId': userId,
+  //         'username': _usernameController.text,
+  //         'gender': _selectedGender,
+  //         'bio': _bioController.text,
+  //       }));
 
-    print(response.body);
+  //   print(response.body);
 
-    if (response.statusCode == 500 || response.statusCode == 503) {
-      throw Exception("Server error");
-    } else {
-      await uploadImage(userId);
+  //   if (response.statusCode == 500 || response.statusCode == 503) {
+  //     throw Exception("Server error");
+  //   } else {
+  //     await uploadImage(userId);
 
-      print("route");
-      // Navigate to next page
-      Navigator.of(context).push(_createRoute(InterestsPage(userId: userId!)));
-    }
-  }
+  //     print("route");
+  //     // Navigate to InterestsPage with the required data
+  //     Navigator.of(context).push(_createRoute(InterestsPage(
+  //       userId: userId!,
+  //     )));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
