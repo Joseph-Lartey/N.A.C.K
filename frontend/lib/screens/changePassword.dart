@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({Key? key}) : super(key: key);
+  final int? userId;
+
+  const ChangePasswordPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   ChangePasswordPageState createState() => ChangePasswordPageState();
@@ -18,8 +24,11 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
   bool _hasNumber = false;
   bool _hasSpecialChar = false;
   bool _doPasswordsMatch = true;
-
   bool _isSubmitDisabled = true; // Initially disable submit button
+
+  bool _currentPasswordVisible = false;
+  bool _newPasswordVisible = false;
+  bool _confirmPasswordVisible = false;
 
   void _validatePassword(String password) {
     setState(() {
@@ -52,30 +61,79 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
     });
   }
 
-  void _handleSubmit() {
-    // Perform password change logic here (simulate success)
-    // For demonstration purposes, we'll just show a SnackBar
+Future<void> _handleSubmit() async {
+  final userId = widget.userId;
+  final currentPassword = _currentPasswordController.text;
+  final newPassword = _newPasswordController.text;
+  final confirmPassword = _confirmPasswordController.text;
+
+  if (userId == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('User ID not found.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  if (!(_doPasswordsMatch && !_isSubmitDisabled)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Passwords do not match or do not meet requirements.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  final url = 'http://16.171.150.101/N.A.C.K/backend/users/change_password';
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'userId': userId,
+      'oldPassword': currentPassword,
+      'newPassword': newPassword,
+      'confirmPassword': confirmPassword,
+    }),
+  );
+
+  // Debugging: log the response body
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  if (response.statusCode == 200) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Password changed successfully!'),
         duration: Duration(seconds: 3),
       ),
     );
-
-    // Clear form fields or perform any other necessary cleanup
-    _currentPasswordController.clear();
-    _newPasswordController.clear();
-    _confirmPasswordController.clear();
-    setState(() {
-      _isMinLength = false;
-      _hasUppercase = false;
-      _hasLowercase = false;
-      _hasNumber = false;
-      _hasSpecialChar = false;
-      _doPasswordsMatch = true;
-      _isSubmitDisabled = true; // Disable submit button again
-    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to change password: ${response.body}'),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
+
+  // Clear form fields or perform any other necessary cleanup
+  _currentPasswordController.clear();
+  _newPasswordController.clear();
+  _confirmPasswordController.clear();
+  setState(() {
+    _isMinLength = false;
+    _hasUppercase = false;
+    _hasLowercase = false;
+    _hasNumber = false;
+    _hasSpecialChar = false;
+    _doPasswordsMatch = true;
+    _isSubmitDisabled = true; // Disable submit button again
+  });
+}
+
 
   @override
   void dispose() {
@@ -103,7 +161,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,14 +169,21 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _currentPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: Colors.grey,
+              obscureText: !_currentPasswordVisible,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _currentPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _currentPasswordVisible = !_currentPasswordVisible;
+                    });
+                  },
                 ),
                 labelText: 'Current Password',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 183, 66, 91),
                 ),
@@ -127,15 +192,22 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _newPasswordController,
-              obscureText: true,
+              obscureText: !_newPasswordVisible,
               onChanged: _validatePassword,
-              decoration: const InputDecoration(
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: Colors.grey,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _newPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _newPasswordVisible = !_newPasswordVisible;
+                    });
+                  },
                 ),
                 labelText: 'New Password',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 183, 66, 91),
                 ),
@@ -144,15 +216,22 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _confirmPasswordController,
-              obscureText: true,
+              obscureText: !_confirmPasswordVisible,
               onChanged: _validatePasswordsMatch,
-              decoration: const InputDecoration(
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: Colors.grey,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _confirmPasswordVisible = !_confirmPasswordVisible;
+                    });
+                  },
                 ),
                 labelText: 'Confirm Password',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 183, 66, 91),
                 ),
@@ -190,7 +269,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               text: 'Special Character',
               isMet: _hasSpecialChar,
             ),
-            const Spacer(),
+            const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: _isSubmitDisabled ? null : _handleSubmit,
@@ -213,7 +292,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 70),
+            const SizedBox(height: 20),
           ],
         ),
       ),
