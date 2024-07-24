@@ -18,8 +18,11 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
   bool _hasNumber = false;
   bool _hasSpecialChar = false;
   bool _doPasswordsMatch = true;
-
   bool _isSubmitDisabled = true; // Initially disable submit button
+
+  bool _currentPasswordVisible = false;
+  bool _newPasswordVisible = false;
+  bool _confirmPasswordVisible = false;
 
   void _validatePassword(String password) {
     setState(() {
@@ -103,7 +106,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,14 +114,21 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _currentPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: Colors.grey,
+              obscureText: !_currentPasswordVisible,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _currentPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _currentPasswordVisible = !_currentPasswordVisible;
+                    });
+                  },
                 ),
                 labelText: 'Current Password',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 183, 66, 91),
                 ),
@@ -127,15 +137,22 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _newPasswordController,
-              obscureText: true,
+              obscureText: !_newPasswordVisible,
               onChanged: _validatePassword,
-              decoration: const InputDecoration(
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: Colors.grey,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _newPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _newPasswordVisible = !_newPasswordVisible;
+                    });
+                  },
                 ),
                 labelText: 'New Password',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 183, 66, 91),
                 ),
@@ -144,15 +161,22 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _confirmPasswordController,
-              obscureText: true,
+              obscureText: !_confirmPasswordVisible,
               onChanged: _validatePasswordsMatch,
-              decoration: const InputDecoration(
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: Colors.grey,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _confirmPasswordVisible = !_confirmPasswordVisible;
+                    });
+                  },
                 ),
                 labelText: 'Confirm Password',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 183, 66, 91),
                 ),
@@ -190,7 +214,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               text: 'Special Character',
               isMet: _hasSpecialChar,
             ),
-            const Spacer(),
+            const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: _isSubmitDisabled ? null : _handleSubmit,
@@ -213,7 +237,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 70),
+            const SizedBox(height: 20),
           ],
         ),
       ),

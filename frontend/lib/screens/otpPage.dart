@@ -30,6 +30,7 @@ class _OtpPageState extends State<OtpPage> {
   final TextEditingController otpController = TextEditingController();
 
   bool _isButtonEnabled = false;
+  bool _otpVisible = false;
 
   void _verifyOTP() async {
     bool isValid = OTPService.verifyOTP(otpController.text);
@@ -183,17 +184,26 @@ class _OtpPageState extends State<OtpPage> {
                             const SizedBox(height: 40),
                             TextField(
                               controller: otpController,
-                              obscureText: true,
+                              obscureText: !_otpVisible,
                               onChanged: (_) {
                                 _checkButtonState();
                               },
-                              decoration: const InputDecoration(
-                                suffixIcon: Icon(
-                                  Icons.visibility_off,
-                                  color: Colors.grey,
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _otpVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.grey,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _otpVisible = !_otpVisible;
+                                    });
+                                  },
                                 ),
                                 labelText: 'Enter 6 digit OTP',
-                                labelStyle: TextStyle(
+                                labelStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 183, 66, 91),
                                 ),
@@ -209,8 +219,7 @@ class _OtpPageState extends State<OtpPage> {
                                   borderRadius: BorderRadius.circular(20),
                                   color: _isButtonEnabled
                                       ? const Color.fromARGB(255, 183, 66, 91)
-                                      : Colors
-                                          .grey, // Adjusted color based on state
+                                      : Colors.grey,
                                 ),
                                 child: TextButton(
                                   onPressed:
