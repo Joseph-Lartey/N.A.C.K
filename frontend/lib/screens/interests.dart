@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:untitled3/screens/homePage.dart';
 import 'package:http/http.dart' as http;
+import 'loginScreen.dart';
 
 class InterestsPage extends StatefulWidget {
   final int? userId;
@@ -108,7 +109,7 @@ class InterestsPageState extends State<InterestsPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                _createRoute(const HomePage()),
+                _createRoute(const LoginScreen()),
               );
             },
             child: const Text(
