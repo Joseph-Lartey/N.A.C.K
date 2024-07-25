@@ -1,10 +1,13 @@
+// chat_room_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled3/providers/auth_provider.dart';
-import '../widgets/navbar.dart'; // Ensure CustomBottomAppBar is implemented here
-import 'chatscreen.dart'; // Ensure ChatScreen is implemented correctly
+import 'package:untitled3/providers/user_provider.dart';
+import '../widgets/navbar.dart';
+import 'chatscreen.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
-import 'dart:math'; // For shuffling messages
+import 'dart:math';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({Key? key}) : super(key: key);
@@ -18,32 +21,53 @@ class _MessagesPageState extends State<MessagesPage> {
   final ValueNotifier<String> _searchQuery = ValueNotifier('');
 
   @override
+  void initState() {
+    super.initState();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    // Fetch all users and then fetch matched users for the logged-in user
+    userProvider.fetchAllUsers().then((_) {
+      userProvider.fetchMatchedUsers(authProvider.user?.userId ?? 0);
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
   Future<void> _handleRefresh() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
     // Simulate network delay
     await Future.delayed(Duration(seconds: 2));
+
+    // Fetch all users and then fetch matched users for the logged-in user
+    await userProvider.fetchAllUsers();
+    await userProvider.fetchMatchedUsers(authProvider.user?.userId ?? 0);
+
     // Shuffle messages for demonstration
-    setState(() {
-      messages.shuffle(Random());
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context); // Access AuthProvider
+    final authProvider = Provider.of<AuthProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+    final matchedUsers = userProvider.matchedUsers;
+
     final userProfileImage =
-        'http://16.171.150.101/N.A.C.K/backend/public/profile_images/${authProvider.user?.profileImage ?? 'default_user.png'}'; // Get user's profile picture or default
+        'http://16.171.150.101/N.A.C.K/backend/public/profile_images/${authProvider.user?.profileImage ?? 'default_user.png'}';
 
     return Scaffold(
       extendBody: true,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60), // Adjust the preferred size here
+        preferredSize: const Size.fromHeight(60),
         child: AppBar(
-          backgroundColor: Colors.white, // WhatsApp green
+          backgroundColor: Colors.white,
           elevation: 0,
           leading: Padding(
             padding: EdgeInsets.all(10.0),
@@ -62,7 +86,8 @@ class _MessagesPageState extends State<MessagesPage> {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.notifications_outlined, color: Colors.black),
+              icon:
+                  const Icon(Icons.notifications_outlined, color: Colors.black),
               onPressed: () {
                 // Action for notifications
               },
@@ -74,7 +99,8 @@ class _MessagesPageState extends State<MessagesPage> {
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
             child: TextField(
               controller: _searchController,
               onChanged: (value) {
@@ -110,90 +136,67 @@ class _MessagesPageState extends State<MessagesPage> {
               child: ValueListenableBuilder<String>(
                 valueListenable: _searchQuery,
                 builder: (context, query, _) {
-                  final filteredMessages = messages.where((message) =>
-                      message.name.toLowerCase().contains(query.toLowerCase()));
+                  final filteredUsers = matchedUsers.where((user) {
+                    final fullName =
+                        '${user.firstName} ${user.lastName}'.toLowerCase();
+                    return fullName.contains(query.toLowerCase());
+                  }).toList();
 
                   return ListView.separated(
-                    itemCount: filteredMessages.length,
+                    itemCount: filteredUsers.length,
                     separatorBuilder: (context, index) => const Divider(
                       height: 1,
                       color: Colors.transparent,
                     ),
                     itemBuilder: (context, index) {
-                      final message = filteredMessages.elementAt(index);
+                      final user = filteredUsers.elementAt(index);
+                      final bio = user.bio.length > 15
+                          ? '${user.bio.substring(0, 15)}...'
+                          : user.bio;
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
-                          vertical: 5.0, // Adjust vertical padding here
+                          vertical: 5.0,
                         ),
                         onTap: () {
-                          // Navigate to chat screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatScreen(message),
-                            ),
-                          );
+                          final matchId =
+                              userProvider.userMatchIds[user.userId];
+                          if (matchId != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                    otherUser: user, matchId: matchId),
+                              ),
+                            );
+                          } else {
+                            print("Not a match");
+                          }
                         },
                         leading: Stack(
                           children: [
                             CircleAvatar(
-                              backgroundImage: AssetImage(message.avatar),
+                              backgroundImage: NetworkImage(
+                                  'http://16.171.150.101/N.A.C.K/backend/public/profile_images/${user.profileImage}'),
                               radius: 30,
                             ),
-                            if (index % 2 == 0) // Example condition for unread badge
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFB7425B),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    message.unreadCount.toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ),
                           ],
                         ),
                         title: Text(
-                          message.name,
+                          '${user.firstName} ${user.lastName}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
                         subtitle: Text(
-                          message.lastMessage,
+                          bio,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
                           ),
-                        ),
-                        trailing: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              message.time,
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                          ],
                         ),
                       );
                     },
@@ -208,46 +211,3 @@ class _MessagesPageState extends State<MessagesPage> {
     );
   }
 }
-
-// Sample data model for messages
-class Message {
-  final String name;
-  final String avatar;
-  final String lastMessage;
-  final String time;
-  final int unreadCount;
-
-  Message({
-    required this.name,
-    required this.avatar,
-    required this.lastMessage,
-    required this.time,
-    required this.unreadCount,
-  });
-}
-
-// Sample messages list
-List<Message> messages = [
-  Message(
-    name: 'Jasmine Young',
-    avatar: 'assets/img1.jpg',
-    lastMessage: 'Last night was great?',
-    time: '2 mins ago',
-    unreadCount: 3,
-  ),
-  Message(
-    name: 'Jessica Stain',
-    avatar: 'assets/img2.jpg',
-    lastMessage: "Let's meet up for coffee tomorrow.",
-    time: '5 mins ago',
-    unreadCount: 1,
-  ),
-  Message(
-    name: 'Emma Watson',
-    avatar: 'assets/img3.jpg',
-    lastMessage: 'I will be there in 5 minutes.',
-    time: '10 mins ago',
-    unreadCount: 5,
-  ),
-  // Add more messages here
-];

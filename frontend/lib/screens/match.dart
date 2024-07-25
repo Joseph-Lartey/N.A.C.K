@@ -141,10 +141,21 @@ class MatchPageState extends State<MatchPage> {
                       ),
                     ),
                     onTap: () {
+
+                      //TODO: Implement route to the chatscreen
+                      // Navigator.of(context)
+                      //     .push(createFadeRoute(ChatScreen(Message(
+                      //   name: 'Jasmine Young',
+                      //   avatar: 'assets/img1.jpg',
+                      //   lastMessage: 'Last night was great?',
+                      //   time: '2 mins ago',
+                      //   unreadCount: 3,
+                      // ))));
                       Navigator.of(context)
                           .push(createFadeRoute(MessagesPage()
                         )
                       );
+
                     },
                   ),
                 ),
