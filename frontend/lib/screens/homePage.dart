@@ -35,10 +35,15 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchUsers() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await userProvider.fetchAllUsers();
 
     setState(() {
-      _profiles = userProvider.users;
+      _profiles = userProvider.users
+          .where((user) => user.userId != authProvider.user?.userId)
+          .toList()
+          .reversed
+          .toList();
     });
   }
 
