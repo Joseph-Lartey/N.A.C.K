@@ -29,4 +29,17 @@ class UserService {
       throw Exception('Failed to load users: $e');
     }
   }
+
+  // Fetch the users matched to a user
+  Future<Map<int, int>> getMatchesForUser(int userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/matches/$userId'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)['data'] as List;
+      return {
+        for (var match in data) match['userId'] as int: match['match_id'] as int
+      };
+    } else {
+      throw Exception('Failed to load matches');
+    }
+  }
 }

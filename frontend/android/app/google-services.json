@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "850813685864",
+    "project_id": "nackapp-734c1",
+    "storage_bucket": "nackapp-734c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850813685864:android:936b0bece4049ac44c6bdd",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABc6Gvm1zWWWdsQL5aDcYZS49AKczgDBY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
