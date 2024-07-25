@@ -141,7 +141,6 @@ class MatchPageState extends State<MatchPage> {
                       ),
                     ),
                     onTap: () {
-
                       //TODO: Implement route to the chatscreen
                       // Navigator.of(context)
                       //     .push(createFadeRoute(ChatScreen(Message(
@@ -152,9 +151,7 @@ class MatchPageState extends State<MatchPage> {
                       //   unreadCount: 3,
                       // ))));
                       Navigator.of(context)
-                          .push(createFadeRoute(MessagesPage()
-                        )
-                      );
+                          .push(createFadeRoute(MessagesPage()));
                     },
                   ),
                 ),
