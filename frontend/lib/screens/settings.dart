@@ -211,14 +211,14 @@ class SettingsPageState extends State<SettingsPage> {
               }
             },
           ),
-          SwitchListTile(
-            title: const Text('Push notifications'),
-            value: _pushNotifications,
-            activeColor: const Color.fromARGB(255, 183, 66, 91),
-            onChanged: (bool value) {
-              _updatePushNotifications(value); // Call _updatePushNotifications
-            },
-          ),
+          // SwitchListTile(
+          //   title: const Text('Push notifications'),
+          //   value: _pushNotifications,
+          //   activeColor: const Color.fromARGB(255, 183, 66, 91),
+          //   onChanged: (bool value) {
+          //     _updatePushNotifications(value); // Call _updatePushNotifications
+          //   },
+          // ),
           SwitchListTile(
             title: const Text('Enable biometric'),
             value: _biometricEnabled,
