@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../services/auth_services.dart';
 
@@ -56,8 +57,14 @@ class AuthProvider with ChangeNotifier {
 
         final profileDetails =
             await _authService.getProfile(loginResponse['id']);
-
         _user = User.fromJson(profileDetails);
+
+        // Save login state to shared preferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('token', _token!);
+        await prefs.setString('user', _user!.toJson() as String);
+        print('User logged in, state saved.');
       } else {
         _loginSuccess = false;
         _errorMessage = loginResponse['error'];
@@ -71,8 +78,39 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // User logout
+  Future<void> logout() async {
+    setLoading(true);
+
+    try {
+      final logoutResponse = await _authService.logout();
+
+      if (logoutResponse['success'] == true) {
+        _loginSuccess = false;
+        _user = null;
+        _token = null;
+        _socketChannel = null;
+
+        // Clear login state from shared preferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', false);
+        await prefs.remove('token');
+        await prefs.remove('user');
+        print('User logged out, state cleared.');
+      } else {
+        _errorMessage = logoutResponse['error'];
+      }
+
+      setLoading(false);
+    } catch (e) {
+      _errorMessage = e.toString();
+      setLoading(false);
+    }
+  }
+
   // User registration
-  Future<void> register(registrationDetail) async {
+  // User registration
+  Future<void> register() async {
     setLoading(true);
     try {
       final registerResponse = await _authService.register(
@@ -86,6 +124,10 @@ class AuthProvider with ChangeNotifier {
       if (registerResponse['success'] == true) {
         _registrationSuccess = true;
         clearRegistrationDetails(); // Clear registration details after successful registration
+
+        // Automatically log in the user after registration
+        await login(
+            _registrationDetails['email']!, _registrationDetails['password']!);
       } else {
         _registrationSuccess = false;
         _errorMessage = registerResponse['error'];

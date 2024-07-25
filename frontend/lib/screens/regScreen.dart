@@ -473,7 +473,7 @@ class _RegScreenState extends State<RegScreen> {
                                 Icons.school,
                                 color: Colors.grey,
                               ),
-                              labelText: 'Class',
+                              labelText: 'Year Group',
                               labelStyle: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromARGB(255, 183, 66, 91),

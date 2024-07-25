@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-
 class AuthService {
   // final String baseUrl = "http://4.231.236.2/N.A.C.K/backend";
   final String baseUrl = "http://16.171.150.101/N.A.C.K/backend";
@@ -56,5 +55,16 @@ class AuthService {
 
   // Log in with firebase
   ///Let user sign in with email and password
- 
+  ///
+  /// // Log users out of the application
+  Future<Map<String, dynamic>> logout() async {
+    final response = await http.post(Uri.parse('$baseUrl/users/logout'),
+        headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode == 500 || response.statusCode == 503) {
+      throw Exception("Server error");
+    } else {
+      return jsonDecode(response.body);
+    }
+  }
 }
