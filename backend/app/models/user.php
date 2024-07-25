@@ -35,7 +35,7 @@ class User extends Model
     // Fetch all users in the system with a specific set of column details (attributes)
     public function fetchAll()
     {
-        $sql = "SELECT userId, firstName, lastName, username, bio, profile_Image
+        $sql = "SELECT userId, firstName, lastName, username, dob, bio, profile_Image
                 FROM {$this->table}";
 
         $stmt = $this->pdo->query($sql);
