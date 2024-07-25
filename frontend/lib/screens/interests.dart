@@ -90,7 +90,7 @@ class InterestsPageState extends State<InterestsPage> {
     // If all requests succeed, navigate to the HomePage
     Navigator.push(
       context,
-      _createRoute(const HomePage()),
+      _createRoute(const LoginScreen()),
     );
   }
 
