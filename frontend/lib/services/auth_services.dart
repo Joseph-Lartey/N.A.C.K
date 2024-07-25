@@ -52,4 +52,7 @@ class AuthService {
       throw Exception("Failed to get profile");
     }
   }
+
+  // Log in with firebase
+  ///Let user sign in with email and password
 }
