@@ -183,8 +183,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   stream: chatService.getMessages(
                       widget.matchId, authProvider.user?.userId ?? 0),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      print('Error: ${snapshot.error}');
+                      return Center(
+                          child:
+                              Text('Something went wrong: ${snapshot.error}'));
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.docs.isEmpty) {
+                      return const Center(child: Text('No messages found.'));
                     }
                     final messages = snapshot.data!.docs
                         .map((doc) =>
