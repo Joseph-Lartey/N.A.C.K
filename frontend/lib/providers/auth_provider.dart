@@ -1,4 +1,3 @@
-// example
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/auth_services.dart';
@@ -11,6 +10,7 @@ class AuthProvider with ChangeNotifier {
   bool _registrationSuccess = false;
   bool _loginSuccess = false;
   String? _errorMessage;
+  bool isLoading = false;
 
   User? get user => _user;
   String? get token => _token;
@@ -18,15 +18,31 @@ class AuthProvider with ChangeNotifier {
   bool? get registrationSuccess => _registrationSuccess;
   bool? get loginSuccess => _loginSuccess;
   String? get errorMessage => _errorMessage;
-  bool isLoading = false;
 
-  // Communicate whether or not the fetch is loading
+  // Temporarily store registration details
+  Map<String, String> _registrationDetails = {};
+
+  Map<String, String> get registrationDetails => _registrationDetails;
+
+  // Set loading state
   void setLoading(bool loading) {
     isLoading = loading;
     notifyListeners();
   }
 
-  // Log user in
+  // Set registration details
+  void setRegistrationDetails(Map<String, String> details) {
+    _registrationDetails = details;
+    notifyListeners();
+  }
+
+  // Clear registration details
+  void clearRegistrationDetails() {
+    _registrationDetails.clear();
+    notifyListeners();
+  }
+
+  // User login
   Future<void> login(String email, String password) async {
     setLoading(true);
 
@@ -35,7 +51,6 @@ class AuthProvider with ChangeNotifier {
 
       if (loginResponse['success'] == true) {
         _loginSuccess = true;
-
         _token = loginResponse['token'];
         _socketChannel = loginResponse['socket-channel'];
 
@@ -43,7 +58,6 @@ class AuthProvider with ChangeNotifier {
             await _authService.getProfile(loginResponse['id']);
 
         _user = User.fromJson(profileDetails);
-        // print("user object: $_user");
       } else {
         _loginSuccess = false;
         _errorMessage = loginResponse['error'];
@@ -51,29 +65,37 @@ class AuthProvider with ChangeNotifier {
 
       setLoading(false);
     } catch (e) {
-      //TODO: Include bottom banner message
-      print(e);
+      _loginSuccess = false;
+      _errorMessage = e.toString();
+      setLoading(false);
     }
   }
 
-  // Create user
-  Future<void> register(String firstname, String lastname, String username,
-      String email, String password, String dob) async {
+  // User registration
+  Future<void> register(registrationDetail) async {
     setLoading(true);
-
     try {
       final registerResponse = await _authService.register(
-          firstname, lastname, username, email, password, dob);
+          _registrationDetails['firstname']!,
+          _registrationDetails['lastname']!,
+          _registrationDetails['username']!,
+          _registrationDetails['email']!,
+          _registrationDetails['password']!,
+          _registrationDetails['dob']!);
 
       if (registerResponse['success'] == true) {
         _registrationSuccess = true;
+        clearRegistrationDetails(); // Clear registration details after successful registration
+      } else {
+        _registrationSuccess = false;
+        _errorMessage = registerResponse['error'];
       }
+      setLoading(false);
     } catch (e) {
       _registrationSuccess = false;
-      print("Error is: $e");
+      _errorMessage = e.toString();
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   // Update user information

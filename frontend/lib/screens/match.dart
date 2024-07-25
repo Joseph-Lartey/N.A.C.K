@@ -133,7 +133,7 @@ class MatchPageState extends State<MatchPage> {
                   ),
                   child: GestureDetector(
                     child: const Text(
-                      'Send a Message',
+                      'Go to Messages',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -141,6 +141,7 @@ class MatchPageState extends State<MatchPage> {
                       ),
                     ),
                     onTap: () {
+
                       //TODO: Implement route to the chatscreen
                       // Navigator.of(context)
                       //     .push(createFadeRoute(ChatScreen(Message(
@@ -150,6 +151,11 @@ class MatchPageState extends State<MatchPage> {
                       //   time: '2 mins ago',
                       //   unreadCount: 3,
                       // ))));
+                      Navigator.of(context)
+                          .push(createFadeRoute(MessagesPage()
+                        )
+                      );
+
                     },
                   ),
                 ),

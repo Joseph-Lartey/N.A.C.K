@@ -107,13 +107,47 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> fetchUserData() async {
+    final userId =
+        Provider.of<AuthProvider>(context, listen: false).user?.userId;
+    if (userId == null) {
+      print('User ID is null');
+      return;
+    }
+
+    try {
+      print('Fetching user data for user ID: $userId');
+      final response = await http.get(
+        Uri.parse('http://16.171.150.101/N.A.C.K/backend/users/$userId'),
+      );
+
+      if (response.statusCode == 200) {
+        print('User data fetched successfully');
+        final data = jsonDecode(response.body);
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        setState(() {
+          authProvider.user?.username = data['username'];
+          authProvider.user?.bio = data['bio'];
+          authProvider.user?.firstName = data['firstName'];
+          authProvider.user?.lastName = data['lastName'];
+          authProvider.user?.email = data['email'];
+          authProvider.user?.profileImage = data['profileImage'];
+        });
+      } else {
+        print('Failed to fetch user data');
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
   Future<void> _handleRefresh() async {
-    // Simulate network delay
+    print('Pull to refresh started');
+    await fetchUserData();
+    setState(() {}); // Refresh the state to update the UI
     await Future.delayed(Duration(seconds: 2));
-    // Refresh the user data here
-    setState(() {
-      // You can call a method to fetch the user data from your backend
-    });
     print('Refresh complete');
   }
 
@@ -130,120 +164,127 @@ class _ProfilePageState extends State<ProfilePage> {
     _lastNameController.text = user?.lastName ?? '';
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+        elevation: 0, // Remove shadow
+        automaticallyImplyLeading: false,
+      ),
       body: LiquidPullToRefresh(
         onRefresh: _handleRefresh,
-        color: Colors.white,
-        backgroundColor: const Color.fromARGB(255, 183, 66, 91),
+        color: Color.fromARGB(255, 183, 66, 91),
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         height: 100,
         showChildOpacityTransition: false,
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Container(
-                color: const Color.fromARGB(255, 183, 66, 91),
-                height: 300, // Adjust the height as needed
-              ),
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(80),
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage: NetworkImage(userProfileImage),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: -10,
-                              child: IconButton(
-                                icon: const Icon(Icons.camera_alt,
-                                    color: Colors.white),
-                                onPressed: selectImageFromGallery,
+        child: ListView(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  color: const Color.fromARGB(255, 183, 66, 91),
+                  height: 300, // Adjust the height as needed
+                ),
+                Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(80),
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(userProfileImage),
                               ),
+                              Positioned(
+                                bottom: 0,
+                                right: -10,
+                                child: IconButton(
+                                  icon: const Icon(Icons.camera_alt,
+                                      color: Colors.white),
+                                  onPressed: selectImageFromGallery,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        Text(
-                          '@${user?.username ?? ''}',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
+                          Text(
+                            '@${user?.username ?? ''}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ProfileInfoRow(
-                          label: 'First Name',
-                          value: user?.firstName ?? '',
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
                         ),
-                        ProfileInfoRow(
-                          label: 'Last Name',
-                          value: user?.lastName ?? '',
-                        ),
-                        ProfileInfoRow(
-                          label: 'Username',
-                          value: user?.username ?? '',
-                          onEdit: (newValue) {
-                            setState(() {
-                              user?.username = newValue;
-                            });
-                            if (user != null) {
-                              updateUserInfo(user.userId.toString(), newValue,
-                                  user.bio ?? '');
-                            }
-                          },
-                        ),
-                        ProfileInfoRow(
-                          label: 'Email Address',
-                          value: user?.email ?? '',
-                        ),
-                        ProfileInfoRow(
-                          label: 'Bio',
-                          value: user?.bio ?? '',
-                          onEdit: (newValue) {
-                            setState(() {
-                              user?.bio = newValue;
-                            });
-                            if (user != null) {
-                              updateUserInfo(user.userId.toString(),
-                                  user.username ?? '', newValue);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                      ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileInfoRow(
+                            label: 'First Name',
+                            value: user?.firstName ?? '',
+                          ),
+                          ProfileInfoRow(
+                            label: 'Last Name',
+                            value: user?.lastName ?? '',
+                          ),
+                          ProfileInfoRow(
+                            label: 'Username',
+                            value: user?.username ?? '',
+                            onEdit: (newValue) {
+                              setState(() {
+                                user?.username = newValue;
+                              });
+                              if (user != null) {
+                                updateUserInfo(user.userId.toString(), newValue,
+                                    user.bio ?? '');
+                              }
+                            },
+                          ),
+                          ProfileInfoRow(
+                            label: 'Email Address',
+                            value: user?.email ?? '',
+                          ),
+                          ProfileInfoRow(
+                            label: 'Bio',
+                            value: user?.bio ?? '',
+                            onEdit: (newValue) {
+                              setState(() {
+                                user?.bio = newValue;
+                              });
+                              if (user != null) {
+                                updateUserInfo(user.userId.toString(),
+                                    user.username ?? '', newValue);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: const CustomBottomAppBar(),
