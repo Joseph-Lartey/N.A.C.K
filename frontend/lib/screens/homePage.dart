@@ -266,13 +266,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
       ),
-      bottomNavigationBar: const ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(40),
-          topRight: Radius.circular(40),
-        ),
-        child: CustomBottomAppBar(),
-      ),
+      bottomNavigationBar: CustomBottomAppBar(currentIndex: 0),
     );
   }
 }
