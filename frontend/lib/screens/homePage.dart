@@ -195,6 +195,20 @@ class _HomePageState extends State<HomePage> {
                           fit: BoxFit.cover,
                         ),
                       ),
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.6),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                       Positioned(
                         bottom: 150,
                         left: 20,
@@ -230,7 +244,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              '${_profiles[_currentIndex].firstName} ${_profiles[_currentIndex].lastName}, ${12}',
+                              '${_profiles[_currentIndex].firstName} ${_profiles[_currentIndex].lastName}',
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -240,8 +254,6 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                // const Icon(Icons.location_on,
-                                //     color: Colors.white),
                                 const SizedBox(width: 4),
                                 Text(
                                   _profiles[_currentIndex].userName,
