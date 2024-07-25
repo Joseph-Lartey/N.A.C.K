@@ -197,11 +197,15 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               Positioned(
                                 bottom: 0,
-                                right: -10,
-                                child: IconButton(
-                                  icon: const Icon(Icons.camera_alt,
-                                      color: Colors.white),
-                                  onPressed: selectImageFromGallery,
+                                right: 0,
+                                child: CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Colors.white,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.camera_alt,
+                                        color: Color.fromARGB(255, 183, 66, 91)),
+                                    onPressed: selectImageFromGallery,
+                                  ),
                                 ),
                               ),
                             ],
@@ -287,7 +291,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomAppBar(),
+      bottomNavigationBar: CustomBottomAppBar(currentIndex: 2),
     );
   }
 }

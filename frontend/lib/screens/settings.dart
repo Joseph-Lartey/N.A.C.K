@@ -240,7 +240,7 @@ class SettingsPageState extends State<SettingsPage> {
           ),
         ],
       ),
-      bottomNavigationBar: const CustomBottomAppBar(),
+      bottomNavigationBar: CustomBottomAppBar(currentIndex: 3),
     );
   }
 }

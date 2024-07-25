@@ -155,7 +155,6 @@ class MatchPageState extends State<MatchPage> {
                           .push(createFadeRoute(MessagesPage()
                         )
                       );
-
                     },
                   ),
                 ),

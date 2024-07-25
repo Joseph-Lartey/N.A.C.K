@@ -207,7 +207,7 @@ class _MessagesPageState extends State<MessagesPage> {
           ),
         ],
       ),
-      bottomNavigationBar: const CustomBottomAppBar(),
+      bottomNavigationBar: CustomBottomAppBar(currentIndex: 1),
     );
   }
 }
