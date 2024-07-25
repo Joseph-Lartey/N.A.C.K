@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/auth_provider.dart';
 import 'homePage.dart';
 import 'forgottenPassword.dart'; // Import the ResetPasswordPage
@@ -63,6 +64,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
+  Future<void> _storeCredentials(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('password', password);
+    print('Credentials stored: $email, $password');
+  }
+
   void _loginRequest(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -77,6 +85,10 @@ class _LoginScreenState extends State<LoginScreen> {
           text: "Wrong email or password",
         );
       } else {
+        // Store email and password
+        await _storeCredentials(
+            _emailController.text, _passwordController.text);
+
         Navigator.push(
           context,
           _createRoute(const HomePage()),
