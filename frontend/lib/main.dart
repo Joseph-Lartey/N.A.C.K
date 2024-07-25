@@ -2,31 +2,38 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled3/providers/auth_provider.dart';
-import 'package:untitled3/services/chat_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:untitled3/screens/homePage.dart';
 import 'firebase_options.dart';
+import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
-import 'services/otp.dart'; // Import the OTP service
+import 'services/chat_service.dart';
+import 'services/otp.dart';
 import 'screens/WelcomeScreen.dart';
+import 'screens/LoginScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  ); // Initialize Firebase
+  );
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
+
   OTPService.configure(); // Configure the OTP service
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => AuthProvider()),
-      ChangeNotifierProvider(create: (_) => UserProvider()),
-      ChangeNotifierProvider(create: (_) => ChatService()),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ChatService()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -40,15 +47,13 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white, // Set the seed color to white
-          brightness: Brightness.light, // Ensure light theme
+          seedColor: Colors.white,
+          brightness: Brightness.light,
         ),
-        scaffoldBackgroundColor:
-            Colors.white, // Set scaffold background to white
+        scaffoldBackgroundColor: Colors.white,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white, // Set AppBar background to white
-          iconTheme:
-              IconThemeData(color: Colors.black), // Icon color for AppBar
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
           titleTextStyle: TextStyle(
             color: Colors.black,
             fontFamily: 'Poppins',
@@ -56,24 +61,110 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const SplashScreen(), // SplashScreen as the home widget
+      home: const SplashScreen(),
     );
   }
 }
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Delay navigation to WelcomeScreen after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  final LocalAuthentication auth = LocalAuthentication();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email');
+    final password = prefs.getString('password');
+    final biometricEnabled = prefs.getBool('biometricEnabled') ?? false;
+
+    print('Stored email: $email');
+    print('Stored password: $password');
+    print('Biometric enabled: $biometricEnabled');
+
+    if (email != null && password != null) {
+      if (biometricEnabled) {
+        print('Attempting biometric authentication...');
+        bool authenticated = await _authenticateWithBiometrics();
+        if (authenticated) {
+          print('Biometric authentication successful');
+          _login(email, password);
+        } else {
+          print('Biometric authentication failed');
+          _navigateToLogin();
+        }
+      } else {
+        print('Logging in with stored credentials...');
+        _login(email, password);
+      }
+    } else {
+      print('No stored credentials found');
+      _navigateToWelcome();
+    }
+  }
+
+  Future<bool> _authenticateWithBiometrics() async {
+    try {
+      return await auth.authenticate(
+        localizedReason: 'Please authenticate to continue',
+        options: const AuthenticationOptions(
+          useErrorDialogs: true,
+          stickyAuth: true,
+        ),
+      );
+    } catch (e) {
+      print('Error during biometric authentication: $e');
+      return false;
+    }
+  }
+
+  void _login(String email, String password) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    print('Attempting to log in user with email: $email');
+    await authProvider.login(email, password);
+    if (authProvider.loginSuccess == true) {
+      print('Login successful');
+      if (!mounted) return; // Check if the widget is still in the widget tree
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
-    });
+    } else {
+      print('Login failed: ${authProvider.errorMessage}');
+      _navigateToLogin();
+    }
+  }
 
+  void _navigateToLogin() {
+    print('Navigating to LoginScreen');
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
+  void _navigateToWelcome() {
+    print('Navigating to WelcomeScreen');
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -81,16 +172,13 @@ class SplashScreen extends StatelessWidget {
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              Color(0xFFB7425D), // Color at the bottom
-              Color(0xFF884244), // Color at the top
+              Color(0xFFB7425D),
+              Color(0xFF884244),
             ],
           ),
         ),
-        // You can add your logo or any other content here
         child: Center(
-          child: Center(
-            child: Image.asset('assets/logo.png'),
-          ),
+          child: Image.asset('assets/logo.png'),
         ),
       ),
     );

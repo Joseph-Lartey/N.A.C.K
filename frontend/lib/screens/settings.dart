@@ -125,6 +125,12 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Future<void> _clearCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('password');
+  }
+
   void _showLogoutConfirmationDialog() {
     showDialog(
       context: context,
@@ -140,8 +146,9 @@ class SettingsPageState extends State<SettingsPage> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
+                await _clearCredentials(); // Clear saved email and password
                 Navigator.of(context).pushAndRemoveUntil(
                   createFadeRoute(const LoginScreen()),
                   (Route<dynamic> route) => false,
