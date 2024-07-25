@@ -71,6 +71,8 @@ class SplashScreen extends StatelessWidget {
     final biometricEnabled = prefs.getBool('biometricEnabled') ?? false;
     print('Login status: $isLoggedIn, Biometric enabled: $biometricEnabled');
 
+    if (!context.mounted) return;
+
     if (isLoggedIn) {
       if (biometricEnabled) {
         Navigator.pushReplacement(
