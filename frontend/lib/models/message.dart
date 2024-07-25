@@ -22,4 +22,15 @@ class Message {
       'timestamp': timestamp
     };
   }
+
+  // Create a Message from a map
+  factory Message.fromMap(Map<String, dynamic> map) {
+    return Message(
+      receiverId: map['receiverId'] as int,
+      senderId: map['senderId'] as int,
+      timestamp: map['timestamp'] as Timestamp,
+      message: map['message'] as String,
+    );
+  }
 }
+

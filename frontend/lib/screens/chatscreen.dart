@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/other_user.dart';
+import '../models/message.dart';
 import '../providers/auth_provider.dart';
-import 'messages.dart'; // Ensure this file contains the Message class definition
+import '../services/chat_service.dart';
 
 class ChatScreen extends StatefulWidget {
   final OtherUser otherUser;
@@ -24,12 +26,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final String baseProfileDir =
-      'http://16.171.150.101/N.A.C.K/backend/public/profile_images/';
-  final List<Map<String, dynamic>> _messages = [
-    {'text': 'Hi there!', 'isSentByMe': false},
-    {'text': 'Hello!', 'isSentByMe': true},
-  ];
+  final String baseProfileDir = 'http://16.171.150.101/N.A.C.K/backend/public/profile_images/';
   late List<CameraDescription> _cameras;
   CameraController? _cameraController;
   bool _isCameraInitialized = false;
@@ -80,8 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _startRecording() async {
     if (_recorder?.isRecording == false) {
       final Directory tempDir = await getTemporaryDirectory();
-      _recordedFilePath =
-          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
+      _recordedFilePath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
       await _recorder?.startRecorder(toFile: _recordedFilePath);
       setState(() {
         _isRecording = true;
@@ -99,11 +95,8 @@ class _ChatScreenState extends State<ChatScreen> {
       // Add the recorded audio file to messages
       if (_recordedFilePath != null) {
         setState(() {
-          _messages.add({
-            'text': _recordedFilePath!,
-            'isSentByMe': true,
-            'isAudio': true, // Indicate this message is an audio file
-          });
+          // Add the audio message to the list
+          _sendAudioMessage();
         });
       }
     }
@@ -117,18 +110,32 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void _sendAudioMessage() {
+    if (_recordedFilePath != null) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final chatService = Provider.of<ChatService>(context, listen: false);
+
+      chatService.sendMessage(
+        widget.matchId,
+        authProvider.user?.userId ?? 0,
+        widget.otherUser.userId,
+        _recordedFilePath!,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final chatService = Provider.of<ChatService>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(
-                  '$baseProfileDir${widget.otherUser.profileImage}'), // Avatar image for received messages
-            ), // Avatar image
+              backgroundImage: NetworkImage('$baseProfileDir${widget.otherUser.profileImage}'),
+            ),
             const SizedBox(width: 10),
             Text(
               '${widget.otherUser.firstName} ${widget.otherUser.lastName}',
@@ -148,12 +155,10 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Stack(
         children: [
-          // Wallpaper
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                    'assets/wallpaper.jpg'), // Replace with your wallpaper image
+                image: AssetImage('assets/wallpaper.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -162,85 +167,74 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               // Message List
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(10.0),
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    final message = _messages[index];
-                    return Row(
-                      mainAxisAlignment: message['isSentByMe']
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (!message['isSentByMe'])
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundImage: NetworkImage(
-                                '$baseProfileDir${widget.otherUser.profileImage}'), // Avatar image for received messages
-                          ),
-                        if (!message['isSentByMe'])
-                          const SizedBox(
-                              width: 8), // Space between avatar and message
-                        Flexible(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 5),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 15),
-                            decoration: BoxDecoration(
-                              color: message['isSentByMe']
-                                  ? Color(0xFFB7425B).withOpacity(0.9)
-                                  : Colors.grey[200],
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: const Radius.circular(10),
-                                bottomRight: const Radius.circular(10),
-                                topLeft: message['isSentByMe']
-                                    ? const Radius.circular(10)
-                                    : Radius
-                                        .zero, // Not rounded for received messages
-                                topRight: message['isSentByMe']
-                                    ? Radius
-                                        .zero // Not rounded for sent messages
-                                    : const Radius.circular(10),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: chatService.getMessages(widget.matchId, authProvider.user?.userId ?? 0),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final messages = snapshot.data!.docs.map((doc) => Message.fromMap(doc.data() as Map<String, dynamic>)).toList();
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(10.0),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        final isSentByMe = message.senderId == authProvider.user?.userId;
+                        return Row(
+                          mainAxisAlignment: isSentByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (!isSentByMe)
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage('$baseProfileDir${widget.otherUser.profileImage}'),
                               ),
-                            ),
-                            child: message['isAudio'] == true
-                                ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.play_arrow),
-                                        onPressed: () =>
-                                            _playAudio(message['text']),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Text('Audio Message'),
-                                    ],
-                                  )
-                                : message['isImage'] == true
-                                    ? Image.file(File(
-                                        message['text'])) // Display the image
+                            if (!isSentByMe)
+                              const SizedBox(width: 8),
+                            Flexible(
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                decoration: BoxDecoration(
+                                  color: isSentByMe ? Color(0xFFB7425B).withOpacity(0.9) : Colors.grey[200],
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: const Radius.circular(10),
+                                    bottomRight: const Radius.circular(10),
+                                    topLeft: isSentByMe ? const Radius.circular(10) : Radius.zero,
+                                    topRight: isSentByMe ? Radius.zero : const Radius.circular(10),
+                                  ),
+                                ),
+                                child: message.message.endsWith('.aac') // Check if the message is an audio file
+                                    ? Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.play_arrow),
+                                            onPressed: () => _playAudio(message.message),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text('Audio Message'),
+                                        ],
+                                      )
                                     : Text(
-                                        message['text'],
+                                        message.message,
                                         style: TextStyle(
-                                          fontSize: 18, // Increased font size
-                                          color: message['isSentByMe']
-                                              ? Colors.white
-                                              : Colors.black,
+                                          fontSize: 18,
+                                          color: isSentByMe ? Colors.white : Colors.black,
                                         ),
                                       ),
-                          ),
-                        ),
-                        if (message['isSentByMe'])
-                          const SizedBox(
-                              width: 8), // Space between message and avatar
-                        if (message['isSentByMe'])
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundImage: NetworkImage(
-                                '$baseProfileDir${authProvider.user?.profileImage}'), // Replace with sender's avatar image
-                          ), //TODO: Change router
-                      ],
+                              ),
+                            ),
+                            if (isSentByMe)
+                              const SizedBox(width: 8),
+                            if (isSentByMe)
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage('$baseProfileDir${authProvider.user?.profileImage}'),
+                              ),
+                          ],
+                        );
+                      },
                     );
                   },
                 ),
@@ -276,23 +270,20 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[200],
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 20),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                         ),
                         onSubmitted: (text) {
-                          _sendMessage();
+                          _sendMessage(chatService, authProvider.user?.userId ?? 0);
                         },
                       ),
                     ),
                     IconButton(
-                      icon: Icon(
-                          _isRecording ? Icons.stop : Icons.mic_none_outlined),
-                      onPressed:
-                          _isRecording ? _stopRecording : _startRecording,
+                      icon: Icon(_isRecording ? Icons.stop : Icons.mic_none_outlined),
+                      onPressed: _isRecording ? _stopRecording : _startRecording,
                     ),
                     IconButton(
                       icon: const Icon(Icons.send),
-                      onPressed: _sendMessage,
+                      onPressed: () => _sendMessage(chatService, authProvider.user?.userId ?? 0),
                     ),
                   ],
                 ),
@@ -304,17 +295,15 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _sendMessage() {
+  void _sendMessage(ChatService chatService, int senderId) {
     if (_controller.text.trim().isNotEmpty) {
-      setState(() {
-        _messages.add({
-          'text': _controller.text.trim(),
-          'isSentByMe': true,
-          'isImage': false, // Indicate this message is not an image
-          'isAudio': false, // Indicate this message is not an audio file
-        });
-        _controller.clear();
-      });
+      chatService.sendMessage(
+        widget.matchId,
+        senderId,
+        widget.otherUser.userId,
+        _controller.text.trim(),
+      );
+      _controller.clear();
     }
   }
 }
