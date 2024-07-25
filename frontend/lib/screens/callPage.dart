@@ -1,9 +1,12 @@
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:flutter/material.dart';
+import '../models/user.dart';
 
 class CallPage extends StatelessWidget {
-  const CallPage({Key? key, required this.callID}) : super(key: key);
-  final String callID;
+  final String callId;
+  final User user;
+
+  const CallPage({Key? key, required this.callId, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +20,9 @@ class CallPage extends StatelessWidget {
         appID: 45384776, // Replace with your appID from ZEGOCLOUD Admin Console
         appSign:
             yourAppSign, // Replace with your appSign from ZEGOCLOUD Admin Console
-        userID: '91', // Replace with the user ID
-        userName: ' brother', // Replace with the user name
-        callID: callID,
+        userID: '${user.userId}', // Replace with the user ID
+        userName: '${user.firstName} ${user.lastName}', // Replace with the user name
+        callID: callId,
         config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),
       ),
     );

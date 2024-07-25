@@ -9,6 +9,7 @@ import '../models/other_user.dart';
 import '../models/message.dart';
 import '../providers/auth_provider.dart';
 import '../services/chat_service.dart';
+import 'callPage.dart';
 
 class ChatScreen extends StatefulWidget {
   final OtherUser otherUser;
@@ -26,7 +27,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final String baseProfileDir = 'http://16.171.150.101/N.A.C.K/backend/public/profile_images/';
+  final String baseProfileDir =
+      'http://16.171.150.101/N.A.C.K/backend/public/profile_images/';
   late List<CameraDescription> _cameras;
   CameraController? _cameraController;
   bool _isCameraInitialized = false;
@@ -77,7 +79,8 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _startRecording() async {
     if (_recorder?.isRecording == false) {
       final Directory tempDir = await getTemporaryDirectory();
-      _recordedFilePath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
+      _recordedFilePath =
+          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
       await _recorder?.startRecorder(toFile: _recordedFilePath);
       setState(() {
         _isRecording = true;
@@ -134,7 +137,8 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage('$baseProfileDir${widget.otherUser.profileImage}'),
+              backgroundImage: NetworkImage(
+                  '$baseProfileDir${widget.otherUser.profileImage}'),
             ),
             const SizedBox(width: 10),
             Text(
@@ -147,7 +151,15 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: const Icon(Icons.phone_outlined),
             onPressed: () {
-              // Action for phone call
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CallPage(
+                    callId: widget.matchId.toString(),
+                    user: authProvider.user!,
+                  ),
+                ),
+              );
             },
           ),
         ],
@@ -168,49 +180,65 @@ class _ChatScreenState extends State<ChatScreen> {
               // Message List
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: chatService.getMessages(widget.matchId, authProvider.user?.userId ?? 0),
+                  stream: chatService.getMessages(
+                      widget.matchId, authProvider.user?.userId ?? 0),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final messages = snapshot.data!.docs.map((doc) => Message.fromMap(doc.data() as Map<String, dynamic>)).toList();
+                    final messages = snapshot.data!.docs
+                        .map((doc) =>
+                            Message.fromMap(doc.data() as Map<String, dynamic>))
+                        .toList();
                     return ListView.builder(
                       padding: const EdgeInsets.all(10.0),
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[index];
-                        final isSentByMe = message.senderId == authProvider.user?.userId;
+                        final isSentByMe =
+                            message.senderId == authProvider.user?.userId;
                         return Row(
-                          mainAxisAlignment: isSentByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                          mainAxisAlignment: isSentByMe
+                              ? MainAxisAlignment.end
+                              : MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (!isSentByMe)
                               CircleAvatar(
                                 radius: 20,
-                                backgroundImage: NetworkImage('$baseProfileDir${widget.otherUser.profileImage}'),
+                                backgroundImage: NetworkImage(
+                                    '$baseProfileDir${widget.otherUser.profileImage}'),
                               ),
-                            if (!isSentByMe)
-                              const SizedBox(width: 8),
+                            if (!isSentByMe) const SizedBox(width: 8),
                             Flexible(
                               child: Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 15),
                                 decoration: BoxDecoration(
-                                  color: isSentByMe ? Color(0xFFB7425B).withOpacity(0.9) : Colors.grey[200],
+                                  color: isSentByMe
+                                      ? Color(0xFFB7425B).withOpacity(0.9)
+                                      : Colors.grey[200],
                                   borderRadius: BorderRadius.only(
                                     bottomLeft: const Radius.circular(10),
                                     bottomRight: const Radius.circular(10),
-                                    topLeft: isSentByMe ? const Radius.circular(10) : Radius.zero,
-                                    topRight: isSentByMe ? Radius.zero : const Radius.circular(10),
+                                    topLeft: isSentByMe
+                                        ? const Radius.circular(10)
+                                        : Radius.zero,
+                                    topRight: isSentByMe
+                                        ? Radius.zero
+                                        : const Radius.circular(10),
                                   ),
                                 ),
-                                child: message.message.endsWith('.aac') // Check if the message is an audio file
+                                child: message.message.endsWith(
+                                        '.aac') // Check if the message is an audio file
                                     ? Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
                                             icon: const Icon(Icons.play_arrow),
-                                            onPressed: () => _playAudio(message.message),
+                                            onPressed: () =>
+                                                _playAudio(message.message),
                                           ),
                                           const SizedBox(width: 8),
                                           const Text('Audio Message'),
@@ -220,17 +248,19 @@ class _ChatScreenState extends State<ChatScreen> {
                                         message.message,
                                         style: TextStyle(
                                           fontSize: 18,
-                                          color: isSentByMe ? Colors.white : Colors.black,
+                                          color: isSentByMe
+                                              ? Colors.white
+                                              : Colors.black,
                                         ),
                                       ),
                               ),
                             ),
-                            if (isSentByMe)
-                              const SizedBox(width: 8),
+                            if (isSentByMe) const SizedBox(width: 8),
                             if (isSentByMe)
                               CircleAvatar(
                                 radius: 20,
-                                backgroundImage: NetworkImage('$baseProfileDir${authProvider.user?.profileImage}'),
+                                backgroundImage: NetworkImage(
+                                    '$baseProfileDir${authProvider.user?.profileImage}'),
                               ),
                           ],
                         );
@@ -270,20 +300,25 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[200],
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 20),
                         ),
                         onSubmitted: (text) {
-                          _sendMessage(chatService, authProvider.user?.userId ?? 0);
+                          _sendMessage(
+                              chatService, authProvider.user?.userId ?? 0);
                         },
                       ),
                     ),
                     IconButton(
-                      icon: Icon(_isRecording ? Icons.stop : Icons.mic_none_outlined),
-                      onPressed: _isRecording ? _stopRecording : _startRecording,
+                      icon: Icon(
+                          _isRecording ? Icons.stop : Icons.mic_none_outlined),
+                      onPressed:
+                          _isRecording ? _stopRecording : _startRecording,
                     ),
                     IconButton(
                       icon: const Icon(Icons.send),
-                      onPressed: () => _sendMessage(chatService, authProvider.user?.userId ?? 0),
+                      onPressed: () => _sendMessage(
+                          chatService, authProvider.user?.userId ?? 0),
                     ),
                   ],
                 ),
